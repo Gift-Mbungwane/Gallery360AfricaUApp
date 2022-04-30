@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "Gallery360Africa",
+    "slug": "Gallery360Africa",
+    "version": "1.0.1",
+    "orientation": "portrait",
+    "icon": "",
+    "splash": {
+      "image": "./src/assets/images/the good one 1.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+       "bundleIdentifier": "com.gallery360africa.Gallery360Africa",
+      "buildNumber": "1.0.1"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./src/assets/images/the good one 1.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.gallery360africa.Gallery360Africa",
+      "versionCode": 1
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
