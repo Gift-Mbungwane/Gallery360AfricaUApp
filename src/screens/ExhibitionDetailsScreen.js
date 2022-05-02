@@ -171,48 +171,49 @@ export default function ExhibitionDetailsScreen({ route, navigation }) {
       </View>
 
       <View style={styles.DetailsContainer}>
-        <Text
-          style={{
-            color: "#000000",
-            paddingBottom: 25,
-            fontSize: 25,
-            fontWeight: "bold",
-            alignSelf: "center",
-          }}
-        >
-          {exhibitionTitle}
-        </Text>
-        <Text
-          style={{
-            color: "#000000",
-            paddingBottom: 15,
-            fontSize: 14,
-            alignSelf: "center",
-          }}
-        >
-          {date}
-        </Text>
-        <Text
-          style={{
-            color: "#000000",
-            paddingBottom: 15,
-            fontSize: 14,
-            alignSelf: "center",
-          }}
-        >
-          {address}
-        </Text>
-        <Text
-          style={{
-            color: "#000000",
-            paddingBottom: 40,
-            fontSize: 14,
-            alignSelf: "center",
-          }}
-        >
-          {description}
-        </Text>
-
+        <View style={{ flex: 5 }}>
+          <Text
+            style={{
+              color: "#000000",
+              paddingBottom: 25,
+              fontSize: 25,
+              fontWeight: "bold",
+              alignSelf: "center",
+            }}
+          >
+            {exhibitionTitle}
+          </Text>
+          <Text
+            style={{
+              color: "#000000",
+              paddingBottom: 15,
+              fontSize: 14,
+              alignSelf: "center",
+            }}
+          >
+            {date}
+          </Text>
+          <Text
+            style={{
+              color: "#000000",
+              paddingBottom: 15,
+              fontSize: 14,
+              alignSelf: "center",
+            }}
+          >
+            {address}
+          </Text>
+          <Text
+            style={{
+              color: "#000000",
+              paddingBottom: 40,
+              fontSize: 14,
+              alignSelf: "center",
+            }}
+          >
+            {description}
+          </Text>
+        </View>
         <View style={{ flexDirection: "row" }}>
           <TouchableOpacity
             style={styles.VisitLocation}
@@ -310,11 +311,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 20,
     alignSelf: "center",
-    height: "40%",
+    height: "48%",
     marginTop: 25,
     backgroundColor: "rgba(255,255,355,0.3)",
     borderColor: "#ffffff",
-    marginVertical: "-25%",
+    marginVertical: "-23%",
   },
   VisitLocation: {
     backgroundColor: "#000000",

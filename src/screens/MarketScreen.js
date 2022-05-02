@@ -16,7 +16,7 @@ import { firestore } from "../../Firebase";
 //
 const SLIDER_WIDTH = Dimensions.get("window").width;
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.8);
-const ITEM_HEIGHT = Math.round((ITEM_WIDTH * 7) / 5);
+const ITEM_HEIGHT = Math.round((ITEM_WIDTH * 6.2) / 5.2);
 
 //
 

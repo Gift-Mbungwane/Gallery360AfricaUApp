@@ -7,8 +7,9 @@ import {
   SafeAreaView,
   Text,
 } from "react-native";
-import { WebView } from "react-native-webview";
+// import { WebView } from "react-native-webview";
 import { useRoute } from "@react-navigation/native";
+import { auth } from "../../Firebase";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -40,14 +41,15 @@ export default function PayPalPaymentScreen({ route, navigation }) {
 
   return (
     <SafeAreaView>
-      <WebView
+      {/* <WebView
         startInLoadingState={true}
         onNavigationStateChange={stateChng}
         renderLoading={() => <Loading />}
         source={{
-          uri: "https://developer.paypal.com/pay/" + amount,
+          uri: "https://gallery-360-africa.web.app",
         }}
-      />
+        uid={auth.currentUser.uid}
+      /> */}
     </SafeAreaView>
   );
 }

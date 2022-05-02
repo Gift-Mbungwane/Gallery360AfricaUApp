@@ -3,9 +3,14 @@ import { StyleSheet, Dimensions } from "react-native";
 const globalStyles = StyleSheet.create({
   // MAIN STYLES
   container: {
+    height: Dimensions.get("screen").height,
+    width: Dimensions.get("screen").width,
+    // backgroundColor: "#fff",
+  },
+  onBoardingContainer: {
     height: "100%",
     width: "100%",
-    backgroundColor: "#fff",
+    // backgroundColor: "#fff",
   },
   body: {
     flex: 3,
@@ -305,7 +310,7 @@ const globalStyles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-end",
-    top: "100%",
+    top: "90%",
     marginVertical: "100%",
   },
   topLeftIcon: {

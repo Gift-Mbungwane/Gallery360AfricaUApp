@@ -234,8 +234,8 @@ export default function ArtPreviewScreen({ route, navigation }) {
       });
   };
 
-  const disableObjects = () => {
-    setDisplayContent(!displayContent);
+  const disableObjects = async () => {
+    return await setDisplayContent(!displayContent);
   };
 
   useEffect(() => {
@@ -302,7 +302,7 @@ export default function ArtPreviewScreen({ route, navigation }) {
                 {following == artistUid ? (
                   <View>
                     <TouchableOpacity
-                      style={{ marginVertical: 12 }}
+                      style={{ marginVertical: 10 }}
                       title="following"
                       onPress={onUnFollowing}
                     >
@@ -312,7 +312,7 @@ export default function ArtPreviewScreen({ route, navigation }) {
                 ) : (
                   <View>
                     <TouchableOpacity
-                      style={{ marginVertical: 12 }}
+                      style={{ marginVertical: 10 }}
                       title="following"
                       onPress={onFollow}
                     >
@@ -322,15 +322,15 @@ export default function ArtPreviewScreen({ route, navigation }) {
                 )}
 
                 <TouchableOpacity
-                  style={{ marginVertical: 12 }}
+                  style={{ marginVertical: 10 }}
                   onPress={() => setModalVisible(true)}
                   activeOpacity={0.5}
                 >
                   <Fontisto name="comments" size={30} color={"#FFFFFF"} />
                 </TouchableOpacity>
 
-                <View style={{ marginVertical: 12 }}>
-                  <View style={{ marginVertical: 12 }}>
+                <View style={{ marginVertical: 10 }}>
+                  <View style={{ marginVertical: 10 }}>
                     {image == imageUID ? (
                       <TouchableOpacity onPress={() => onDislikePress()}>
                         <AntDesign name="heart" size={30} color="red" />
@@ -351,7 +351,7 @@ export default function ArtPreviewScreen({ route, navigation }) {
                 </View>
                 <View>
                   <TouchableOpacity
-                    style={{ marginVertical: 12 }}
+                    style={{ marginVertical: 10 }}
                     onPress={() => addToCart()}
                   >
                     <MaterialIcons
@@ -445,7 +445,7 @@ export default function ArtPreviewScreen({ route, navigation }) {
             </View>
           ) : (
             <View>
-              <View style={{ flex: 5 }}></View>
+              <View style={{ flex: 4 }}></View>
               <View style={globalStyles.bottomContainer1}>
                 <View
                   blur="51"

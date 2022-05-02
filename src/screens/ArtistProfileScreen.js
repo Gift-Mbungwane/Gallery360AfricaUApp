@@ -310,7 +310,7 @@ export default function ArtistProfileScreen({ route, navigation }) {
                   width: 120,
                   height: 150,
                   borderRadius: 15,
-                  marginHorizontal: 15,
+                  left: 10,
                   top: 20,
                   justifyContent: "center",
                   alignItems: "center",
@@ -354,7 +354,8 @@ const styles = StyleSheet.create({
     color: "#000000",
     fontSize: 20,
     fontWeight: "bold",
-    marginLeft: 20,
+    marginLeft: 15,
+    top: 15,
   },
   img: {
     height: 150,

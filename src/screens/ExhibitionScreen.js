@@ -20,7 +20,7 @@ export default function ExhibitionScreen({ navigation }) {
   //
   const SLIDER_WIDTH = Dimensions.get("window").width;
   const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.8);
-  const ITEM_HEIGHT = Math.round((ITEM_WIDTH * 7) / 5);
+  const ITEM_HEIGHT = Math.round((ITEM_WIDTH * 6.5) / 5);
   const [state, setState] = useState();
   const [artist, setArtist] = useState(null);
   const [exhibition, setExhibition] = useState([]);
@@ -116,7 +116,7 @@ export default function ExhibitionScreen({ navigation }) {
         </SafeAreaView>
       </View>
 
-      <Text style={{ color: "#000", paddingLeft: 15, fontSize: 18 }}>
+      <Text style={{ color: "#000", marginHorizontal: 10, fontSize: 18 }}>
         Artists
       </Text>
 
@@ -180,14 +180,14 @@ const styles = StyleSheet.create({
   },
   body: {
     flex: 6,
-    top: 10,
+    top: 3,
     alignItems: "center",
     justifyContent: "center",
   },
   footer: {
     justifyContent: "center",
     alignItems: "center",
-    marginVertical: 8,
+    marginVertical: 12,
     flexDirection: "row",
     paddingLeft: 10,
   },

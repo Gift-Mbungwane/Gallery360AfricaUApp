@@ -12,7 +12,7 @@ export default function OnboardingScreen({ navigation }) {
   return (
     <ImageBackground
       source={background}
-      style={globalStyles.container}
+      style={globalStyles.onBoardingContainer}
       resizeMode="stretch"
     >
       <View style={globalStyles.onboardingBody}>

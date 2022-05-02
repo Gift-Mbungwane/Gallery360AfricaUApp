@@ -18,7 +18,7 @@ import Carousel from "react-native-snap-carousel";
 export default function ArtWorksScreen({ route, navigation }) {
   const SLIDER_WIDTH = Dimensions.get("window").width;
   const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.9);
-  const ITEM_HEIGHT = Math.round((ITEM_WIDTH * 10) / 5);
+  const ITEM_HEIGHT = Math.round((ITEM_WIDTH * 9) / 5);
   const [art, setArt] = useState([]);
   const [state, setState] = useState();
 

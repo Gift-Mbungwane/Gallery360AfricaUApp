@@ -9,8 +9,9 @@ import {
   Image,
   ScrollView,
 } from "react-native";
+import * as WebBrowser from "expo-web-browser";
 import { Ionicons, Entypo } from "@expo/vector-icons";
-import { firestore } from "../../Firebase";
+import { auth, firestore } from "../../Firebase";
 import { globalStyles } from "../assets/styles/GlobalStyles";
 
 export default function CartScreen({ navigation, route }) {
@@ -80,6 +81,21 @@ export default function CartScreen({ navigation, route }) {
       })
       .catch((error) => alert(error));
   };
+
+  const openBrowser = async () => {
+    const uid = auth.currentUser.uid;
+    const open = WebBrowser.openBrowserAsync(
+      "https://gallery-360-africa.web.app/Payment" +
+        `?id=${auth.currentUser.uid}`
+      // new Promise((resolve, reject) => {
+      //   resolve(`uid=${uid}`);
+      //   reject(() => {
+      //     navigation.navigate("Home");
+      //   });
+      // })
+    );
+  };
+
   useEffect(() => {
     getCart();
   }, []);
@@ -242,15 +258,16 @@ export default function CartScreen({ navigation, route }) {
               backgroundColor: "black",
               alignSelf: "center",
               justifyContent: "center",
-              marginTop: 5,
+              marginVertical: -10,
             }}
           >
             <TouchableOpacity
-              onPress={() =>
-                navigation.navigate("DeliveryAddress", {
-                  uuid: uuid,
-                  amount: totalAmount,
-                })
+              onPress={
+                () => openBrowser()
+                // navigation.navigate("PayPalPayment", {
+                //   uuid: uuid,
+                //   amount: totalAmount,
+                // })
               }
             >
               <Text
