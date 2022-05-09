@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import Toast from "react-native-toast-message";
+import Toast from "react-native-simple-toast";
 import { auth, firestore } from "../../Firebase";
 
 export default function UserSettingsScreen({ navigation }) {
@@ -9,12 +9,7 @@ export default function UserSettingsScreen({ navigation }) {
       await auth
         .signOut()
         .then(() => {
-          Toast.show({
-            type: "error",
-            text1: "Hello",
-            text2: "You have signed out!",
-          });
-
+          Toast.show("You have signed out!", Toast.LONG, Toast.CENTER);
           navigation.replace("SignIn");
         })
         .catch((error) => alert(error));

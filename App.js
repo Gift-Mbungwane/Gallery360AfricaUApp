@@ -15,7 +15,7 @@ import {
   Entypo,
   Ionicons,
 } from "@expo/vector-icons";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-simple-toast";
 import { globalStyles } from "./src/assets/styles/GlobalStyles";
 
 //
@@ -184,11 +184,6 @@ export default function App({ navigation }) {
       >
         {user ? (
           <>
-            {/* <Stack.Screen
-              options={{ headerShown: false }}
-              name="Splash"
-              component={SplashScreen}
-            /> */}
             <Stack.Screen
               name="Home"
               component={TabNavigator}
@@ -216,27 +211,8 @@ export default function App({ navigation }) {
                       flexDirection: "row",
                       width: 95,
                       left: 35,
-                      // justifyContent: "space-between",
                     }}
                   >
-                    {/* <TouchableOpacity
-                      style={{
-                        borderWidth: 0.5,
-                        borderRadius: 30,
-                        width: 30,
-                        height: 30,
-                        borderColor: "#ceb89e",
-                      }}
-                      onPress={() => navigation.navigate("Search")}
-                    >
-                      <FontAwesome
-                        name="search"
-                        size={24}
-                        color={"#ceb89e"}
-                        style={{ alignSelf: "center" }}
-                      />
-                    </TouchableOpacity> */}
-
                     <TouchableOpacity
                       style={{
                         borderWidth: 0.5,
@@ -481,7 +457,6 @@ export default function App({ navigation }) {
               name="UserProfile"
               component={UserProfileScreen}
             />
-            {/* <Stack.Screen options={{headerShown: false}} name='Map' component={Map} />  */}
             <Stack.Screen
               options={{
                 headerShown: true,
@@ -500,10 +475,6 @@ export default function App({ navigation }) {
               name="Cart"
               component={CartScreen}
             />
-            {/* <Stack.Screen options={{headerShown: false}} name='PaymentSuccesful' component={PaymentSuccesful} /> */}
-            {/* <Stack.Screen options={{headerShown: false}} name='PaymentFailure' component={PaymentFailure} /> */}
-            {/* <Stack.Screen options={{headerShown: true,  headerTransparent: true}} name='PaymentForm' component={PaymentForm} /> */}
-            {/* <Stack.Screen options={{headerShown: true,  headerTransparent: true}} name='DeliveryAddress' component={DeliveryAddress} /> */}
             <Stack.Screen
               options={({ navigation }) => ({
                 headerShown: true,
@@ -545,7 +516,6 @@ export default function App({ navigation }) {
               name="Search"
               component={SearchScreen}
             />
-            {/* <Stack.Screen options={{headerShown: true, headerTransparent: true}} name='Notifications' component={Notifications} /> */}
             <Stack.Screen
               options={({ navigation }) => ({
                 headerShown: true,
@@ -570,8 +540,6 @@ export default function App({ navigation }) {
               name="TermsAndConditions"
               component={TermsAndConditionsScreen}
             />
-            {/* <Stack.Screen options={{headerShown: true, headerTransparent: true}} name='Artists' component={Artists} /> */}
-            {/* <Stack.Screen options={{headerShown: true, headerTransparent: true}} name='ArtWorks' component={ArtWorks} /> */}
             <Stack.Screen
               options={({ navigation }) => ({
                 headerShown: true,
@@ -606,22 +574,6 @@ export default function App({ navigation }) {
                 headerTransparent: true,
                 headerBackTitleVisible: false,
                 headerTintColor: "#FFFFFF",
-
-                // headerLeft: () => (
-                //   <View style={{ marginVertical: -25, marginHorizontal: -15 }}>
-                //     <TouchableOpacity
-                //       style={globalStyles.topLeftIcon}
-                //       onPress={() => navigation.goBack("Home")}
-                //     >
-                //       <Ionicons
-                //         name="chevron-back"
-                //         size={29}
-                //         color="#22180E"
-                //         style={{ alignSelf: "center", marginVertical: 5 }}
-                //       />
-                //     </TouchableOpacity>
-                //   </View>
-                // ),
                 headerTitle: () => (
                   <View>
                     <Text

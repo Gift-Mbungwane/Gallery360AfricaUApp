@@ -480,7 +480,7 @@ const globalStyles = StyleSheet.create({
   flatlistView: {
     // borderRadius: 10,
     //    backgroundColor: 'red',
-    marginVertical: -20,
+    marginVertical: -15,
   },
   cancelIcon: {
     width: 37,

@@ -16,7 +16,7 @@ import React, { useState } from "react";
 import { Formik } from "formik";
 import { globalStyles } from "../assets/styles/GlobalStyles";
 import { firestore, auth } from "../../Firebase";
-import Toast from "react-native-toast-message";
+import Toast from "react-native-simple-toast";
 
 export default function SignUpScreen({ navigation }) {
   const [fullName, setFullName] = useState("");
@@ -27,29 +27,13 @@ export default function SignUpScreen({ navigation }) {
     const reg =
       /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (fullName == "" && email == "" && password == "") {
-      Toast.show({
-        type: "error",
-        text1: "Hello user",
-        text2: "Both fields are empty",
-      });
+      Toast.show("Both fields are empty", Toast.LONG, Toast.CENTER);
     } else if (fullName == "") {
-      Toast.show({
-        type: "error",
-        text1: "Hello user",
-        text2: "Full name cannot be empty",
-      });
+      Toast.show("Full name cannot be empty", Toast.LONG, Toast.CENTER);
     } else if (!reg.test(email)) {
-      Toast.show({
-        type: "error",
-        text1: "Hello user",
-        text2: "Email is not valid",
-      });
+      Toast.show("Email is not valid", Toast.LONG, Toast.CENTER);
     } else if (password == "") {
-      Toast.show({
-        type: "error",
-        text1: "Hello user",
-        text2: "Password cannot be empty",
-      });
+      Toast.show("Password cannot be empty", Toast.LONG, Toast.CENTER);
     }
   };
   const register = async () => {
@@ -70,30 +54,32 @@ export default function SignUpScreen({ navigation }) {
             })
             .then(() => {
               navigation.navigate("SignIn");
-              Toast.show({
-                type: "success",
-                text1: "Hello user",
-                text2: "You have successfully registered ",
-              });
+              Toast.show(
+                "You have successfully registered ",
+                Toast.LONG,
+                Toast.CENTER
+              );
               navigation.navigate("SignIn");
             })
-            .catch((error) => alert(error));
+            .catch((error) => {
+              Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
+            });
           // console.log('User account created & signed in!');
         })
         .catch((error) => {
           if (error.code === "auth/email-already-in-use") {
-            Toast.show({
-              type: "error",
-              text1: "Hello user",
-              text2: "That email address is already in use!",
-            });
+            Toast.show(
+              "That email address is already in use!",
+              Toast.LONG,
+              Toast.CENTER
+            );
           }
           if (error.code === "auth/invalid-email") {
-            Toast.show({
-              type: "error",
-              text1: "Hello user",
-              text2: "That email address is invalid!",
-            });
+            Toast.show(
+              "That email address is invalid!",
+              Toast.LONG,
+              Toast.CENTER
+            );
           } else {
             register();
           }

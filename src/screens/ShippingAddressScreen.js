@@ -13,7 +13,7 @@ import {
 import React, { useState } from "react";
 import { globalStyles } from "../assets/styles/GlobalStyles";
 import { auth, firestore } from "../../Firebase";
-import { Toast } from "react-native-toast-message";
+import Toast from "react-native-simple-toast";
 import { MaterialIcons } from "@expo/vector-icons";
 
 export default function ShippingAddressScreen({ navigation, route }) {
@@ -37,46 +37,22 @@ export default function ShippingAddressScreen({ navigation, route }) {
       province == "" &&
       postalCode == ""
     ) {
-      Toast.show({
-        type: "error",
-        text2: "All fields are required",
-      });
+      Toast.show("All fields are required", Toast.LONG, Toast.CENTER);
     } else if (recipientName == "") {
-      Toast.show({
-        type: "error",
-        text2: "Recipient name is requred",
-      });
+      Toast.show("Recipient name is requred", Toast.LONG, Toast.CENTER);
     } else if (mobile == "") {
-      Toast.show({
-        type: "error",
-        text2: "Mobile number is requred",
-      });
+      Toast.show("Mobile number is requred", Toast.LONG, Toast.CENTER);
     } else if (streetName == "") {
-      Toast.show({
-        type: "error",
-        text2: "Street name is requred",
-      });
+      Toast.show("Street name is requred", Toast.LONG, Toast.CENTER);
     } else if (city == "") {
-      Toast.show({
-        type: "error",
-        text2: "City is requred",
-      });
+      Toast.show("City is requred", Toast.LONG, Toast.CENTER);
     } else if (province == "") {
-      Toast.show({
-        type: "error",
-        text2: "Province is requred",
-      });
+      Toast.show("Province is requred", Toast.LONG, Toast.CENTER);
     } else if (postalCode == "") {
-      Toast.show({
-        type: "error",
-        text2: "Postal Code is requred",
-      });
+      Toast.show("Postal Code is requred", Toast.LONG, Toast.CENTER);
     } else {
       register();
-      Toast.show({
-        type: "success",
-        text2: "Address successfully added",
-      });
+      Toast.show("Address successfully added", Toast.LONG, Toast.CENTER);
     }
   };
 
@@ -98,7 +74,12 @@ export default function ShippingAddressScreen({ navigation, route }) {
           .update({
             key: address.id,
           })
-          .catch((error) => alert(error));
+          .then(() => {
+            Toast.show("Your address has been added", Toast.LONG, Toast.CENTER);
+          })
+          .catch((error) => {
+            Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
+          });
         navigation.navigate("DeliveryAddress", { uuid: uuid });
       });
   };

@@ -10,7 +10,7 @@ import {
   ScrollView,
   SafeAreaView,
 } from "react-native";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-simple-toast";
 //
 import { auth, firestore } from "../../Firebase";
 //
@@ -68,7 +68,7 @@ export default function ArtistProfileScreen({ route, navigation }) {
       .where("status", "==", "approved")
       .onSnapshot((snapshot) => {
         const artSizes = snapshot.size - 2;
-        console.log(artSizes, " the art size of the artist");
+        // console.log(artSizes, " the art size of the artist");
         setSize(artSizes);
       });
   };
@@ -83,7 +83,9 @@ export default function ArtistProfileScreen({ route, navigation }) {
       .then(() => {
         onFollowing(artistUid);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
+      });
   };
 
   const onFollowing = async () => {
@@ -102,13 +104,16 @@ export default function ArtistProfileScreen({ route, navigation }) {
           artistPhoto: photoUrl,
           fullName: FullName,
           artistName: artistName,
+        })
+        .then(() => {
+          Toast.show(
+            `You're now Following ${artistName}`,
+            Toast.LONG,
+            Toast.CENTER
+          );
         });
-      Toast.show({
-        type: "success",
-        text2: `You're now Following ${artistName}`,
-      });
     } catch (error) {
-      alert(error);
+      Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
     }
   };
 
@@ -123,12 +128,13 @@ export default function ArtistProfileScreen({ route, navigation }) {
         .collection("userFollowing")
         .doc(uuid)
         .delete();
-      Toast.show({
-        type: "error",
-        text2: `You're no longer following ${artistName}`,
-      });
+      Toast.show(
+        `You're no longer following ${artistName}`,
+        Toast.LONG,
+        Toast.CENTER
+      );
     } catch (error) {
-      alert(error);
+      Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
     }
   };
 
@@ -169,7 +175,7 @@ export default function ArtistProfileScreen({ route, navigation }) {
       style={styles.container}
     >
       <View style={styles.TopContainer}>
-        <View style={{ marginVertical: 10 }}>
+        <View style={{ marginVertical: 12 }}>
           <VideoPlayer
             style={{ width: "80%", height: 250 }}
             videoProps={{

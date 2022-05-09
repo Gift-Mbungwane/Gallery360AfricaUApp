@@ -16,6 +16,7 @@ import { Entypo } from "@expo/vector-icons";
 import { firestore, auth } from "../../Firebase";
 import * as Location from "expo-location";
 import Constants from "expo-constants";
+import Toast from "react-native-simple-toast";
 
 const STATUSBAR_HEIGHT = StatusBar.currentHeight;
 
@@ -39,10 +40,11 @@ export default function ExhibitionDetailsScreen({ route, navigation }) {
   const getLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
-      Toast.show({
-        type: "error",
-        text1: "Permission to access location was denied",
-      });
+      Toast.show(
+        "Permission to access location was denied",
+        Toast.LONG,
+        Toast.CENTER
+      );
 
       return;
     } else if (status == "granted") {
@@ -72,7 +74,9 @@ export default function ExhibitionDetailsScreen({ route, navigation }) {
         exhibitionUid: exhibitionUid,
       })
       .then((documentSnap) => {})
-      .catch((error) => alert(error));
+      .catch((error) => {
+        Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
+      });
     // props.sendNotification(user.notificationToken, "New Like", `${props.currentUser.name} liked your post`, { type: 0, postId, user: firebase.auth().currentUser.uid })
   };
 
@@ -85,7 +89,9 @@ export default function ExhibitionDetailsScreen({ route, navigation }) {
       .doc(uid)
       .delete({})
       .then(() => {})
-      .catch((error) => alert(error));
+      .catch((error) => {
+        Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
+      });
   };
 
   const likesState = async () => {
@@ -208,6 +214,7 @@ export default function ExhibitionDetailsScreen({ route, navigation }) {
               color: "#000000",
               paddingBottom: 40,
               fontSize: 14,
+              width: "95%",
               alignSelf: "center",
             }}
           >

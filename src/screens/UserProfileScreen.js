@@ -13,7 +13,6 @@ import {
   ActivityIndicator,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import Toast from "react-native-toast-message";
 import { firestore, auth, storageRef } from "../../Firebase";
 import {
   MaterialCommunityIcons,
@@ -24,6 +23,8 @@ import {
   AntDesign,
 } from "@expo/vector-icons";
 import { globalStyles } from "../assets/styles/GlobalStyles";
+import Toast from "react-native-simple-toast";
+
 const background = require("../assets/images/home.png");
 
 export default function UserProfileScreen({ route, navigation }) {
@@ -39,11 +40,7 @@ export default function UserProfileScreen({ route, navigation }) {
       await auth
         .signOut()
         .then(() => {
-          Toast.show({
-            type: "error",
-            text1: "Hello",
-            text2: "You have signed out!",
-          });
+          Toast.show("You have signed out!", Toast.LONG, Toast.CENTER);
           navigation.replace("SignIn");
         })
         .catch((error) => alert(error));
@@ -63,8 +60,8 @@ export default function UserProfileScreen({ route, navigation }) {
     console.log(result.uri);
 
     if (!result.cancelled) {
-      setSubmit(true);
-      setImage(result.uri);
+      setSubmit(!submit);
+      //setimageUri(result.uri);
       const blob = await new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.onload = function () {
@@ -96,6 +93,8 @@ export default function UserProfileScreen({ route, navigation }) {
       //   console.log(imageUrl, "this is setting the image too storage before 2");
       //   setPhoto(imageUrl);
       // });
+    } else {
+      setimageUri(result.uri);
     }
   };
 
@@ -108,11 +107,15 @@ export default function UserProfileScreen({ route, navigation }) {
         photoURL: imageUri,
       })
       .then(() => {
-        alert("you have successfully update your profile");
+        Toast.show(
+          "you have successfully update your profile",
+          Toast.LONG,
+          Toast.CENTER
+        );
         setModalOpen(false);
       })
       .catch((error) => {
-        alert(error);
+        Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
       });
   };
 
@@ -288,51 +291,6 @@ export default function UserProfileScreen({ route, navigation }) {
                 Logout
               </Text>
             </TouchableOpacity>
-
-            {/* <TouchableOpacity 
-                          onPress={() => navigation.navigate('Notifications')} 
-                          style={{
-                            backgroundColor:"#E3E3E3", 
-                            width:"80%", 
-                            height:70, 
-                            flexDirection:"row", 
-                            alignSelf:"center", 
-                            alignItems:"center", 
-                            borderRadius:20, 
-                            marginVertical:15
-                            }}
-                            >
-                          <MaterialIcons
-                            name="notifications"
-                            size={24}
-                            color={'#0E1822'}
-                            style={{ marginHorizontal: 10, overflow:"hidden",  color:"#0E1822"}}
-                          />
-                          <Text style={{marginHorizontal:10, color:"#0E1822"}}>Notifications</Text>
-                          <Entypo name="chevron-small-right" size={24} style={{marginVertical:-10, marginHorizontal:"37%", color:"#0E1822"}}/>
-                        </TouchableOpacity> */}
-
-            {/* <TouchableOpacity 
-                        onPress={() => navigation.navigate('UserSettings')} 
-                        style={{
-                          backgroundColor:"#E3E3E3",
-                           width:"80%", 
-                           height:70, 
-                           flexDirection:"row", 
-                           alignSelf:"center", 
-                           alignItems:"center", 
-                           borderRadius:20
-                           }}
-                           >
-                        <Ionicons
-                          name="settings-outline"
-                          size={24}
-                          color={'#0E1822'}
-                          style={{ marginHorizontal: 10, overflow:"hidden",  color:"#0E1822"}}
-                        />
-                        <Text style={{marginHorizontal:10, color:"#0E1822"}}>Settings</Text>
-                        <Entypo name="chevron-small-right" size={24} style={{marginVertical:-10, marginHorizontal:"47%",  color:"#0E1822"}}/>
-                      </TouchableOpacity> */}
           </View>
         </View>
       </ImageBackground>

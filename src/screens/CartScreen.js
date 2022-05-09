@@ -13,6 +13,10 @@ import * as WebBrowser from "expo-web-browser";
 import { Ionicons, Entypo } from "@expo/vector-icons";
 import { auth, firestore } from "../../Firebase";
 import { globalStyles } from "../assets/styles/GlobalStyles";
+import Toast from "react-native-simple-toast";
+import Constants from "expo-constants";
+import * as Linking from "expo-linking";
+// import * as AuthSession from "expo-auth-session/src/AuthSession";
 
 export default function CartScreen({ navigation, route }) {
   const { uuid } = route.params;
@@ -24,6 +28,11 @@ export default function CartScreen({ navigation, route }) {
   const [totalAmount, setTotalAmount] = useState(0);
   const [artURL, setArtURL] = useState("");
   const [keyy, setKey] = useState("");
+  const [accessToken, setAccessToken] = useState();
+  // const [request, response, promptAsync] = AuthSession.getDefaultReturnUrl(
+  //   "/",
+  //   Linking.createURL("/?")
+  // );
 
   const getCart = () => {
     return firestore
@@ -74,30 +83,52 @@ export default function CartScreen({ navigation, route }) {
       .doc(keyy)
       .delete()
       .then(() => {
-        Toast.show({
-          type: "error",
-          text2: "Your item has been deleted! ",
-        });
+        Toast.show("Your item has been deleted! ", Toast.LONG, Toast.CENTER);
       })
-      .catch((error) => alert(error));
+      .catch((error) => {
+        Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
+      });
   };
 
   const openBrowser = async () => {
     const uid = auth.currentUser.uid;
-    const open = WebBrowser.openBrowserAsync(
-      "https://gallery-360-africa.web.app/Payment" +
-        `?id=${auth.currentUser.uid}`
-      // new Promise((resolve, reject) => {
-      //   resolve(`uid=${uid}`);
-      //   reject(() => {
-      //     navigation.navigate("Home");
-      //   });
-      // })
-    );
+    // const open = WebBrowser.openBrowserAsync(
+    //   "https://gallery-360-africa.web.app/Payment" +
+    //     `?id=${auth.currentUser.uid}`
+    // );
+
+    try {
+      // const redirectUrl = Linking.getInitialURL("/");
+      // const result = await WebBrowser.openAuthSessionAsync(
+      //   "https://gallery-360-africa.web.app/Payment" +
+      //     `/?linkingUri=${Linking.createURL("/?")}` +
+      //     `?id=${auth.currentUser.uid}`,
+      //   redirectUrl
+      // );
+
+      const result = WebBrowser.openAuthSessionAsync(``);
+
+      console.log(result.url, " the result of the url");
+      if (result.type === "cancel" || result.type === "dismiss") {
+        return { type: result.type };
+        console.log(
+          result.type,
+          " the result of cancelling or go back to th app "
+        );
+      }
+
+      // if (result.type) {
+      //   // navigation.navigate("Market");
+      //   console.log(result.url, " this is the result uri");
+      // }
+    } catch (error) {
+      Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
+    }
   };
 
   useEffect(() => {
     getCart();
+    return () => getCart();
   }, []);
 
   //
