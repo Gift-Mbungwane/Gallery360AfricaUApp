@@ -15,7 +15,8 @@ import {
   Entypo,
   Ionicons,
 } from "@expo/vector-icons";
-import Toast from "react-native-simple-toast";
+import * as Linking from "expo-linking";
+// import Toast from "react-native-simple-toast";
 import { globalStyles } from "./src/assets/styles/GlobalStyles";
 
 //
@@ -40,6 +41,8 @@ import PreviewMoreScreen from "./src/screens/PreviewMoreScreen";
 import PayPalPaymentScreen from "./src/screens/PayPalPaymentScreen";
 import ArtistsScreen from "./src/screens/ArtistsScreen";
 import ArtWorksScreen from "./src/screens/ArtWorksScreen";
+import PaymentFailureScreen from "./src/screens/PaymentFailureScreen";
+import PaymentSuccessScreen from "./src/screens/PaymentSuccessScreen";
 
 const Tab = createMaterialTopTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -83,44 +86,57 @@ const TabNavigator = () => {
   );
 };
 
+const prefix = Linking.createURL("/");
 //
 export default function App({ navigation }) {
-  // toast message
-  const toastConfig = {
-    success: (props) => (
-      <BaseToast
-        {...props}
-        style={{ borderLeftColor: "green" }}
-        contentContainerStyle={{ paddingHorizontal: 15 }}
-        text1Style={{
-          fontSize: 17,
-          fontWeight: "400",
-        }}
-        text2Style={{
-          fontSize: 13,
-          color: "green",
-        }}
-      />
-    ),
-    error: (props) => (
-      <ErrorToast
-        {...props}
-        text1Style={{
-          fontSize: 17,
-        }}
-        text2Style={{
-          fontSize: 13,
-          color: "red",
-        }}
-      />
-    ),
-    tomatoToast: ({ text1, props }) => (
-      <View style={{ height: 60, width: "100%", backgroundColor: "tomato" }}>
-        <Text>{text1}</Text>
-        <Text>{props.uuid}</Text>
-      </View>
-    ),
+  const config = {
+    screens: {
+      Success: "/Success",
+      Failure: "/Failure",
+    },
   };
+
+  const linking = {
+    prefixes: [prefix, "https://gallery-360-africa.web.app/"],
+    config,
+  };
+
+  // toast message
+  // const toastConfig = {
+  //   success: (props) => (
+  //     <BaseToast
+  //       {...props}
+  //       style={{ borderLeftColor: "green" }}
+  //       contentContainerStyle={{ paddingHorizontal: 15 }}
+  //       text1Style={{
+  //         fontSize: 17,
+  //         fontWeight: "400",
+  //       }}
+  //       text2Style={{
+  //         fontSize: 13,
+  //         color: "green",
+  //       }}
+  //     />
+  //   ),
+  //   error: (props) => (
+  //     <ErrorToast
+  //       {...props}
+  //       text1Style={{
+  //         fontSize: 17,
+  //       }}
+  //       text2Style={{
+  //         fontSize: 13,
+  //         color: "red",
+  //       }}
+  //     />
+  //   ),
+  //   tomatoToast: ({ text1, props }) => (
+  //     <View style={{ height: 60, width: "100%", backgroundColor: "tomato" }}>
+  //       <Text>{text1}</Text>
+  //       <Text>{props.uuid}</Text>
+  //     </View>
+  //   ),
+  // };
 
   // set state
   const [user, setuser] = useState("");
@@ -172,7 +188,7 @@ export default function App({ navigation }) {
   const uuid = auth?.currentUser?.uid;
 
   return (
-    <NavigationContainer>
+    <NavigationContainer linking={linking}>
       <Stack.Navigator
         initialRouteName="Home"
         screenOptions={{
@@ -592,6 +608,16 @@ export default function App({ navigation }) {
               })}
               name="PreviewMore"
               component={PreviewMoreScreen}
+            />
+            <Stack.Screen
+              options={{ headerShown: false }}
+              name="Success"
+              component={PaymentSuccessScreen}
+            />
+            <Stack.Screen
+              options={{ headerShown: false }}
+              name="Failure"
+              component={PaymentFailureScreen}
             />
           </>
         ) : (

@@ -13,7 +13,7 @@ import {
 import React, { useState } from "react";
 import { globalStyles } from "../assets/styles/GlobalStyles";
 import { auth, firestore } from "../../Firebase";
-import Toast from "react-native-simple-toast";
+// import Toast from "react-native-simple-toast";
 import { MaterialIcons } from "@expo/vector-icons";
 
 export default function ShippingAddressScreen({ navigation, route }) {
@@ -37,22 +37,22 @@ export default function ShippingAddressScreen({ navigation, route }) {
       province == "" &&
       postalCode == ""
     ) {
-      Toast.show("All fields are required", Toast.LONG, Toast.CENTER);
+      // Toast.show("All fields are required", Toast.LONG, Toast.CENTER);
     } else if (recipientName == "") {
-      Toast.show("Recipient name is requred", Toast.LONG, Toast.CENTER);
+      // Toast.show("Recipient name is requred", Toast.LONG, Toast.CENTER);
     } else if (mobile == "") {
-      Toast.show("Mobile number is requred", Toast.LONG, Toast.CENTER);
+      // Toast.show("Mobile number is requred", Toast.LONG, Toast.CENTER);
     } else if (streetName == "") {
-      Toast.show("Street name is requred", Toast.LONG, Toast.CENTER);
+      // Toast.show("Street name is requred", Toast.LONG, Toast.CENTER);
     } else if (city == "") {
-      Toast.show("City is requred", Toast.LONG, Toast.CENTER);
+      // Toast.show("City is requred", Toast.LONG, Toast.CENTER);
     } else if (province == "") {
-      Toast.show("Province is requred", Toast.LONG, Toast.CENTER);
+      // Toast.show("Province is requred", Toast.LONG, Toast.CENTER);
     } else if (postalCode == "") {
-      Toast.show("Postal Code is requred", Toast.LONG, Toast.CENTER);
+      // Toast.show("Postal Code is requred", Toast.LONG, Toast.CENTER);
     } else {
       register();
-      Toast.show("Address successfully added", Toast.LONG, Toast.CENTER);
+      // Toast.show("Address successfully added", Toast.LONG, Toast.CENTER);
     }
   };
 
@@ -75,10 +75,10 @@ export default function ShippingAddressScreen({ navigation, route }) {
             key: address.id,
           })
           .then(() => {
-            Toast.show("Your address has been added", Toast.LONG, Toast.CENTER);
+            // Toast.show("Your address has been added", Toast.LONG, Toast.CENTER);
           })
           .catch((error) => {
-            Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
+            // Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
           });
         navigation.navigate("DeliveryAddress", { uuid: uuid });
       });

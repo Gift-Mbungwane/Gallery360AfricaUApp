@@ -2,9 +2,9 @@
   "expo": {
     "name": "Gallery360Africa",
     "slug": "Gallery360Africa",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "orientation": "portrait",
-    "icon": "",
+    "icon": "./src/assets/images/thegoodone1.png",
     "updates": {
       "fallbackToCacheTimeout": 0
     },
@@ -18,7 +18,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./src/assets/images/the good one 1.png",
+        "foregroundImage": "./src/assets/images/thegoodone1.png",
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.gallery360africa.Gallery360Africa",
@@ -29,6 +29,3 @@
     }
   }
 }
-
-
-

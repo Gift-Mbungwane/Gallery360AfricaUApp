@@ -14,7 +14,7 @@ import {
 import React, { useState } from "react";
 import { Formik } from "formik";
 import { LinearGradient } from "expo-linear-gradient";
-import Toast from "react-native-simple-toast";
+// import Toast from "react-native-simple-toast";
 // firebase
 import { auth } from "../../Firebase";
 // components
@@ -33,14 +33,18 @@ export default function SignInScreen({ navigation }) {
     const reg =
       /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (email == "" && password == "") {
-      Toast.show("Both fields are empty", Toast.LONG, Toast.CENTER);
+      // Toast.show("Both fields are empty", Toast.LONG, Toast.CENTER);
+      alert("Both fields are empty");
     } else if (!reg.test(email)) {
       {
-        Toast.show("Email is not valid", Toast.LONG, Toast.CENTER);
+        // Toast.show("Email is not valid", Toast.LONG, Toast.CENTER);
+        alert("Both fields are empty");
+
         setLoading(false);
       }
     } else if (password == "") {
-      Toast.show("Password cannot be empty", Toast.LONG, Toast.CENTER);
+      // Toast.show("Password cannot be empty", Toast.LONG, Toast.CENTER);
+      alert("Both fields are empty");
     } else {
       setLoading(false);
     }
@@ -53,29 +57,29 @@ export default function SignInScreen({ navigation }) {
       await auth
         .signInWithEmailAndPassword(email, password)
         .then((user) => {
-          <ActivityIndicator size="large" color="green" />;
+          // <ActivityIndicator size="large" color="green" />;
           console.log(user);
-          Toast.show(
-            "You have successfully loged in ",
-            Toast.LONG,
-            Toast.CENTER
-          );
+          // Toast.show(
+          //   "You have successfully loged in ",
+          //   Toast.LONG,
+          //   Toast.CENTER
+          // );
           if (user) navigation.navigate("Home");
         })
         .catch((error) => {
           console.log(error);
           if (error.code === "auth/invalid-email") {
-            Toast.show("Email is not valid", Toast.LONG, Toast.CENTER);
+            // Toast.show("Email is not valid", Toast.LONG, Toast.CENTER);
             setLoading(false);
           } else if (error.code === "auth/user-not-found") {
-            Toast.show("No User Found", Toast.LONG, Toast.CENTER);
+            // Toast.show("No User Found", Toast.LONG, Toast.CENTER);
             setLoading(false);
           } else {
-            Toast.show(
-              "Please check your email id or password",
-              Toast.LONG,
-              Toast.CENTER
-            );
+            // Toast.show(
+            //   "Please check your email id or password",
+            //   Toast.LONG,
+            //   Toast.CENTER
+            // );
             setLoading(false);
           }
         });

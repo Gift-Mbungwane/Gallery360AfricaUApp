@@ -16,7 +16,7 @@ import React, { useState } from "react";
 import { Formik } from "formik";
 import { globalStyles } from "../assets/styles/GlobalStyles";
 import { firestore, auth } from "../../Firebase";
-import Toast from "react-native-simple-toast";
+// import Toast from "react-native-simple-toast";
 
 export default function SignUpScreen({ navigation }) {
   const [fullName, setFullName] = useState("");
@@ -27,13 +27,13 @@ export default function SignUpScreen({ navigation }) {
     const reg =
       /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (fullName == "" && email == "" && password == "") {
-      Toast.show("Both fields are empty", Toast.LONG, Toast.CENTER);
+      // Toast.show("Both fields are empty", Toast.LONG, Toast.CENTER);
     } else if (fullName == "") {
-      Toast.show("Full name cannot be empty", Toast.LONG, Toast.CENTER);
+      // Toast.show("Full name cannot be empty", Toast.LONG, Toast.CENTER);
     } else if (!reg.test(email)) {
-      Toast.show("Email is not valid", Toast.LONG, Toast.CENTER);
+      // Toast.show("Email is not valid", Toast.LONG, Toast.CENTER);
     } else if (password == "") {
-      Toast.show("Password cannot be empty", Toast.LONG, Toast.CENTER);
+      // Toast.show("Password cannot be empty", Toast.LONG, Toast.CENTER);
     }
   };
   const register = async () => {
@@ -50,38 +50,37 @@ export default function SignUpScreen({ navigation }) {
               fullName: fullName,
               email: user.email,
               photoURL:
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTet-jk67T6SYdHW04eIMLygHzEeJKobi9zdg&usqp=CAU",
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqjYWb_kZ7jZ_aCJJdFjLqxS-DBaGsJGxopg&usqp=CAU",
             })
             .then(() => {
               navigation.navigate("SignIn");
-              Toast.show(
-                "You have successfully registered ",
-                Toast.LONG,
-                Toast.CENTER
-              );
-              navigation.navigate("SignIn");
+              // Toast.show(
+              //   "You have successfully registered ",
+              //   Toast.LONG,
+              //   Toast.CENTER
+              // );
             })
             .catch((error) => {
-              Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
+              // Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
             });
           // console.log('User account created & signed in!');
         })
         .catch((error) => {
           if (error.code === "auth/email-already-in-use") {
-            Toast.show(
-              "That email address is already in use!",
-              Toast.LONG,
-              Toast.CENTER
-            );
+            // Toast.show(
+            //   "That email address is already in use!",
+            //   Toast.LONG,
+            //   Toast.CENTER
+            // );
           }
           if (error.code === "auth/invalid-email") {
-            Toast.show(
-              "That email address is invalid!",
-              Toast.LONG,
-              Toast.CENTER
-            );
+            // Toast.show(
+            //   "That email address is invalid!",
+            //   Toast.LONG,
+            //   Toast.CENTER
+            // );
           } else {
-            register();
+            validate();
           }
           console.error(error);
         });

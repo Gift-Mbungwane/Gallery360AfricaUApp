@@ -13,14 +13,15 @@ import * as WebBrowser from "expo-web-browser";
 import { Ionicons, Entypo } from "@expo/vector-icons";
 import { auth, firestore } from "../../Firebase";
 import { globalStyles } from "../assets/styles/GlobalStyles";
-import Toast from "react-native-simple-toast";
+// import Toast from "react-native-simple-toast";
 import Constants from "expo-constants";
 import * as Linking from "expo-linking";
 // import * as AuthSession from "expo-auth-session/src/AuthSession";
 
+WebBrowser.maybeCompleteAuthSession();
+
 export default function CartScreen({ navigation, route }) {
   const { uuid } = route.params;
-
   const [cartItem, setCartItem] = useState(0);
   const [cart, setCart] = useState(null);
   const [artName, setArtName] = useState("");
@@ -29,6 +30,7 @@ export default function CartScreen({ navigation, route }) {
   const [artURL, setArtURL] = useState("");
   const [keyy, setKey] = useState("");
   const [accessToken, setAccessToken] = useState();
+  const [baseUri, setBaseUri] = useState("");
   // const [request, response, promptAsync] = AuthSession.getDefaultReturnUrl(
   //   "/",
   //   Linking.createURL("/?")
@@ -83,11 +85,17 @@ export default function CartScreen({ navigation, route }) {
       .doc(keyy)
       .delete()
       .then(() => {
-        Toast.show("Your item has been deleted! ", Toast.LONG, Toast.CENTER);
+        // Toast.show("Your item has been deleted! ", Toast.LONG, Toast.CENTER);
       })
       .catch((error) => {
-        Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
+        // Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
       });
+  };
+
+  const handleRedirect = (event) => {
+    WebBrowser.dismissBrowser();
+    const redirectData = Linking.parse(event.url);
+    console.log(redirectData, "the handled link from listeners");
   };
 
   const openBrowser = async () => {
@@ -97,24 +105,46 @@ export default function CartScreen({ navigation, route }) {
     //     `?id=${auth.currentUser.uid}`
     // );
 
+    Linking.addEventListener("url", handleRedirect);
     try {
       // const redirectUrl = Linking.getInitialURL("/");
+      const uid = auth?.currentUser?.uid;
+
+      const authurl =
+        "https://gallery-360-africa.web.app/Payment" + `/?id=${uid}`; // example.com is some auth server url
+
+      const redirectUri = [
+        "https://gallery-360-africa.web.app/Success",
+        "https://gallery-360-africa.web.app/Failure",
+      ].map((url) => url.replace("https://gallery-360-africa.web.app/", ""));
+
+      const result = await WebBrowser.openAuthSessionAsync(authurl, redirectUri)
+        .then((results) => {
+          console.log(results.url, " now this is the url of current screen");
+          Linking.removeEventListener("url", handleRedirect);
+        })
+        .catch((error) => alert(error));
+
       // const result = await WebBrowser.openAuthSessionAsync(
       //   "https://gallery-360-africa.web.app/Payment" +
-      //     `/?linkingUri=${Linking.createURL("/?")}` +
-      //     `?id=${auth.currentUser.uid}`,
-      //   redirectUrl
+      //     //`${Linking.createURL("/")}` +
+      //     `/?id=${uid}`,
+      //   redirectUri.map((uri) => uri)
       // );
-
-      const result = WebBrowser.openAuthSessionAsync(``);
 
       console.log(result.url, " the result of the url");
       if (result.type === "cancel" || result.type === "dismiss") {
-        return { type: result.type };
+        //return { type: result.type };
         console.log(
           result.type,
           " the result of cancelling or go back to th app "
         );
+      }
+
+      if (result.url == "https://gallery-360-africa.web.app/Success") {
+        console.log(result.url, "this is hte return url yo need to expect");
+      } else if (result.url !== "https://gallery-360-africa.web.app/Success") {
+        console.log(result.url, " this is the failed return url");
       }
 
       // if (result.type) {
@@ -122,11 +152,12 @@ export default function CartScreen({ navigation, route }) {
       //   console.log(result.url, " this is the result uri");
       // }
     } catch (error) {
-      Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
+      // Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
     }
   };
 
   useEffect(() => {
+    // window.location.href = baseUri;
     getCart();
     return () => getCart();
   }, []);

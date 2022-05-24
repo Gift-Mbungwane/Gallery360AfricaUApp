@@ -14,7 +14,7 @@ import { firestore, auth } from "../../Firebase";
 import { globalStyles } from "../assets/styles/GlobalStyles";
 import { AntDesign, Entypo, Fontisto, MaterialIcons } from "@expo/vector-icons";
 import CommentsModal from "../assets/components/CommentsModal";
-import Toast from "react-native-simple-toast";
+// import Toast from "react-native-simple-toast";
 
 export default function ArtPreviewScreen({ route, navigation }) {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -67,7 +67,7 @@ export default function ArtPreviewScreen({ route, navigation }) {
       })
       .then((documentSnap) => {})
       .catch((error) => {
-        Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
+        // Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
       });
     // props.sendNotification(user.notificationToken, "New Like", `${props.currentUser.name} liked your post`, { type: 0, postId, user: firebase.auth().currentUser.uid })
   };
@@ -82,7 +82,7 @@ export default function ArtPreviewScreen({ route, navigation }) {
       .delete({})
       .then(() => {})
       .catch((error) => {
-        Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
+        // Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
       });
   };
 
@@ -149,14 +149,14 @@ export default function ArtPreviewScreen({ route, navigation }) {
         imageUid: imageUID,
       })
       .then((snapShot) => {
-        Toast.show(
-          "Your item has been added to cart",
-          Toast.LONG,
-          Toast.CENTER
-        );
+        // Toast.show(
+        //   "Your item has been added to cart",
+        //   Toast.LONG,
+        //   Toast.CENTER
+        // );
       })
       .catch((error) => {
-        Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
+        // Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
       });
   };
 
@@ -171,7 +171,7 @@ export default function ArtPreviewScreen({ route, navigation }) {
         onFollowing();
       })
       .catch((error) => {
-        Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
+        // Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
       });
   };
 
@@ -198,7 +198,7 @@ export default function ArtPreviewScreen({ route, navigation }) {
         });
       })
       .catch((error) => {
-        Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
+        // Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
       });
   };
 
@@ -219,7 +219,7 @@ export default function ArtPreviewScreen({ route, navigation }) {
         setFollowing(false);
       })
       .catch((error) => {
-        Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
+        // Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
       });
   };
 

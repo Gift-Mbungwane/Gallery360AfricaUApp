@@ -23,7 +23,7 @@ import {
   AntDesign,
 } from "@expo/vector-icons";
 import { globalStyles } from "../assets/styles/GlobalStyles";
-import Toast from "react-native-simple-toast";
+// import Toast from "react-native-simple-toast";
 
 const background = require("../assets/images/home.png");
 
@@ -40,7 +40,7 @@ export default function UserProfileScreen({ route, navigation }) {
       await auth
         .signOut()
         .then(() => {
-          Toast.show("You have signed out!", Toast.LONG, Toast.CENTER);
+          // Toast.show("You have signed out!", Toast.LONG, Toast.CENTER);
           navigation.replace("SignIn");
         })
         .catch((error) => alert(error));
@@ -107,15 +107,15 @@ export default function UserProfileScreen({ route, navigation }) {
         photoURL: imageUri,
       })
       .then(() => {
-        Toast.show(
-          "you have successfully update your profile",
-          Toast.LONG,
-          Toast.CENTER
-        );
+        // Toast.show(
+        //   "you have successfully update your profile",
+        //   Toast.LONG,
+        //   Toast.CENTER
+        // );
         setModalOpen(false);
       })
       .catch((error) => {
-        Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
+        // Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
       });
   };
 
