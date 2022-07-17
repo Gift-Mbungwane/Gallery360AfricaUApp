@@ -1,0 +1,446 @@
+        {user ? (
+          <>
+            <Stack.Screen
+              name="Home"
+              component={TabNavigator}
+              options={({ navigation }) => ({
+                headerTitleAlign: "left",
+                headerTitleStyle: {
+                  color: "#000",
+                },
+
+                headerBackVisible: false,
+                headerShadowVisible: false,
+
+                title: "",
+                headerLeft: () => (
+                  <View>
+                    <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+                      Hi {fullName}
+                    </Text>
+                  </View>
+                ),
+                //
+                headerRight: () => (
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      width: 95,
+                      left: 35,
+                    }}
+                  >
+                    <TouchableOpacity
+                      style={{
+                        borderWidth: 0.5,
+                        borderRadius: 30,
+                        width: 30,
+                        height: 30,
+                        right: 10,
+                        borderColor: "#ceb89e",
+                      }}
+                      onPress={() =>
+                        navigation.navigate("Cart", {
+                          cartItem: cartItem,
+                          uuid: uuid,
+                        })
+                      }
+                    >
+                      <FontAwesome
+                        name="shopping-cart"
+                        size={24}
+                        color={"#ceb89e"}
+                        style={{ alignSelf: "center" }}
+                      />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate("UserProfile", {
+                          photoURL: User,
+                          fullName: fullName,
+                          uuid: uuid,
+                          cartItem: cartItem,
+                        })
+                      }
+                    >
+                      <Image
+                        source={{ uri: `${User}` }}
+                        style={{
+                          width: 30,
+                          height: 30,
+                          borderRadius: 30,
+                          backgroundColor: "lightgrey",
+                          borderColor: "#ceb89e",
+                          borderWidth: 0.5,
+                        }}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                ),
+              })}
+            />
+
+            <Stack.Screen
+              name="ArtPreview"
+              component={ArtPreviewScreen}
+              options={({ navigation }) => ({
+                headerTransparent: true,
+                headerTintColor: "#fff",
+                headerBackTitleVisible: false,
+                headerTitle: () => (
+                  <View
+                    style={{
+                      height: 30,
+                      borderRadius: 14,
+                      alignSelf: "center",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: "#F5F5F5",
+                        fontWeight: "bold",
+                        fontSize: 18,
+                        alignSelf: "center",
+                        marginVertical: 3,
+                      }}
+                    >
+                      Preview Art
+                    </Text>
+                  </View>
+                ),
+                headerRight: () => (
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate("Cart", {
+                        cartItem: cartItem,
+                        uuid: uuid,
+                      })
+                    }
+                    style={globalStyles.cartIcon}
+                  >
+                    <View
+                      style={[
+                        Platform.OS == "android"
+                          ? globalStyles.iconContainer
+                          : null,
+                      ]}
+                    >
+                      {cartItem > 0 ? (
+                        <View
+                          style={{
+                            position: "absolute",
+                            height: 16,
+                            width: 16,
+                            borderRadius: 17,
+                            backgroundColor: "rgba(95,197,123,0.9)",
+                            right: 2,
+                            marginVertical: 3,
+                            alignSelf: "flex-end",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            zIndex: 2000,
+                          }}
+                        >
+                          <Text
+                            style={{
+                              color: "#F5F5F5",
+                              fontWeight: "bold",
+                              marginVertical: -10,
+                              fontSize: 12,
+                            }}
+                          >
+                            {cartItem}
+                          </Text>
+                        </View>
+                      ) : (
+                        <View></View>
+                      )}
+                      <MaterialCommunityIcons
+                        name="cart"
+                        size={28}
+                        color={"#FFFFFF"}
+                        style={{ alignSelf: "center", marginVertical: 10 }}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                ),
+              })}
+            />
+
+            <Stack.Screen
+              options={({ navigation }) => ({
+                headerTransparent: false,
+                headerTintColor: "#fff",
+                headerTitleStyle: "#fff",
+
+                headerLeft: () => (
+                  <View style={{ marginVertical: -20 }}>
+                    <TouchableOpacity
+                      style={globalStyles.topLeftIcon}
+                      onPress={() => navigation.goBack("Home")}
+                    >
+                      <Ionicons
+                        name="chevron-back"
+                        size={29}
+                        color="#F5F5F5"
+                        style={{ alignSelf: "center", marginVertical: 5 }}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                ),
+              })}
+              name="PayPalPayment"
+              component={PayPalPaymentScreen}
+            />
+            <Stack.Screen
+              options={({ navigation }) => ({
+                headerTransparent: true,
+                headerTintColor: "black",
+                headerTitleStyle: "black",
+              })}
+              name="Artists"
+              component={ArtistsScreen}
+            />
+            <Stack.Screen
+              options={({ navigation }) => ({
+                headerTransparent: true,
+                headerTintColor: "black",
+                headerTitleStyle: "black",
+                headerBackTitleVisible: false,
+                title: "Art Work",
+              })}
+              name="ArtWorks"
+              component={ArtWorksScreen}
+            />
+
+            <Stack.Screen
+              options={({ navigation }) => ({
+                headerShown: true,
+                headerTransparent: true,
+                headerTintColor: "#fff",
+                headerTitle: () => (
+                  <View
+                    style={{
+                      height: 30,
+                      borderRadius: 14,
+                      alignSelf: "center",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: "#F5F5F5",
+                        fontWeight: "bold",
+                        fontSize: 18,
+                        alignSelf: "center",
+                        marginVertical: 3,
+                      }}
+                    >
+                      Exhibition
+                    </Text>
+                  </View>
+                ),
+              })}
+              name="ExhibitionDetails"
+              component={ExhibitionDetailsScreen}
+            />
+            <Stack.Screen
+              options={({ navigation }) => ({
+                headerShown: true,
+                headerTransparent: true,
+
+                headerTitle: () => (
+                  <View
+                    style={{
+                      height: 30,
+                      borderRadius: 14,
+                      alignSelf: "center",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: "#22180E",
+                        fontWeight: "bold",
+                        fontSize: 18,
+                        alignSelf: "center",
+                        marginVertical: 3,
+                      }}
+                    >
+                      Profile
+                    </Text>
+                  </View>
+                ),
+              })}
+              name="UserProfile"
+              component={UserProfileScreen}
+            />
+            <Stack.Screen
+              options={{
+                headerShown: true,
+                headerTransparent: true,
+                title: "Settings",
+              }}
+              name="UserSettings"
+              component={UserSettingsScreen}
+            />
+            <Stack.Screen
+              options={({ navigation }) => ({
+                headerShown: true,
+                headerTransparent: true,
+                headerBackTitleVisible: false,
+              })}
+              name="Cart"
+              component={CartScreen}
+            />
+            <Stack.Screen
+              options={({ navigation }) => ({
+                headerShown: true,
+                headerTransparent: true,
+                headerBackTitleVisible: false,
+                title: "Shipping Address",
+              })}
+              name="ShippingAddress"
+              component={ShippingAddressScreen}
+            />
+            <Stack.Screen
+              options={({ navigation }) => ({
+                headerShown: true,
+                headerTransparent: true,
+                headerBackTitleVisible: false,
+                title: "Delivery Address",
+              })}
+              name="DeliveryAddress"
+              component={DeliveryAddressScreen}
+            />
+            <Stack.Screen
+              options={({ navigation }) => ({
+                headerShown: true,
+                headerTransparent: true,
+                headerBackTitleVisible: false,
+                headerTitle: "Preview",
+              })}
+              name="Preview"
+              component={PreviewScreen}
+            />
+
+            <Stack.Screen
+              options={({ navigation }) => ({
+                headerShown: true,
+
+                headerTitle: "Search",
+                headerTransparent: true,
+              })}
+              name="Search"
+              component={SearchScreen}
+            />
+            <Stack.Screen
+              options={({ navigation }) => ({
+                headerShown: true,
+                headerBackTitleVisible: false,
+                headerTitle: () => (
+                  <View>
+                    <Text
+                      style={{
+                        color: "#22180E",
+                        fontWeight: "bold",
+                        fontSize: 18,
+                        alignSelf: "center",
+                        marginVertical: 3,
+                      }}
+                    >
+                      T's And C's
+                    </Text>
+                  </View>
+                ),
+                headerTransparent: true,
+              })}
+              name="TermsAndConditions"
+              component={TermsAndConditionsScreen}
+            />
+            <Stack.Screen
+              options={({ navigation }) => ({
+                headerShown: true,
+                headerTransparent: true,
+                headerBackTitleVisible: false,
+                headerTitle: () => (
+                  <View
+                    style={{
+                      height: 30,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: "black",
+                        fontWeight: "bold",
+                        fontSize: 18,
+                        alignSelf: "center",
+                        marginVertical: 3,
+                      }}
+                    >
+                      Artist
+                    </Text>
+                  </View>
+                ),
+              })}
+              name="ArtistProfile"
+              component={ArtistProfileScreen}
+            />
+            <Stack.Screen
+              options={({ navigation }) => ({
+                headerShown: true,
+                headerTransparent: true,
+                headerBackTitleVisible: false,
+                headerTintColor: "#FFFFFF",
+                headerTitle: () => (
+                  <View>
+                    <Text
+                      style={{
+                        color: "#F5F5F5",
+                        fontWeight: "bold",
+                        fontSize: 18,
+                        alignSelf: "center",
+                        marginVertical: 3,
+                      }}
+                    >
+                      Preview All
+                    </Text>
+                  </View>
+                ),
+              })}
+              name="PreviewMore"
+              component={PreviewMoreScreen}
+            />
+            <Stack.Screen
+              options={{ headerShown: false }}
+              name="Success"
+              component={PaymentSuccessScreen}
+            />
+            <Stack.Screen
+              options={{ headerShown: false }}
+              name="Failure"
+              component={PaymentFailureScreen}
+            />
+          </>
+        ) : (
+          <>
+            <Stack.Screen
+              options={{ headerShown: false }}
+              name="Splash"
+              component={SplashScreen}
+            />
+            <Stack.Screen
+              options={{ headerShown: false }}
+              name="Onboarding"
+              component={OnboardingScreen}
+            />
+            <Stack.Screen
+              options={{ headerShown: false }}
+              name="SignUp"
+              component={SignUpScreen}
+            />
+            <Stack.Screen
+              options={{ headerShown: false }}
+              name="SignIn"
+              component={SignInScreen}
+            />
+          </>
+        )}

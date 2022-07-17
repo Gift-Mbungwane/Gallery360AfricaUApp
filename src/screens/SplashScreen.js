@@ -1,10 +1,19 @@
 import { StyleSheet, Text, View, ImageBackground, Image } from "react-native";
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { globalStyles } from "../assets/styles/GlobalStyles";
+import bgImage from "../assets/images/splash/splash.png";
+import logo from "../assets/images/splash/logo.png";
+import { UserContext } from "../Context/UserContext";
+import { SplashContext } from "../Context/SplashContext";
 
 export default function SplashScreen({ navigation }) {
+  const { isLoggedIn, setUserState } = useContext(UserContext);
+  const { deactivateSplash } = useContext(SplashContext);
+
   setTimeout(() => {
-    navigation.replace("Onboarding");
+    deactivateSplash(true)
+    return;
+    // navigation.replace("Onboarding");
   }, 3000);
 
   return (
@@ -30,5 +39,4 @@ export default function SplashScreen({ navigation }) {
 }
 
 // images
-const bgImage = require("../assets/images/splash/splash.png");
-const logo = require("../assets/images/splash/logo.png");
+

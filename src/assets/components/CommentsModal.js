@@ -40,7 +40,7 @@ function CommentsModal({
   const [isModalVisible, setModalVisible] = useState(isVisible);
   //
   const addComments = () => {
-    const uid = auth.currentUser.uid;
+    const uid = auth.currentUser ? auth.currentUser.uid : '0CVA2hLN0SfrpGMDBMRyBqGkGO32';
     //  console.log(ImageUid + " the image uid 333")
     firestore
       .collection("comments")
@@ -75,7 +75,7 @@ function CommentsModal({
     // console.log(photoURL + " user photo");
     firestore
       .collection("users")
-      .where("uid", "==", auth.currentUser.uid)
+      .where("uid", "==", auth.currentUser ? auth.currentUser.uid : '0CVA2hLN0SfrpGMDBMRyBqGkGO32')
       .onSnapshot((snapShot) => {
         const displayName = snapShot.docs.map((docs) => docs.data().fullName);
         const userPhoto = snapShot.docs.map((docs) => docs.data().photoURL);

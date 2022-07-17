@@ -491,6 +491,7 @@ const globalStyles = StyleSheet.create({
     zIndex: 10,
     right: 18,
     top: 25,
+    margin: 5
   },
   closeIconStyle: {
     textAlign: "center",
@@ -601,25 +602,33 @@ const globalStyles = StyleSheet.create({
 
   //USER PROFILE SCREEN
   backgroundImg: {
-    width: "100%",
-    height: "100%",
+    width: Dimensions.get('screen').width,
+    height: Dimensions.get('screen').height,
+    borderColor: 'green',
+    // borderWidth: 20,
   },
 
   profileImg: {
     width: 200,
     height: 200,
     borderRadius: 100,
-    bottom: 85,
+    bottom: 100,
+    marginBottom: -100
   },
 
   profileImgContainer: {
+    top: 120,
     width: "80%",
-    height: 215,
+    height: 230,
     borderRadius: 15,
+    flexDirection: 'column',
+    alignContent: "center",
     backgroundColor: "#E3E3E3",
     alignSelf: "center",
     alignItems: "center",
-    top: 30,
+    // borderColor: 'red',
+    // borderWidth: 1
+    // top: 30,
   },
 
   topLeftIcon: {
@@ -634,7 +643,8 @@ const globalStyles = StyleSheet.create({
   userNameText: {
     color: "#000",
     fontSize: 20,
-    bottom: 75,
+    // bottom: 75,
+    margin: 20
   },
 
   editBtn: {
@@ -644,7 +654,8 @@ const globalStyles = StyleSheet.create({
     borderRadius: 15,
     justifyContent: "center",
     alignItems: "center",
-    bottom: 70,
+    // bottom: 70,
+    // top: 20
   },
 
   btnText: {
@@ -653,7 +664,8 @@ const globalStyles = StyleSheet.create({
   },
 
   optionsContainer: {
-    top: 35,
+    top: 120,
+    marginTop: 20
   },
 
   modalContainer: {

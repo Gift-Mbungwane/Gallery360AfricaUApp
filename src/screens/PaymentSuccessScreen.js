@@ -10,6 +10,11 @@ import { globalStyles } from "../assets/styles/GlobalStyles";
 
 export default function PaymentSuccessScreen({ navigation }) {
   return (
+    <View>
+      <Text>Hi</Text>
+    </View>
+  )
+  return (
     <ImageBackground
       source={bg}
       style={globalStyles.container}

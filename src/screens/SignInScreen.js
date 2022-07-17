@@ -11,7 +11,7 @@ import {
   ActivityIndicator,
   SafeAreaView,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import { Formik } from "formik";
 import { LinearGradient } from "expo-linear-gradient";
 // import Toast from "react-native-simple-toast";
@@ -19,6 +19,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { auth } from "../../Firebase";
 // components
 import AppLoader from "../assets/components/AppLoader";
+import { UserContext } from "../Context/UserContext";
 
 // main
 export default function SignInScreen({ navigation }) {
@@ -27,6 +28,7 @@ export default function SignInScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [errortext, setErrortext] = useState("");
   const [loading, setLoading] = useState(false);
+  const { isLoggedIn, toggleUserState } = useContext(UserContext)
 
   // form validation
   const validate = () => {
@@ -64,7 +66,12 @@ export default function SignInScreen({ navigation }) {
           //   Toast.LONG,
           //   Toast.CENTER
           // );
-          if (user) navigation.navigate("Home");
+          toggleUserState(true)
+          if(typeof isLoggedIn === 'boolean' ) {
+            console.log(isLoggedIn);
+            // if (user) navigation.navigate("Home");
+          }
+          
         })
         .catch((error) => {
           console.log(error);

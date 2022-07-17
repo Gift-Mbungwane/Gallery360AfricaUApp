@@ -29,6 +29,7 @@ export default function SearchScreen({ route, navigation }) {
         setUsers(users);
       });
   };
+
   return (
     <View style={styles.parentContainer}>
       <View style={styles.searchBarContainer}>

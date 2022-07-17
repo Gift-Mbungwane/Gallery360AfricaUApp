@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -11,6 +11,8 @@ import {
   FlatList,
   SafeAreaView,
   ActivityIndicator,
+  Dimensions,  
+  StatusBar
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { firestore, auth, storageRef } from "../../Firebase";
@@ -23,6 +25,10 @@ import {
   AntDesign,
 } from "@expo/vector-icons";
 import { globalStyles } from "../assets/styles/GlobalStyles";
+// import * as NavigationBar from 'expo-navigation-bar';
+
+
+import { UserContext } from "../Context/UserContext";
 // import Toast from "react-native-simple-toast";
 
 const background = require("../assets/images/home.png");
@@ -30,18 +36,27 @@ const background = require("../assets/images/home.png");
 export default function UserProfileScreen({ route, navigation }) {
   const [modalOpen, setModalOpen] = useState("");
   const [userName, setUserName] = useState("");
-  const [imageUri, setimageUri] = useState(`${route.params.photoURL}`);
+  const [imageUri, setimageUri] = useState(`${route.params ? route.params.photoURL : 'https://icon-library.com/images/no-profile-picture-icon-female/no-profile-picture-icon-female-17.jpg' }`);
   const [submit, setSubmit] = useState(false);
 
   const { photoURL, fullName, uuid, cartItem } = route.params;
-
+  const { isLoggedIn, toggleUserState } = useContext(UserContext)
+  const screenHeight = Dimensions.get('screen').height;
+  const viewHeight = Dimensions.get('window').height;
+  const viewWidth = Dimensions.get('window').width;
+  const pageHeight = Dimensions.get('window').height
+  console.log({ viewHeight, screenHeight });
   const signoutUser = async () => {
     try {
       await auth
         .signOut()
         .then(() => {
           // Toast.show("You have signed out!", Toast.LONG, Toast.CENTER);
-          navigation.replace("SignIn");
+          if(typeof isLoggedIn === 'boolean') {
+            console.log(isLoggedIn);
+            toggleUserState(false)
+          }
+         
         })
         .catch((error) => alert(error));
     } catch (e) {
@@ -118,11 +133,198 @@ export default function UserProfileScreen({ route, navigation }) {
         // Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
       });
   };
+  useEffect( ()=> {
+    // StatusBar.setHidden(true)
+  }, [])
 
   return (
-    <View>
+    <ImageBackground source={background} style={ globalStyles.backgroundImg}>
+      <SafeAreaView style={{height: viewHeight - 40, paddingTop: 40}}>
+                <View style={{ height: viewHeight - 40, marginTop: 0 }}>
+          <Modal visible={modalOpen}>
+            <View style={globalStyles.modalContainer}>
+              <View style={globalStyles.closeBtnContaainer}>
+                <EvilIcons
+                  onPress={() => setModalOpen(false)}
+                  name="close"
+                  size={35}
+                  color="white"
+                />
+              </View>
+              <View style={globalStyles.editprofileImgContainer}>
+                <Image
+                  source={{ uri: imageUri }}
+                  style={globalStyles.uploadedImage}
+                />
+                {!submit ? (
+                  <AntDesign
+                    onPress={() => openImageLibrary()}
+                    style={globalStyles.imgAddIcon}
+                    name="pluscircle"
+                    size={35}
+                    color="#E3E3E3"
+                  />
+                ) : (
+                  <ActivityIndicator
+                    style={{ alignSelf: "center", position: "absolute" }}
+                    color="black"
+                    size="small"
+                  />
+                )}
+              </View>
+              <TextInput
+                placeholder="Edit Username"
+                onChangeText={(fullName) => setUserName(fullName)}
+                style={globalStyles.editUserInput}
+              />
+              <TouchableOpacity
+                style={globalStyles.updateBtn}
+                onPress={updateUser}
+              >
+                <Text style={globalStyles.modalText}>Update</Text>
+              </TouchableOpacity>
+            </View>
+          </Modal>
+
+          <View style={ globalStyles.profileImgContainer }>
+            {photoURL ? (
+              <Image
+                source={{ uri: `${photoURL}` }}
+                style={globalStyles.profileImg }
+              />
+            ) : (
+              <Image
+                source={{
+                  uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTet-jk67T6SYdHW04eIMLygHzEeJKobi9zdg&usqp=CAU",
+                }}
+                style={globalStyles.profileImg} 
+              />
+            )}
+            <Text style={globalStyles.userNameText}>{fullName}</Text>
+            {/* <Text style={{}}>{fullName}</Text> */}
+            <TouchableOpacity
+              onPress={() => setModalOpen(true)}
+              style={globalStyles.editBtn}
+            >
+              {/* <Text style={{}}>Edit Profile</Text> */}
+              <Text style={globalStyles.btnText}>Edit Profile</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={globalStyles.optionsContainer}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("Cart", { uuid: uuid, cartItem: cartItem })
+              }
+              style={{
+                backgroundColor: "#E3E3E3",
+                width: "80%",
+                height: 60,
+                flexDirection: "row",
+                alignSelf: "center",
+                alignItems: "center",
+                borderRadius: 20,
+                marginVertical: 15,
+                position: 'relative'
+              }}
+            >
+              <MaterialCommunityIcons
+                name="cart"
+                size={24}
+                color={"#0E1822"}
+                style={{
+                  marginHorizontal: 10,
+                  overflow: "hidden",
+                  color: "#0E1822",
+                  position: 'absolute',
+                  left: 10
+                }}
+              />
+              <Text
+                style={{
+                  marginHorizontal: 65,
+                  color: "#0E1822",
+                  fontSize: 16,
+                  fontWeight: "600",
+                  textAlign: 'center',
+                  width: '100%'
+                }}
+              >
+                My Cart
+              </Text>
+              {/* <Entypo name="chevron-small-right" size={24} style={{marginVertical:-10, marginHorizontal:"47%",  color:"#0E1822"}}/> */}
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => navigation.navigate("TermsAndConditions")}
+              style={{
+                // top: 70,
+                alignSelf: "center",
+                backgroundColor: "#E3E3E3",
+                width: "80%",
+                height: 60,
+                justifyContent: "center",
+                alignItems: "center",
+                paddingHorizontal: 20,
+                borderRadius: 20,
+              }}
+            >
+              <Text
+                style={{ color: "#0E1822", fontSize: 16, fontWeight: "600" }}
+              >
+                Terms and Conditions
+              </Text>
+            </TouchableOpacity>
+
+            <View
+              style={{
+                alignSelf: "center",
+                backgroundColor: "#E3E3E3",
+                width: "80%",
+                height: 60,
+                justifyContent: "center",
+                alignItems: "center",
+                paddingHorizontal: 20,
+                borderRadius: 20,
+                marginVertical: 15,
+              }}
+            >
+              <Text
+                style={{ color: "#0E1822", fontSize: 16, fontWeight: "600" }}
+              >
+                App Version
+              </Text>
+              <Text style={{ color: "gray", fontSize: 12 }}>v1.0.0</Text>
+            </View>
+
+            <TouchableOpacity
+              style={{
+                alignSelf: "center",
+                backgroundColor: "#E3E3E3",
+                width: "80%",
+                height: 60,
+                justifyContent: "center",
+                alignItems: "center",
+                paddingHorizontal: 20,
+                borderRadius: 20,
+              }}
+              onPress={signoutUser}
+            >
+              <Text
+                style={{ color: "#0E1822", fontSize: 16, fontWeight: "600" }}
+              >
+                Logout
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </SafeAreaView>
+    </ImageBackground>
+  )
+  return (
+    <SafeAreaView style={{ height: viewHeight, borderWidth: 10, borderColor: 'red' }}>
       <ImageBackground source={background} style={globalStyles.backgroundImg}>
-        <View style={{ top: 120 }}>
+      <View style={{ height: viewHeight, marginTop: 0, borderColor: 'red', borderWidth: 1 }}>
           <Modal visible={modalOpen}>
             <View style={globalStyles.modalContainer}>
               <View style={globalStyles.closeBtnContaainer}>
@@ -294,6 +496,6 @@ export default function UserProfileScreen({ route, navigation }) {
           </View>
         </View>
       </ImageBackground>
-    </View>
+    </SafeAreaView>
   );
 }

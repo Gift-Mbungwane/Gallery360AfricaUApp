@@ -38,7 +38,11 @@ export default function PayPalPaymentScreen({ route, navigation }) {
       // console.log("PayerID", PayerID);
     }
   };
-
+  return (
+    <View>
+      <Text>Hi</Text>
+    </View>
+  )
   return (
     <SafeAreaView>
       {/* <WebView

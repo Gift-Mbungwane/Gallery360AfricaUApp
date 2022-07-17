@@ -12,6 +12,7 @@ import { auth, firestore } from "../../Firebase";
 
 export default function DeliveryAddressScreen({ navigation, route }) {
   const { uuid, amount } = route.params;
+  // const { uuid, amount } = route.params || { uuid: '0CVA2hLN0SfrpGMDBMRyBqGkGO32', amount: 5};
 
   const [address, setAddress] = useState(null);
   const [addressUuid, setUidAddress] = useState("");
@@ -57,10 +58,9 @@ export default function DeliveryAddressScreen({ navigation, route }) {
 
   useEffect(() => {
     getAddress();
-    return () => getAddress();
+    // return () => getAddress();
   }, []);
-
-  return (
+return (
     <View>
       <ImageBackground
         source={bg}

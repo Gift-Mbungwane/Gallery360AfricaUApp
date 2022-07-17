@@ -48,8 +48,8 @@ export default function ExhibitionScreen({ navigation }) {
     getExhibition();
     getArtist();
 
-    return () => getArtist();
-    return () => getExhibition();
+    // return () => getArtist();
+    // return () => getExhibition();
   }, []);
 
   //

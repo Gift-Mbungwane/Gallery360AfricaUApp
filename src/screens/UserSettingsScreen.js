@@ -1,6 +1,7 @@
-import { StyleSheet, Text, View } from "react-native";
+import { ImageBackground, StyleSheet, Text, View, SafeAreaView, TouchableOpacity } from "react-native";
 import React from "react";
 // import Toast from "react-native-simple-toast";
+import { globalStyles } from "../assets/styles/GlobalStyles";
 import { auth, firestore } from "../../Firebase";
 
 export default function UserSettingsScreen({ navigation }) {

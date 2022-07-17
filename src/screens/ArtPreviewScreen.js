@@ -40,7 +40,7 @@ export default function ArtPreviewScreen({ route, navigation }) {
   const { artistUid, imageUID } = route.params;
 
   const getArtistDetailts = async () => {
-    return await firestore
+    return firestore
       .collection("artists")
       .doc(artistUid)
       .onSnapshot((snapShot) => {
@@ -133,7 +133,9 @@ export default function ArtPreviewScreen({ route, navigation }) {
       });
   };
 
-  const addToCart = async () => {
+  const addToCart = async() => {
+    console.log('adding to cart');
+    return
     const uid = auth.currentUser.uid;
     return await firestore
       .collection("cartItem")
@@ -366,7 +368,7 @@ export default function ArtPreviewScreen({ route, navigation }) {
                   >
                     <MaterialIcons
                       name="add-shopping-cart"
-                      size={32}
+                      size={30}
                       color={"#FFFFFF"}
                     />
                   </TouchableOpacity>

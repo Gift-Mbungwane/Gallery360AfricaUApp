@@ -31,7 +31,7 @@ export default function ArtistsScreen({ navigation }) {
   };
   useEffect(() => {
     getArtist();
-    return () => getArtist();
+    // return () => getArtist();
   }, []);
 
   const [state, setState] = useState();
@@ -73,7 +73,6 @@ export default function ArtistsScreen({ navigation }) {
       </View>
     );
   };
-
   return (
     <ImageBackground
       source={imageBg}

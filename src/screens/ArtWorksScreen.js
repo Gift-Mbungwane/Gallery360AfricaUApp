@@ -23,6 +23,7 @@ export default function ArtWorksScreen({ route, navigation }) {
   const [state, setState] = useState();
 
   const { artistUid } = route.params;
+  // const { artistUid } = route.params || { artistUid: 'DGghRcsny8hyLQa2NsrFA4IK1gj2'};
 
   const getArt = () => {
     return firestore
@@ -36,7 +37,7 @@ export default function ArtWorksScreen({ route, navigation }) {
   };
   useEffect(() => {
     getArt();
-    return () => getArt();
+    // return () => getArt();
   }, []);
 
   const _renderItem = ({ item, index }) => {

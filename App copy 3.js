@@ -118,24 +118,18 @@ export default function App({ navigation }) {
   const [isLoggedIn, setUserState] = useState(AsyncStorage.getItem('isLoggedIn'))
   const [showSplash, setShowSplash] = useState(true)
   // const [splashDidShow, deactivateSplash] = useState(false);
-  
   useEffect(() => {
-    // StatusBar.setBackgroundColor('transparent')
-    // StatusBar.setTranslucent(true);
-    // NavigationBar.setVisibilityAsync(false)
-    StatusBar.setBackgroundColor('#ceb89e')
-    NavigationBar.setBackgroundColorAsync('#ceb89e')
+    // StatusBar.setHidden(true)
+
+    // NavigationBar.setVisibilityAsync("hidden");  
     const unregister = auth.onAuthStateChanged((userExist) => {
       if (userExist) {
         // setuser(userExist);
 
         firestore.collection('users').doc(userExist.uid).onSnapshot( res => {
-          if(res.data()) {
-            const { fullName, photoURL } = res.data()
-            setImageLink(photoURL);
-            setFullName(fullName);
-          }
-
+          const { fullName, photoURL } = res.data()
+          setImageLink(photoURL);
+          setFullName(fullName);
         }, (err) => {
           if(err.message === 'Failed to get document because the client is offline.') {
             console.log(err.message);
@@ -189,16 +183,6 @@ export default function App({ navigation }) {
     }
 
   }
-  useEffect( () => {
-    // if(showSplash) {
-    //   StatusBar.setBackgroundColor('transparent')
-    //   StatusBar.setTranslucent(true);
-    //   NavigationBar.getVisibilityAsync(false)
-    // } else {
-    //   StatusBar.setBackgroundColor('#ceb89e')
-    //   NavigationBar.setBackgroundColorAsync('#ceb89e')
-    // }
-  }, [showSplash])
   const toggleUserState = async (bln) => {
     try {
       await AsyncStorage.setItem('isLoggedIn', JSON.stringify(bln));
@@ -214,7 +198,16 @@ export default function App({ navigation }) {
   getData()
 
   return (
-    <SafeAreaProvider style={styles.container}>
+    <SafeAreaProvider>
+          <SafeAreaView style={{ flex: 1, height: Dimensions.get('window').height }}>
+      <Text style={{ flex: 1, borderColor: 'red', borderWidth: 5 }}>Hi</Text>
+      <StatusBar hidden></StatusBar>
+    </SafeAreaView>
+    </SafeAreaProvider>
+
+  )
+  return (
+    <View style={styles.container}>
       {showSplash ? (
         <SplashContext.Provider value={{ showSplash, deactivateSplash: deactivateSplash }}>
           <SplashScreen />
@@ -689,7 +682,7 @@ export default function App({ navigation }) {
         </UserContext.Provider>
       
       }
-    </SafeAreaProvider>
+    </View>
   )
   return (
     <View>

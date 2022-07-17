@@ -57,6 +57,7 @@ export default function ArtistProfileScreen({ route, navigation }) {
       .limit(2)
       .onSnapshot((snapshot) => {
         const allArt = snapshot.docs.map((docSnap) => docSnap.data());
+        console.log('all art: ', allArt);
         setArt(allArt);
       });
   };
@@ -140,7 +141,7 @@ export default function ArtistProfileScreen({ route, navigation }) {
 
   //
   const followState = () => {
-    const uid = auth.currentUser.uid;
+    const uid = auth.currentUser;
     return firestore
       .collection("following")
       .doc(artistUid)
@@ -161,12 +162,14 @@ export default function ArtistProfileScreen({ route, navigation }) {
     getArt();
     getNumberOfImage();
     followState();
-
-    return () => followState();
-    return () => getArt();
-    return () => getNumberOfImage();
+    
+    // return () => followState();
+    // return () => getArt();
+    // return () => getNumberOfImage();
   }, []);
-
+  useEffect(() => {
+    console.log(art);
+  }, [art])
   //
   return (
     <ImageBackground
@@ -264,72 +267,77 @@ export default function ArtistProfileScreen({ route, navigation }) {
 
       <View style={styles.BottomContainer}>
         <Text style={styles.moreText}>More Works</Text>
-        <SafeAreaView style={{ flexDirection: "row" }}>
-          <FlatList
-            scrollEnabled={false}
-            horizontal={true}
-            data={art}
-            keyExtractor={(item) => `${item.ImageUid}`}
-            renderItem={({ item }) => {
-              return (
-                <View style={styles.listItem2}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      navigation.navigate("ArtPreview", {
-                        artistUid: artistUid,
-                        price: item.price,
-                        description: item.description,
-                        artUrl: item.artUrl,
-                        artistPhoto: item.artistPhoto,
-                        artistName: item.artistName,
-                        imageUID: item.ImageUid,
-                        artType: item.artType,
-                        description: description,
-                      })
-                    }
-                  >
-                    <Image source={{ uri: item.artUrl }} style={styles.img} />
-                    <View style={styles.priceView}>
-                      <Text style={styles.price}>{item.price}</Text>
+        { art && art.length > 0 ? 
+                  <SafeAreaView style={{ flexDirection: "row" }}>
+                  <FlatList
+                    scrollEnabled={false}
+                    horizontal={true}
+                    data={art}
+                    keyExtractor={(item) => `${item.ImageUid}`}
+                    renderItem={({ item }) => {
+                      return (
+                        <View style={styles.listItem2}>
+                          <TouchableOpacity
+                            onPress={() =>
+                              navigation.navigate("ArtPreview", {
+                                artistUid: artistUid,
+                                price: item.price,
+                                description: item.description,
+                                artUrl: item.artUrl,
+                                artistPhoto: item.artistPhoto,
+                                artistName: item.artistName,
+                                imageUID: item.ImageUid,
+                                artType: item.artType,
+                                description: description,
+                              })
+                            }
+                          >
+                            <Image source={{ uri: item.artUrl }} style={styles.img} />
+                            <View style={styles.priceView}>
+                              <Text style={styles.price}>{item.price}</Text>
+                            </View>
+                          </TouchableOpacity>
+                        </View>
+                      );
+                    }}
+                  />
+                  {size > 0 ? (
+                    <View
+                      style={{ backfaceVisibility: "hidden", marginHorizontal: -35 }}
+                    >
+                      <TouchableOpacity
+                        onPress={() =>
+                          navigation.navigate("ArtWorks", {
+                            description: description,
+                            artistUid: artistUid,
+                            photoUrl: photoUrl,
+                            artistName: artistName,
+                          })
+                        }
+                        style={{
+                          borderWidth: 1,
+                          borderColor: "gray",
+                          width: 120,
+                          height: 150,
+                          borderRadius: 15,
+                          left: 10,
+                          top: 20,
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text style={{ fontSize: 18, color: "gray" }}> +{size}</Text>
+                        {/* <Text style={{color:'blue', fontSize:20, fontWeight:'700'}}>See All</Text> */}
+                      </TouchableOpacity>
                     </View>
-                  </TouchableOpacity>
+                  ) : (
+                    <View></View>
+                  )}
+                </SafeAreaView> : <View style={ styles.noArtView }>
+                  <Text style={ styles.noArtText }>No artworks are currently available from { artistName }</Text>
                 </View>
-              );
-            }}
-          />
-          {size > 0 ? (
-            <View
-              style={{ backfaceVisibility: "hidden", marginHorizontal: -35 }}
-            >
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate("ArtWorks", {
-                    description: description,
-                    artistUid: artistUid,
-                    photoUrl: photoUrl,
-                    artistName: artistName,
-                  })
-                }
-                style={{
-                  borderWidth: 1,
-                  borderColor: "gray",
-                  width: 120,
-                  height: 150,
-                  borderRadius: 15,
-                  left: 10,
-                  top: 20,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <Text style={{ fontSize: 18, color: "gray" }}> +{size}</Text>
-                {/* <Text style={{color:'blue', fontSize:20, fontWeight:'700'}}>See All</Text> */}
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <View></View>
-          )}
-        </SafeAreaView>
+      }
+
       </View>
     </ImageBackground>
   );
@@ -362,6 +370,19 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginLeft: 15,
     top: 15,
+  },
+  noArtView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  noArtText: {
+    color: "#000000",
+    fontSize: 18,
+    fontWeight: 'bold',
+    width: '60%',
+    height: 200,
+    textAlign: "center"
   },
   img: {
     height: 150,

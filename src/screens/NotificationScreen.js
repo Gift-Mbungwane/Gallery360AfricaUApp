@@ -23,7 +23,7 @@ import * as Linking from "expo-linking";
 WebBrowser.maybeCompleteAuthSession();
 
 export default function CartScreen({ navigation, route }) {
-  const { uuid } = route.params || { uuid: 'jLEqNAaAgycYdLzaVG9otkyqvY33' };
+  const { uuid } = route.params;
   const [cartItem, setCartItem] = useState(0);
   const [cart, setCart] = useState(null);
   const [artName, setArtName] = useState("");
@@ -220,7 +220,7 @@ export default function CartScreen({ navigation, route }) {
     return (
       <View style={globalStyles.flatlistView}>
         <View style={globalStyles.cancelIcon}>
-          <TouchableOpacity style={{ width: 37, height: 37, cursor: 'pointer' }} onPress={() => deleteCart(keyy)}>
+          <TouchableOpacity onPress={() => deleteCart(keyy)}>
             <Ionicons
               name="close-outline"
               size={25}
@@ -266,7 +266,7 @@ export default function CartScreen({ navigation, route }) {
 
         {cartItem > 0 ? (
           <FlatList
-            style={{marginLeft: 10, marginRight: 10 }}
+            // style={{marginVertical:"6%"}}
             data={cart}
             showsHorizontalScrollIndicator={false}
             keyExtractor={(item) => `${item.artUrl}`}

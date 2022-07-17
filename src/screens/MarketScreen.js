@@ -25,6 +25,7 @@ export default function MarketScreen({ navigation }) {
   const [artist, setArtist] = useState([]);
   const [state, setState] = useState();
   const [data, setData] = useState(null);
+  const [artwork, setArtwork] = useState([])
   //
   const getArtist = () => {
     return firestore
@@ -37,51 +38,71 @@ export default function MarketScreen({ navigation }) {
       });
   };
 
+  const getArtWorks = () => {
+    return firestore.collection('Market').orderBy('artName').limit(5).where('isEnabled', '==', true).onSnapshot( (snapshot) => {
+      const art = snapshot.docs.map(item => ( { ...item.data(), isArt: true }))
+      
+      setArtwork([...art, { isArt: false, text: 'Show All' }])
+      console.log('artworks: ', art);
+    })
+  }
+
   const _renderItem = ({ item, index }) => {
+    console.log(item);
+    const params = item.isArt ? {
+      artistUid: item.artistUid,
+      artName: item.artName,
+      imageUID: item.ImageUid,
+      artUrl: item.artUrl,
+      artistName: item.artistName,
+      artType: item.artType,
+      photoUrl: item.photoUrl,
+    } : null;
     return (
       <View style={{ flexDirection: "row" }}>
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate("ArtPreview", {
-              artistUid: item.artistUid,
-              artName: item.artName,
-              imageUID: item.ImageUid,
-              artUrl: item.artUrl,
-              artistName: item.artistName,
-              artType: item.artType,
-              photoUrl: item.photoUrl,
-            })
-          }
-        >
-          <Image
-            source={{ uri: item.artUrl }}
-            style={{
-              width: ITEM_WIDTH,
-              height: ITEM_HEIGHT,
-              borderRadius: 16,
-            }}
-          />
-          <View
-            style={{
-              backgroundColor: "#fff",
-              height: 65,
-              position: "absolute",
-              borderRadius: 16,
-              bottom: 8,
-              left: 8,
-              right: 8,
-              justifyContent: "center",
-            }}
-          >
-            <Text style={styles.artNameTxt}>{item.artName}</Text>
-            <Text style={styles.artTypeTxt}>{item.artType}</Text>
-          </View>
-        </TouchableOpacity>
+        { item.isArt ? 
+                  <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate("ArtPreview", params)
+                  }
+                >
+                  <Image
+                    source={{ uri: item.artUrl }}
+                    style={{
+                      width: ITEM_WIDTH,
+                      height: ITEM_HEIGHT,
+                      borderRadius: 16,
+                    }}
+                  />
+                  <View
+                    style={{
+                      backgroundColor: "#fff",
+                      height: 65,
+                      position: "absolute",
+                      borderRadius: 16,
+                      bottom: 8,
+                      left: 8,
+                      right: 8,
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Text style={styles.artNameTxt}>{item.artName}</Text>
+                    <Text style={styles.artTypeTxt}>{item.artType}</Text>
+                  </View>
+                </TouchableOpacity> : <TouchableOpacity style={ styles.showMoreTextOpacity } onPress={() => navigation.navigate("PreviewMore", { datas: data })} >
+                  <Text style={ styles.showMoreText }>Show All</Text>
+                </TouchableOpacity>
+      }
+
       </View>
     );
   };
 
   useEffect(() => {
+    // let isMounted = true;
+    // if(isMounted) {
+
+    // }
     const getArtData = firestore
       .collection("Market")
       .where("status", "==", "approved")
@@ -91,29 +112,18 @@ export default function MarketScreen({ navigation }) {
       });
 
     getArtist();
-
-    return () => getArtist();
-    return () => getArtData();
+    getArtWorks();
+    // return () => getArtist();
+    // return () => getArtData();
   }, []);
 
   //
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        onPress={() => navigation.navigate("PreviewMore", { datas: data })}
-      >
-        <Text
-          style={{
-            color: "#000",
-            marginHorizontal: 15,
-            marginVertical: 2,
-            fontSize: 18,
-            alignSelf: "flex-end",
-          }}
-        >
-          Show All
-        </Text>
-      </TouchableOpacity>
+      <View style={styles.artCarouselView}>
+
+      </View>
+
       <View style={styles.body}>
         <SafeAreaView
           style={{
@@ -124,13 +134,14 @@ export default function MarketScreen({ navigation }) {
           }}
         >
           <Carousel
-            data={artist}
+            data={artwork}
             sliderWidth={SLIDER_WIDTH}
             itemWidth={ITEM_WIDTH}
             renderItem={_renderItem}
             onSnapToItem={(index) => setState({ index })}
             useScrollView={true}
           />
+
         </SafeAreaView>
       </View>
       <Text style={{ color: "#000", paddingLeft: 15, fontSize: 18 }}>
@@ -252,6 +263,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     bottom: 3,
   },
+  scrollView: {
+    borderColor: 'red',
+    borderWidth: 1
+  },
   showAll: {
     borderWidth: 1,
     borderColor: "#f5f5f5",
@@ -278,4 +293,27 @@ const styles = StyleSheet.create({
     // width: 100,
     // height: 100,
   },
+  artCarouselView: {
+    flexDirection: 'row'
+  },
+  showMoreTextOpacity: {
+    borderWidth: 1,
+    borderColor: '#ceb89e',
+    backgroundColor: 'rgba(206,184, 158, 0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 15,
+    width: ITEM_WIDTH,
+    height: ITEM_HEIGHT,
+  },
+  showMoreText: {
+      color: "rgb(80, 80, 80)",
+      marginHorizontal: 15,
+      marginVertical: 2,
+      fontSize: 28,
+      // alignSelf: "flex-end",
+
+
+  }
+  
 });

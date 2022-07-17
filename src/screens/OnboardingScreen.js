@@ -7,6 +7,18 @@ import {
 } from "react-native";
 import React from "react";
 import { globalStyles } from "../assets/styles/GlobalStyles";
+// const background = require("../assets/images/onboarding/onboarding.png");
+// const image1 = require("../assets/images/onboarding/image1.jpg");
+// const image2 = require("../assets/images/onboarding/image2.jpg");
+// const image3 = require("../assets/images/onboarding/image3.jpg");
+// const image4 = require("../assets/images/onboarding/image4.jpg");
+
+import background from "../assets/images/onboarding/onboarding.png";
+import image1 from "../assets/images/onboarding/image1.jpg";
+import image2 from "../assets/images/onboarding/image2.jpg";
+import image3 from "../assets/images/onboarding/image3.jpg";
+import image4 from "../assets/images/onboarding/image4.jpg";
+
 
 export default function OnboardingScreen({ navigation }) {
   return (
@@ -65,8 +77,3 @@ export default function OnboardingScreen({ navigation }) {
 }
 
 // images
-const background = require("../assets/images/onboarding/onboarding.png");
-const image1 = require("../assets/images/onboarding/image1.jpg");
-const image2 = require("../assets/images/onboarding/image2.jpg");
-const image3 = require("../assets/images/onboarding/image3.jpg");
-const image4 = require("../assets/images/onboarding/image4.jpg");

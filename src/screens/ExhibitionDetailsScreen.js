@@ -95,7 +95,7 @@ export default function ExhibitionDetailsScreen({ route, navigation }) {
   };
 
   const likesState = async () => {
-    const uid = auth.currentUser.uid;
+    const uid = auth.currentUser;
     return await firestore
       .collection("exhibition")
       .doc(exhibitionUid)
@@ -142,7 +142,7 @@ export default function ExhibitionDetailsScreen({ route, navigation }) {
     // getLocation();
 
     return () => likesState();
-    // return () => getLocation();
+    return () => getLocation();
     return () => getExhibitionDetails();
   }, []);
 
@@ -165,7 +165,6 @@ export default function ExhibitionDetailsScreen({ route, navigation }) {
       alert(error.message);
     }
   };
-
   return (
     <View style={styles.container}>
       <View style={styles.Top}>

@@ -2,6 +2,7 @@
   "expo": {
     "name": "Gallery360Africa",
     "slug": "Gallery360Africa",
+    "scheme": "gallery",
     "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./src/assets/images/thegoodone1.png",
