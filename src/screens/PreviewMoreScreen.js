@@ -6,7 +6,7 @@ import {
   View,
   useColorScheme,
   TouchableOpacity,
-  ImageBackground, Dimensions
+  ImageBackground, Dimensions, StyleSheet, Platform
 } from "react-native";
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 import React, { ReactElement, useEffect, useMemo, useState } from "react";
@@ -117,12 +117,12 @@ export default function PreviewMoreScreen({ route, navigation }) {
       <ImageBackground
         source={image}
         resizeMode="stretch"
-        style={globalStyles.container}
+        style={styles.container}
       >
         {/* {console.log(datas, "the image of the thingy")} */}
-        <View style={{ marginTop: 60, height: viewHeight, width: viewWidth }}>
+        <View style={{ marginTop: 0, height: viewHeight, width: viewWidth }}>
         <MasonryList
-          style={{ marginTop: 10 }}
+          style={{ marginTop: 0 }}
           showsVerticalScrollIndicator={false}
           keyExtractor={(item) => item.ImageUid}
           ListHeaderComponent={<View />}
@@ -140,3 +140,15 @@ export default function PreviewMoreScreen({ route, navigation }) {
     </SafeAreaView>
   );
 }
+const statusBarHeight = StatusBar.currentHeight;
+const paddingOnTop = Platform.OS === 'android' || Platform.OS === 'web' ? 60 + statusBarHeight: 0
+console.log('bar height: ', statusBarHeight);
+const styles =StyleSheet.create({
+  container: {
+    height: "100%",
+    width: "100%",
+    paddingTop: paddingOnTop
+    // backgroundColor: "red",
+    // paddingBottom: 10
+  },
+})

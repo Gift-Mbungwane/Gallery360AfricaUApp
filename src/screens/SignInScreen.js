@@ -13,13 +13,15 @@ import {
 } from "react-native";
 import React, { useCallback, useContext, useState } from "react";
 import { Formik } from "formik";
-import { LinearGradient } from "expo-linear-gradient";
+// import { LinearGradient } from "expo-linear-gradient";
 // import Toast from "react-native-simple-toast";
 // firebase
 import { auth } from "../../Firebase";
 // components
 import AppLoader from "../assets/components/AppLoader";
 import { UserContext } from "../Context/UserContext";
+import { LinearGradient } from "react-native-svg";
+import { globalStyles } from "../assets/styles/GlobalStyles";
 
 // main
 export default function SignInScreen({ navigation }) {
@@ -55,6 +57,7 @@ export default function SignInScreen({ navigation }) {
   //
   const signIn = async () => {
     setLoading(true);
+    console.log(email, password);
     if (email !== "" && password !== "") {
       await auth
         .signInWithEmailAndPassword(email, password)
@@ -75,6 +78,7 @@ export default function SignInScreen({ navigation }) {
         })
         .catch((error) => {
           console.log(error);
+          console.log('network error');
           if (error.code === "auth/invalid-email") {
             // Toast.show("Email is not valid", Toast.LONG, Toast.CENTER);
             setLoading(false);
@@ -103,7 +107,7 @@ export default function SignInScreen({ navigation }) {
           <SafeAreaView>
             <ImageBackground
               source={require("../assets/images/signIn/bg.png")}
-              style={styles.imageBack}
+              style={globalStyles.imageBack}
             >
               <View style={{ flex: 1 }}>
                 <View style={styles.gallery360logo}>
@@ -167,17 +171,18 @@ export default function SignInScreen({ navigation }) {
                   }}
                   activeOpacity={0.5}
                 >
-                  <LinearGradient
-                    start={{ x: 1, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    colors={["#0E1822", "#181818"]}
+                  <View
                     style={styles.buttonStyle}
                   >
                     <Text style={styles.buttonTextStyle}>Sign In</Text>
-                  </LinearGradient>
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={{ alignSelf: 'center', marginBottom: 10 }} onPress={()=> navigation.navigate('ForgotPassword')}>
+                  <Text style={{ color: '#22180E' }}>Forgot password </Text>
                 </TouchableOpacity>
                 <View style={{ flexDirection: "row", alignSelf: "center" }}>
-                  <Text style={{}}>Don't have an account?</Text>
+                  <Text style={{ color: '#FFF' }}>Don't have an account?</Text>
                   <Text>
                     <TouchableOpacity
                       onPress={() => navigation.navigate("SignUp")}
@@ -197,7 +202,7 @@ export default function SignInScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   imageBack: {
-    height: Dimensions.get("window").height / 1,
+    height: Dimensions.get("window").height,
   },
   buttonStyle: {
     backgroundColor: "#0E1822",
@@ -211,11 +216,13 @@ const styles = StyleSheet.create({
     marginRight: 35,
     marginTop: 25,
     marginBottom: 20,
+    justifyContent: 'center'
   },
   buttonTextStyle: {
     color: "#FFFFFF",
     paddingVertical: 13,
     fontSize: 16,
+
   },
   inputStyle: {
     flex: 1,
@@ -254,11 +261,16 @@ const styles = StyleSheet.create({
     marginRight: 35,
     marginTop: 25,
     marginBottom: 20,
+    justifyContent: 'center',
+    // backgroundColor: 'yellow'
   },
   buttonTextStyle: {
     color: "#FFFFFF",
     paddingVertical: 13,
     fontSize: 16,
+    textAlign: 'center',
+    // backgroundColor: 'red',
+    alignSelf: 'center'
   },
   gallery360logo: {
     height: 226,

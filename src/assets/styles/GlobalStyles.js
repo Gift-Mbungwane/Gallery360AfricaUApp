@@ -1,4 +1,4 @@
-import { StyleSheet, Dimensions } from "react-native";
+import { StyleSheet, Dimensions, StatusBar } from "react-native";
 
 const globalStyles = StyleSheet.create({
   // MAIN STYLES
@@ -67,11 +67,13 @@ const globalStyles = StyleSheet.create({
     borderColor: "#7DE24E",
     height: 50,
     alignItems: "center",
+    justifyContent: 'center',
     borderRadius: 14,
     marginLeft: 35,
     marginRight: 35,
     marginTop: 25,
     marginBottom: 20,
+    
   },
   buttonTextStyle: {
     color: "#FFFFFF",
@@ -89,7 +91,8 @@ const globalStyles = StyleSheet.create({
     borderColor: "#FFFFFF",
   },
   imageBack: {
-    height: Dimensions.get("window").height / 1,
+    height: Dimensions.get("window").height,
+    top: StatusBar.currentHeight && StatusBar.currentHeight
   },
   gallery360logo: {
     height: 226,
@@ -277,7 +280,8 @@ const globalStyles = StyleSheet.create({
   // TIKTOK SCREEN STYLES
   tikTokContainer: {
     width: "100%",
-    height: Dimensions.get("screen").height,
+    height: Dimensions.get("window").height,
+
   },
   videPlayButton: {
     position: "absolute",
@@ -297,13 +301,14 @@ const globalStyles = StyleSheet.create({
   uiContainer: {
     height: "100%",
     justifyContent: "flex-end",
+    paddingBottom: 50
   },
   bottomContainer: {
+    // bottom: 0,
     padding: 15,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-end",
-    marginVertical: "23%",
   },
   bottomContainer1: {
     padding: 40,
@@ -356,10 +361,10 @@ const globalStyles = StyleSheet.create({
   //  right container
   rightContainer: {
     alignSelf: "flex-end",
-    height: "20%",
+    height: 220,
     justifyContent: "space-between",
-    marginVertical: "-20%",
-    right: 5,
+    // marginVertical: "-20%",
+    right: 10
   },
   profilePicture: {
     width: 50,
@@ -390,6 +395,7 @@ const globalStyles = StyleSheet.create({
     marginVertical: 60,
   },
   secondBottomContainer: {
+    backgroundColor: 'blue',
     width: "100%",
     height: "90%",
     marginVertical: "6%",
@@ -456,9 +462,12 @@ const globalStyles = StyleSheet.create({
   },
   cartIcon: {
     alignSelf: "flex-end",
-    width: 45,
-    height: 45,
+    width: 40,
+    height: 40,
     marginHorizontal: 5,
+    borderRadius: 12,
+    borderColor: 'white',
+    borderWidth: 1
   },
   artistImg: {
     width: 50,
@@ -609,23 +618,27 @@ const globalStyles = StyleSheet.create({
   },
 
   profileImg: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    bottom: 100,
-    marginBottom: -100
+    position: 'absolute',
+    height: '90%',
+    aspectRatio: 1,
+    // height: '90%',
+    borderRadius: 300,
+    top: '-45%',
+    // bottom: 150,
+    // marginBottom: -150
   },
-
   profileImgContainer: {
-    top: 120,
+    // top: 120,
+    marginBottom: 20,
     width: "80%",
-    height: 230,
+    height: '65%',
     borderRadius: 15,
     flexDirection: 'column',
-    alignContent: "center",
+    alignContent: 'flex-end',
     backgroundColor: "#E3E3E3",
     alignSelf: "center",
     alignItems: "center",
+    justifyContent: 'flex-end'
     // borderColor: 'red',
     // borderWidth: 1
     // top: 30,
@@ -664,8 +677,13 @@ const globalStyles = StyleSheet.create({
   },
 
   optionsContainer: {
-    top: 120,
-    marginTop: 20
+    // top: 120,
+    flex: 5,
+    justifyContent: 'space-evenly',
+    // borderColor: 'red',
+    // borderWidth: 1
+    // bottom: -110,
+    // marginTop: 20
   },
 
   modalContainer: {
@@ -677,15 +695,20 @@ const globalStyles = StyleSheet.create({
     top: 30,
     alignItems: "center",
     paddingVertical: 15,
+    // borderColor: 'red',
+    // borderWidth: 1
   },
 
   editprofileImgContainer: {
     width: 200,
     height: 200,
-    borderRadius: 150,
-    backgroundColor: "gray",
-    justifyContent: "center",
-    alignItems: "center",
+    // borderRadius: 300,
+    // backgroundColor: "gray",
+    // justifyContent: "center",
+    // alignItems: "center",
+    // borderColor: 'red',
+    // borderWidth: 3
+    
   },
 
   editUserInput: {
@@ -726,7 +749,7 @@ const globalStyles = StyleSheet.create({
   uploadedImage: {
     width: 200,
     height: 200,
-    borderRadius: 100,
+    borderRadius: 300,
   },
   imgAddIcon: {
     position: "absolute",

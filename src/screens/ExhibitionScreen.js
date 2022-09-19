@@ -8,6 +8,8 @@ import {
   SafeAreaView,
   ScrollView,
   StyleSheet,
+  StatusBar,
+  Platform,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 //
@@ -20,7 +22,15 @@ export default function ExhibitionScreen({ navigation }) {
   //
   const SLIDER_WIDTH = Dimensions.get("window").width;
   const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.8);
-  const ITEM_HEIGHT = Math.round((ITEM_WIDTH * 6.5) / 5);
+  // const ITEM_HEIGHT = Math.round((ITEM_WIDTH * 6.5) / 5);
+  const statusBarHeight = StatusBar.currentHeight ? StatusBar.currentHeight : 0
+const paddingOnTop = Platform.OS === 'android' || Platform.OS === 'web' ? 60 + statusBarHeight: 0
+const navBarHeight = Dimensions.get('screen').height - Dimensions.get('window').height - statusBarHeight;
+const tabBarHeight = 50
+const paddingOnBottom = 90
+const screenHeight = Dimensions.get('screen').height - statusBarHeight - paddingOnTop - navBarHeight - tabBarHeight - paddingOnBottom;
+const carouselHeight = (screenHeight/7) * 6
+const ITEM_HEIGHT = carouselHeight;
   const [state, setState] = useState();
   const [artist, setArtist] = useState(null);
   const [exhibition, setExhibition] = useState([]);
@@ -40,7 +50,13 @@ export default function ExhibitionScreen({ navigation }) {
   //
   const getExhibition = () => {
     return firestore.collection("exhibition").onSnapshot((snapShot) => {
-      const allExhibitions = snapShot.docs.map((docSnap) => docSnap.data());
+      // const allExhibitions = snapShot.docs.map((docSnap) => docSnap.data());
+      // const unfiltered = snapShot.docs.map((docSnap) => docSnap.data())
+      const allExhibitions = snapShot.docs.map(docSnap => docSnap.data()).filter((data) => {
+        console.log(typeof data.date);
+        return typeof data.date === 'string'
+      });
+      console.log(allExhibitions);
       setExhibition(allExhibitions);
     });
   };
@@ -116,14 +132,11 @@ export default function ExhibitionScreen({ navigation }) {
         </SafeAreaView>
       </View>
 
-      <Text style={{ color: "#000", marginHorizontal: 10, fontSize: 18 }}>
-        Artists
-      </Text>
-
       <View style={styles.footer}>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
           <FlatList
             horizontal
+            style={{ paddingLeft: 15 }}
             bounces={false}
             showsHorizontalScrollIndicator={false}
             data={artist}
@@ -176,20 +189,25 @@ const styles = StyleSheet.create({
   container: {
     height: "100%",
     width: "100%",
-    backgroundColor: "#fff",
+    // backgroundColor: "red",
+    paddingBottom: 10
   },
   body: {
     flex: 6,
-    top: 3,
     alignItems: "center",
     justifyContent: "center",
+    // backgroundColor: 'yellow',
+    paddingTop: 50
   },
   footer: {
+    flex: 2,
     justifyContent: "center",
     alignItems: "center",
-    marginVertical: 12,
+    marginVertical: 8,
     flexDirection: "row",
-    paddingLeft: 10,
+    // paddingLeft: 20,
+    maxHeight: 110,
+    // backgroundColor: 'green'
   },
   artistsView: {
     paddingHorizontal: 5,
@@ -234,6 +252,7 @@ const styles = StyleSheet.create({
   },
   artTypeTxt: {
     color: "gray",
+    fontSize: 12,
     paddingHorizontal: 20,
     bottom: 3,
   },

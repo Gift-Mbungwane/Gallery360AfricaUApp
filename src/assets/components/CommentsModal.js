@@ -11,6 +11,7 @@ import {
   KeyboardAvoidingView,
   TouchableOpacity,
   FlatList,
+  Keyboard
 } from "react-native";
 import {
   MaterialIcons,
@@ -40,6 +41,9 @@ function CommentsModal({
   const [isModalVisible, setModalVisible] = useState(isVisible);
   //
   const addComments = () => {
+    const comment = com
+    setCom('');
+    Keyboard.dismiss()
     const uid = auth.currentUser ? auth.currentUser.uid : '0CVA2hLN0SfrpGMDBMRyBqGkGO32';
     //  console.log(ImageUid + " the image uid 333")
     firestore
@@ -51,15 +55,20 @@ function CommentsModal({
         imageUID: ImageUid,
         userName: fullName,
       })
-      .then((key) =>
+      .then((key) => {
         key.update({
           key: key.id,
         })
-      )
-      .catch((error) => alert(error));
+        
+      })
+      .catch((error) => {
+        alert(error);
+        setCom(comment)
+      });
   };
   //
   const getComents = () => {
+    console.log(ImageUid);
     firestore
       .collection("comments")
       .where("imageUID", "==", ImageUid)
@@ -106,7 +115,7 @@ function CommentsModal({
     outputRange: [1000, 1000 - 720],
   });
   return (
-    <Modal animationType="fade" transparent={true} visible={isVisible}>
+    <Modal animationType="fade" transparent={true} visible={isVisible} style={{ }}>
       <KeyboardAvoidingView
         style={{
           flex: 1,
@@ -116,6 +125,7 @@ function CommentsModal({
           shadowOpacity: 4,
           shadowRadius: 20,
           elevation: 5,
+          height: '10%'
         }}
         behavior="padding"
       >
@@ -134,20 +144,24 @@ function CommentsModal({
           style={{
             position: "absolute",
             left: 0,
-            top: modalY,
+            // top: modalY,
+            bottom: 0,
             width: "100%",
-            height: "100%",
-            padding: 24,
+            height: "80%",
+            padding: 0,
             borderTopRightRadius: 24,
             borderTopLeftRadius: 24,
-            backgroundColor: "#fff",
+            backgroundColor: "#fff"
           }}
         >
-          <View style={{ flex: 3 }}>
-            <Text style={{ color: "#000", alignSelf: "center", fontSize: 18 }}>
+          <View style={{ flex: 6, paddingHorizontal: 0 }}>
+            {/* <View style={{ height: 40, justifyContent: 'center'}}>
+
+            </View> */}
+            <Text style={{ height: 40, lineHeight: 40, color: "#000", alignSelf: "center", fontSize: 18 }}>
               {numCom > 0 ? <Text>{numCom}</Text> : <View></View>} Comments
             </Text>
-            <View style={{ justifyContent: "flex-start", bottom: 25 }}>
+            <View style={{ justifyContent: "flex-start", bottom: 0 }}>
               {/* <AntDesign
                 name="closecircleo"
                 size={24}
@@ -155,7 +169,7 @@ function CommentsModal({
                 onPress={() => setModalVisible(!isVisible)}
               /> */}
             </View>
-            <View style={{ height: "80%" }}>
+            <View style={{ flex: 1, marginHorizontal: 10 }}>
               {numCom > 0 ? (
                 <FlatList
                   data={comments}
@@ -220,27 +234,32 @@ function CommentsModal({
               )}
             </View>
           </View>
-          <View style={{ flex: 3, flexDirection: "row" }}>
-            <View style={styles.userProfile}>
+          <View style={{ flexDirection: "row", height: 70, padding: 10 }}>
+            {/* <View style={styles.userProfile}>
               <Image
                 source={{ uri: `${photoURL}` }}
                 resizeMode="stretch"
                 style={styles.profilePic}
               />
-            </View>
+            </View> */}
             <View style={styles.inputStyle}>
-              <View style={{ flexDirection: "row" }}>
+              {/* <View style={{ flexDirection: "row" }}> */}
                 <TextInput
-                  style={{ width: "85%" }}
+                  style={{ flex: 1 }}
                   onChangeText={(comments) => setCom(comments)}
                   placeholder="Comments..."
                   placeholderTextColor="#828282"
                   autoCapitalize="sentences"
+                  value={ com }
                 />
-                <View
+
+              {/* </View> */}
+            </View>
+            <View
                   style={{
                     flexDirection: "row",
-                    width: "29%",
+                    width: 40,
+                    paddingLeft: 10,
                     justifyContent: "space-between",
                   }}
                 >
@@ -254,8 +273,6 @@ function CommentsModal({
                     />
                   </TouchableOpacity>
                 </View>
-              </View>
-            </View>
           </View>
         </Animated.View>
       </KeyboardAvoidingView>
@@ -267,13 +284,15 @@ const styles = StyleSheet.create({
   inputStyle: {
     color: "#000",
     height: 50,
-    width: 250,
+    flex: 1,
+    flexDirection: 'row',
     borderWidth: 1,
     borderRadius: 8,
     borderColor: "#676767",
-    bottom: 30,
-    marginHorizontal: 15,
-    marginVertical: 7,
+    padding: 10
+    // bottom: 30,
+    // marginHorizontal: 15,
+    // marginVertical: 7,
   },
   profilePic: {
     height: 40,
@@ -286,6 +305,7 @@ const styles = StyleSheet.create({
     color: "#000",
     fontSize: 17,
     fontWeight: "bold",
+    // borderWidth: 1, borderColor: 'yellow'
     marginHorizontal: "5%",
     marginVertical: "3%",
   },

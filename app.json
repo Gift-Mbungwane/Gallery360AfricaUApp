@@ -22,7 +22,7 @@
         "foregroundImage": "./src/assets/images/thegoodone1.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.gallery360africa.Gallery360Africa",
+      "package": "com.gallery360africa.user",
       "versionCode": 1
     },
     "web": {

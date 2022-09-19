@@ -12,17 +12,17 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { firestore, auth } from "../../Firebase";
 import { globalStyles } from "../assets/styles/GlobalStyles";
-// import { AntDesign, Entypo, Fontisto, MaterialIcons } from "@expo/vector-icons";
 import CommentsModal from "../assets/components/CommentsModal";
 import { AntDesign, Entypo, FontAwesome, FontAwesome5, Fontisto } from "@expo/vector-icons";
+import Render from "react-native-web/dist/cjs/exports/render";
 
 // import Toast from "react-native-simple-toast";
 
-export default function ArtPreviewScreen({ route, navigation }) {
-  console.log({ route, navigation });
+export default function ScrollScreen({ route, navigation }) {
+  // console.log({ route, navigation });
   const [isModalVisible, setModalVisible] = useState(false);
   const [like, setLike] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
@@ -42,10 +42,12 @@ export default function ArtPreviewScreen({ route, navigation }) {
   const [artSize, setArtSize] = useState("");
   const [description, setDescription] = useState("");
   const [artUrl, setArtUrl] = useState("");
-  const [itemOnCart, setItemOnCart] = useState(false)
+  const [itemOnCart, setItemOnCart] = useState(false);
+  const [artworks, setArtworks] = useState([{ photoURL, FullName: 'Artwork', imageUID, title: 'why' },{ photoURL, FullName: 'Second', imageUID, title: 'why' },{ photoURL, FullName: 'Third', imageUID, title: 'why' },{ photoURL, FullName: 'Fourth', imageUID, title: 'why' }])
+
   console.log({ ...route.params });
   const { artistUid, imageUID } = route.params;
-
+  // console.log('height: ', StatusBar.currentHeight);
   const [Data] = useState([{ photoURL, FullName, imageUID, title: 'why' },{ photoURL, FullName, imageUID, title: 'why' },{ photoURL, FullName, imageUID, title: 'why' }])
 
   const getArtistDetailts = async () => {
@@ -313,9 +315,9 @@ export default function ArtPreviewScreen({ route, navigation }) {
   useEffect(() => {
     const uid = auth.currentUser.uid
     firestore.collection('cartItem').doc(uid).collection('items').doc(imageUID).get().then((res) => {
-      console.log(res.data());
+      // console.log(res.data());
       if (res.exists) {
-        console.log(res.data());
+        // console.log(res.data());
         setItemOnCart(true)
       }
     })
@@ -324,7 +326,7 @@ export default function ArtPreviewScreen({ route, navigation }) {
     getArtDetails();
   }, [])
   const RenderScrollView = ({ photoURL, FullName, imageUID, style }) => {
-    console.log(imageUID);
+    // console.log(imageUID);
     return (
       <TouchableOpacity
         activeOpacity={1.5}
@@ -560,67 +562,106 @@ export default function ArtPreviewScreen({ route, navigation }) {
     )
 
   }
-  return(
-    <RenderScrollView photoURL={photoURL} FullName={FullName} imageUID={imageUID} style={{ borderColor: 'red', borderWidth: 1}} />
-  )
+  const handleVieweableItemsChanged = useCallback(({ changed }) => {
+    
+    console.log(changed);
+    if(changed[0].isViewable) {
+      const name = changed[0].item.FullName
+      navigation.setParams({ artName: name });
+    }
+
+    return;
+    setViewedItems(oldViewedItems => {
+      // We can have access to the current state without adding it
+      //  to the useCallback dependencies
+
+      let newViewedItems = null;
+
+      changed.forEach(({ index, isViewable }) => {
+        if (index != null && isViewable && !oldViewedItems.includes(index)) {
+          
+           if (newViewedItems == null) {
+             newViewedItems = [...oldViewedItems];
+           }
+           newViewedItems.push(index);
+        }
+      });
+
+      // If the items didn't change, we return the old items so
+      //  an unnecessary re-render is avoided.
+      return newViewedItems == null ? oldViewedItems : newViewedItems;
+    });
+
+    // Since it has no dependencies, this function is created only once
+  }, []);
+  // return(
+  //   <RenderScrollView photoURL={photoURL} FullName={FullName} imageUID={imageUID} style={{ borderColor: 'red', borderWidth: 1}} />
+  // )
+
   return (
-    <View style={styles.container}>
-      {/* <ScrollView
-        data={[{ photoURL, FullName, imageUID }, { photoURL, FullName, imageUID }]}
-        renderItem={(item) => <RenderScrollView />}
+    <View style={ styles.topCont }>
+      <FlatList
+        style={{ borderColor: 'green', borderWidth: 1, flex: 1 }}
+        data={ artworks }
+        renderItem={(item) => <RenderScrollView photoURL={item.photoURL} FullName={ item.photoURL } imageUID={ item.imageUID } />}
+        keyExtractor={(item,index) => index}
         snapToAlignment='start'
         horizontal={false}
-        decelerationRate={0}
-        snapToInterval={800}
-        overScrollMode="never"
+        decelerationRate={0.2}
+        snapToInterval={Dimensions.get('window').height}
+        overScrollMode="always"
         scroll
-        contentInset={{
-          top: 0,
-          left: 0,
-          bottom: 0,
-          right: 0,
-        }}
-      >
-        <RenderScrollView />
-        <RenderScrollView />
-        <RenderScrollView />
-        <RenderScrollView />
-      </ScrollView> */}
-      <FlatList
-        data={Data}
-        renderItem={({ item }) => (
-          <View
-            style={{
-              height: Dimensions.get('window').height,
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: 'red'
-            }}>
-            <Text style={{ fontWeight: 'bold', color: 'white' }}>{item.title}</Text>
-          </View>
-        )}
-        keyExtractor={(_, index) => index.toString()}
-
-        getItemLayout={(_, index) => {
-          return { length: Dimensions.get('window').height, offset: Dimensions.get('window').height * index, index };
-        }}
-        initialScrollIndex={21}
-        showsVerticalScrollIndicator={false}
-        initialNumToRender={3}
-        windowSize={9}
-        snapToOffsets={Data.map((x, i) => (i * Dimensions.get('window').height))}
+        disableIntervalMomentum
+        onViewableItemsChanged={handleVieweableItemsChanged}
+        
       />
+        {/* { artworks.map( (item) => <RenderScrollView onLayout={() => { console.log('loading')}} photoURL={item.photoURL} FullName={ item.photoURL } imageUID={ item.imageUID }/> ) } */}
+      
+      {/* </ScrollView>  */}
+    {/* //   {/* <FlatList
+    //     data={Data}
+    //     renderItem={({ item }) => (
+    //       <View
+    //         style={{
+    //           height: Dimensions.get('window').height,
+    //           alignItems: 'center',
+    //           justifyContent: 'center',
+    //           backgroundColor: 'red'
+    //         }}>
+    //         <Text style={{ fontWeight: 'bold', color: 'white' }}>{item.title}</Text>
+    //       </View>
+    //     )}
+    //     keyExtractor={(_, index) => index.toString()}
+
+    //     getItemLayout={(_, index) => {
+    //       return { length: Dimensions.get('window').height, offset: Dimensions.get('window').height * index, index };
+    //     }}
+    //     initialScrollIndex={21}
+    //     showsVerticalScrollIndicator={false}
+    //     initialNumToRender={3}
+    //     windowSize={9}
+    //     snapToAlignment={'start'}
+    //     snapToInterval={Dimensions.get('window').height}
+    //     decelerationRate={'fast'}
+    //     snapToOffsets={Data.map((x, i) => (i * Dimensions.get('window').height))}
+    //   /> */} 
     </View>
   );
 }
 const statusBarHeight = StatusBar.currentHeight;
-const paddingOnTop = Platform.OS === 'android' || Platform.OS === 'web' ? 60 + statusBarHeight : 0
+// console.log('height:', statusBarHeight);
+// const paddingOnTop = Platform.OS === 'android' || Platform.OS === 'web' ? statusBarHeight : 0
 // const navBarHeight
 const styles = StyleSheet.create({
+  topCont: {borderColor: 'yellow', borderWidth: 1, flex: 1, paddingTop: StatusBar.currentHeight },
   container: {
-    width: "100%", height: Dimensions.get('window').height, overflow:'hidden',
-    // paddingTop: paddingOnTop
-    top: statusBarHeight
+    width: "100%", height: Dimensions.get('window').height, top: 0, overflow:'hidden',
+    // paddingTop: statusBarHeight + 60,
+    // top: statusBarHeight,
+    // paddingTop: statusBarHeight,
+    // paddingBottom: 100,
+    // marginBottom: 50,
+    borderColor: 'yellow', borderWidth: 1
   },
   tikTokView: {
     height: Dimensions.get('window').height

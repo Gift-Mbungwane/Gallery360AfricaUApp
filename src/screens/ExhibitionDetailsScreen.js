@@ -72,8 +72,11 @@ export default function ExhibitionDetailsScreen({ route, navigation }) {
       .set({
         uid: uid,
         exhibitionUid: exhibitionUid,
+        like: true
       })
-      .then((documentSnap) => {})
+      .then((documentSnap) => {
+        setExhibitionUid(exhibitionUid)
+      })
       .catch((error) => {
         // Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
       });
@@ -87,15 +90,18 @@ export default function ExhibitionDetailsScreen({ route, navigation }) {
       .doc(exhibitionUid)
       .collection("likes")
       .doc(uid)
-      .delete({})
-      .then(() => {})
+      .delete()
+      .then(() => {
+        setExhibitionUid('')
+      })
       .catch((error) => {
         // Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
       });
   };
 
   const likesState = async () => {
-    const uid = auth.currentUser;
+    const uid = auth.currentUser.uid;
+    console.log({ exhibitionUid, uid});
     return await firestore
       .collection("exhibition")
       .doc(exhibitionUid)
@@ -171,12 +177,12 @@ export default function ExhibitionDetailsScreen({ route, navigation }) {
         <ImageBackground
           source={{ uri: `${exhibitionImage}` }}
           style={styles.image}
-          imageStyle={{ borderRadius: 20 }}
+          imageStyle={{ borderBottomLeftRadius: 20, borderBottomRightRadius: 20 }}
         ></ImageBackground>
       </View>
 
       <View style={styles.DetailsContainer}>
-        <View style={{ flex: 5 }}>
+        <View style={{ flex: 5, margin: 10 }}>
           <Text
             style={{
               color: "#000000",
@@ -220,7 +226,7 @@ export default function ExhibitionDetailsScreen({ route, navigation }) {
             {description}
           </Text>
         </View>
-        <View style={{ flexDirection: "row" }}>
+        <View style={{ flexDirection: "row", justifyContent: 'center', marginBottom: 10 }}>
           <TouchableOpacity
             style={styles.VisitLocation}
             onPress={() => getLocation()}
@@ -319,7 +325,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     height: "48%",
     marginTop: 25,
-    backgroundColor: "rgba(255,255,355,0.3)",
+    backgroundColor: "rgba(230, 230, 230,0.5)",
     borderColor: "#ffffff",
     marginVertical: "-23%",
   },
