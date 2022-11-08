@@ -16,6 +16,7 @@ import React, { useEffect, useState } from "react";
 import Carousel from "react-native-snap-carousel";
 //
 import { firestore } from "../../Firebase";
+import LoaderImage from "../assets/components/LoaderImage";
 
 //
 export default function ExhibitionScreen({ navigation }) {
@@ -52,12 +53,13 @@ const ITEM_HEIGHT = carouselHeight;
     return firestore.collection("exhibition").onSnapshot((snapShot) => {
       // const allExhibitions = snapShot.docs.map((docSnap) => docSnap.data());
       // const unfiltered = snapShot.docs.map((docSnap) => docSnap.data())
-      const allExhibitions = snapShot.docs.map(docSnap => docSnap.data()).filter((data) => {
-        console.log(typeof data.date);
+      const allExhibitions = snapShot.docs.map(docSnap => ({ ...docSnap.data(), isExhibition: true })).filter((data) => {
+        // console.log(typeof data.date);
         return typeof data.date === 'string'
       });
-      console.log(allExhibitions);
+      // console.log(allExhibitions);
       setExhibition(allExhibitions);
+      // setExhibition([...allExhibitions, { isExhibition: false, text: 'Show All' }]);
     });
   };
   useEffect(() => {
@@ -70,44 +72,55 @@ const ITEM_HEIGHT = carouselHeight;
 
   //
   const _renderItem = ({ item, index }) => {
-    return (
-      <View>
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate("ExhibitionDetails", {
-              exhibitionUid: item.exhibitionUid,
-              artistUid: item.artistUid,
-              exhibitionTitle: item.exhibitionTitle,
-              date: item.date,
-              addresses: item.address,
-              description: item.description,
-            })
-          }
-        >
-          <Image
-            source={{ uri: item.exhibitionImage }}
-            style={{ width: ITEM_WIDTH, height: ITEM_HEIGHT, borderRadius: 16 }}
-          />
-          <View
-            style={{
-              backgroundColor: "#fff",
-              height: 65,
-              position: "absolute",
-              borderRadius: 16,
-              bottom: 8,
-              left: 8,
-              right: 8,
-              justifyContent: "center",
-            }}
+    if(item.isExhibition) {
+      return (
+        <View>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate("ExhibitionDetails", {
+                exhibitionUid: item.exhibitionUid,
+                artistUid: item.artistUid,
+                exhibitionTitle: item.exhibitionTitle,
+                date: item.date,
+                addresses: item.address,
+                description: item.description,
+              })
+            }
           >
-            <Text style={styles.artNameTxt}>{item.exhibitionTitle}</Text>
-            <View style={{ flexDirection: "row" }}>
-              <Text style={styles.artTypeTxt}>{item.date}</Text>
+            <LoaderImage
+              uri={ item.exhibitionImage }
+              style={{ width: ITEM_WIDTH, height: ITEM_HEIGHT, borderRadius: 16 }}
+            />
+            <View
+              style={{
+                backgroundColor: "#fff",
+                height: 65,
+                position: "absolute",
+                borderRadius: 16,
+                bottom: 8,
+                left: 8,
+                right: 8,
+                justifyContent: "center",
+              }}
+            >
+              <Text style={styles.artNameTxt} numberOfLines={1}>{item.exhibitionTitle}</Text>
+              <View style={{ flexDirection: "row" }}>
+                <Text style={styles.artTypeTxt}>{item.date}</Text>
+              </View>
             </View>
-          </View>
+          </TouchableOpacity>
+        </View>
+      );
+    } else {
+      return (
+        <View style={{ flexDirection: "row" }}>
+        <TouchableOpacity style={styles.showMoreTextOpacity} onPress={() => navigation.navigate("PreviewMore", { datas: data })} >
+          <Text style={styles.showMoreText} numberOfLines={1}>Show All</Text>
         </TouchableOpacity>
       </View>
-    );
+      )
+    }
+
   };
 
   //
@@ -123,18 +136,50 @@ const ITEM_HEIGHT = carouselHeight;
         >
           <Carousel
             data={exhibition}
+            initialNumToRender={1}
+            windowSize={1}
             sliderWidth={SLIDER_WIDTH}
             itemWidth={ITEM_WIDTH}
             renderItem={_renderItem}
             onSnapToItem={(index) => setState({ index })}
-            useScrollView={true}
+            useScrollView={false}
           />
         </SafeAreaView>
       </View>
 
       <View style={styles.footer}>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-          <FlatList
+          { artist &&
+            artist.map(item =>{
+              return (
+                <View key={item.artistUid}>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate("ArtistProfile", {
+                      description: item.description,
+                      artistUid: item.artistUid,
+                      photoUrl: item.photoUrl,
+                      artistName: item.artistName,
+                      videoUrl: item.videoUrl,
+                      exhibitionImagess: item.exhibitionImage,
+                    })
+                  }
+                >
+                  <View style={styles.artistsView}>
+                    <Image
+                      source={{ uri: item.photoUrl }}
+                      style={styles.artistImage}
+                    />
+                    <View style={styles.artistNameContainer}>
+                      <Text style={styles.ArtistName}>{item.artistName}</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              </View>
+              )
+            })
+          }
+          {/* <FlatList
             horizontal
             style={{ paddingLeft: 15 }}
             bounces={false}
@@ -169,7 +214,7 @@ const ITEM_HEIGHT = carouselHeight;
                 </View>
               );
             }}
-          />
+          /> */}
           <TouchableOpacity onPress={() => navigation.navigate("Artists")}>
             <View style={styles.showAll}>
               <Text
@@ -249,6 +294,7 @@ const styles = StyleSheet.create({
     fontSize: 23,
     color: "#000",
     paddingHorizontal: 20,
+    // paddingRight: 60
   },
   artTypeTxt: {
     color: "gray",

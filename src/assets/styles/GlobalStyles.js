@@ -295,20 +295,26 @@ const globalStyles = StyleSheet.create({
     position: "absolute",
     top: 0,
     left: 0,
-    bottom: 0,
-    right: 0,
+    // bottom: 0,
+    // right: 0,
   },
   uiContainer: {
     height: "100%",
     justifyContent: "flex-end",
-    paddingBottom: 50
+    paddingBottom: 0
   },
   bottomContainer: {
     // bottom: 0,
-    padding: 15,
+    padding: 10,
+    // height: '30%',
+    minHeight: 240,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-end",
+    // borderColor: 'red',
+    // borderWidth: 1,
+    marginTop: 40
+    // height: 300
   },
   bottomContainer1: {
     padding: 40,
@@ -361,7 +367,8 @@ const globalStyles = StyleSheet.create({
   //  right container
   rightContainer: {
     alignSelf: "flex-end",
-    height: 220,
+    // height: 220,
+    height: 165,
     justifyContent: "space-between",
     // marginVertical: "-20%",
     right: 10
@@ -383,9 +390,15 @@ const globalStyles = StyleSheet.create({
     marginTop: 5,
   },
   viewArtist: {
-    marginVertical: 10,
+    // marginVertical: 10,
     flexDirection: "row",
-    marginHorizontal: 10,
+    // marginHorizontal: 10,
+    marginBottom: 10,
+    // flex: 1,
+    // maxHeight: 'auto',
+    // borderColor: 'red',
+    // borderWidth: 1,
+    alignItems: 'center'
   },
   viewMiddleIcon: {
     flexDirection: "column",
@@ -396,8 +409,10 @@ const globalStyles = StyleSheet.create({
   },
   secondBottomContainer: {
     backgroundColor: 'blue',
+    padding: 20,
     width: "100%",
-    height: "90%",
+    height: '100%',
+    // height: "90%",
     marginVertical: "6%",
     alignSelf: "center",
     backgroundColor: "rgba(16,18,27,0.4)",
@@ -407,7 +422,7 @@ const globalStyles = StyleSheet.create({
     //border: 1,
     borderRadius: 20,
     flexDirection: "column",
-    top: 50,
+    // top: 50,
   },
   secondBottomContainer1: {
     width: "80%",
@@ -431,14 +446,18 @@ const globalStyles = StyleSheet.create({
   },
   viewDescription: {
     alignSelf: "flex-start",
-    marginHorizontal: 15,
-    width: "90%",
+    // marginHorizontal: 15,
+    width: "100%",
+    flex: 2
     // top: 10
+    // borderWidth: ''
   },
   artistName: {
     fontWeight: "bold",
     fontSize: 22,
     color: "#F5F5F5",
+    // borderColor: 'blue',
+    // borderWidth: 1
   },
   buttonContainer: {
     position: "absolute",
@@ -473,7 +492,7 @@ const globalStyles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 50,
-    marginVertical: 10,
+    // marginVertical: 10,
     borderColor: "rgba(196, 196, 196, 0.51)",
     borderWidth: 4,
   },
@@ -685,14 +704,17 @@ const globalStyles = StyleSheet.create({
     // bottom: -110,
     // marginTop: 20
   },
-
+  modalFullView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
   modalContainer: {
     width: "85%",
     height: 475,
     backgroundColor: "#E3E3E3",
     borderRadius: 15,
     alignSelf: "center",
-    top: 30,
     alignItems: "center",
     paddingVertical: 15,
     // borderColor: 'red',
@@ -753,6 +775,8 @@ const globalStyles = StyleSheet.create({
   },
   imgAddIcon: {
     position: "absolute",
+    color: 'green',
+    zIndex: 10
   },
 
   flatlist: {

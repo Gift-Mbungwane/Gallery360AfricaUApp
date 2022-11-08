@@ -29,23 +29,25 @@ import { globalStyles } from "../assets/styles/GlobalStyles";
 
 
 import { UserContext } from "../Context/UserContext";
+import LoaderImage from "../assets/components/LoaderImage";
 // import Toast from "react-native-simple-toast";
 
 const background = require("../assets/images/home.png");
 
 export default function UserProfileScreen({ route, navigation }) {
   const [modalOpen, setModalOpen] = useState("");
-  const [userName, setUserName] = useState("");
+  const [userName, setUserName] = useState('');
   const [imageUri, setimageUri] = useState(`${route.params ? route.params.photoURL : 'https://icon-library.com/images/no-profile-picture-icon-female/no-profile-picture-icon-female-17.jpg'}`);
   const [submit, setSubmit] = useState(false);
-
-  const { photoURL, fullName, uuid, cartItem } = route.params;
+  const [photoUri, setPhotoUri] = useState('')
+  const [placeholder] = useState('https://icon-library.com/images/no-profile-picture-icon-female/no-profile-picture-icon-female-17.jpg')
+  let { photoURL, fullName, uuid, cartItem } = route.params;
   const { isLoggedIn, toggleUserState } = useContext(UserContext)
   const screenHeight = Dimensions.get('screen').height;
   const viewHeight = Dimensions.get('window').height;
   const viewWidth = Dimensions.get('window').width;
   const pageHeight = Dimensions.get('window').height
-  console.log({ viewHeight, screenHeight });
+  // console.log({ viewHeight, screenHeight });
 
   const openImageLibrary = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -55,7 +57,7 @@ export default function UserProfileScreen({ route, navigation }) {
       quality: 1,
     });
 
-    console.log(result.uri);
+    // console.log(result.uri);
 
     if (!result.cancelled) {
       setSubmit(!submit);
@@ -92,12 +94,13 @@ export default function UserProfileScreen({ route, navigation }) {
       //   setPhoto(imageUrl);
       // });
     } else {
-      setimageUri(result.uri);
+      console.log(result.uri);
+      if(result.uri) setimageUri(result.uri)
     }
   };
 
   const updateUser = () => {
-    console.log('uuid: ', uuid);
+    // console.log('uuid: ', uuid);
     firestore
       .collection("users")
       .doc(uuid)
@@ -111,7 +114,11 @@ export default function UserProfileScreen({ route, navigation }) {
         //   Toast.LONG,
         //   Toast.CENTER
         // );
+        setUserName(userName);
+        // fullName = userName;
+        setPhotoUri(imageUri)
         setModalOpen(false);
+
       })
       .catch((error) => {
         // Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
@@ -119,6 +126,13 @@ export default function UserProfileScreen({ route, navigation }) {
   };
   useEffect(() => {
     // StatusBar.setHidden(true)
+    firestore.collection('users').doc(uuid).get().then(res => {
+      // console.log(res.data())
+      if(res.data()) {
+        setUserName(res.data().fullName);
+        setPhotoUri(res.data().photoURL);
+      }
+    })
   }, [])
 
   return (
@@ -126,6 +140,7 @@ export default function UserProfileScreen({ route, navigation }) {
       <SafeAreaView style={styles.areaView}>
         <View style={styles.topLevelView}>
           <Modal visible={modalOpen}>
+            <View style={ globalStyles.modalFullView }>
             <View style={globalStyles.modalContainer}>
               <View style={globalStyles.closeBtnContaainer}>
                 <EvilIcons
@@ -136,8 +151,9 @@ export default function UserProfileScreen({ route, navigation }) {
                 />
               </View>
               <View style={globalStyles.editprofileImgContainer}>
-                <Image
-                  source={{ uri: imageUri }}
+                
+                <LoaderImage
+                  uri={ imageUri }
                   style={globalStyles.uploadedImage}
                 />
                 {!submit ? (
@@ -149,11 +165,14 @@ export default function UserProfileScreen({ route, navigation }) {
                     color="#E3E3E3"
                   />
                 ) : (
-                  <ActivityIndicator
-                    style={{ alignSelf: "center", position: "absolute" }}
+                  <View  style={{ position: 'absolute', height: 200, width: 200, backgroundColor: 'rgba(200, 200, 200, .5)', justifyContent: 'center', alignContent: 'center' }}>
+                                      <ActivityIndicator
+                    style={{ }}
                     color="black"
-                    size="small"
+                    size="large"
                   />
+                  </View>
+
                 )}
               </View>
               <TextInput
@@ -168,14 +187,16 @@ export default function UserProfileScreen({ route, navigation }) {
                 <Text style={globalStyles.modalText}>Update</Text>
               </TouchableOpacity>
             </View>
+            </View>
+
           </Modal>
 
 
           <View style={styles.profileContainer}>
             <View style={globalStyles.profileImgContainer}>
-              {photoURL ? (
-                <Image
-                  source={{ uri: `${photoURL}` }}
+              {photoUri ? (
+                <LoaderImage
+                  uri={ photoUri }
                   style={globalStyles.profileImg}
                 />
               ) : (
@@ -186,7 +207,7 @@ export default function UserProfileScreen({ route, navigation }) {
                   style={globalStyles.profileImg}
                 />
               )}
-              <Text style={globalStyles.userNameText}>{fullName}</Text>
+              <Text style={globalStyles.userNameText}>{userName}</Text>
               <TouchableOpacity
                 onPress={() => setModalOpen(true)}
                 style={ styles.editBtn }

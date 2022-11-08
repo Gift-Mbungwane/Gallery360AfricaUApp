@@ -32,11 +32,11 @@ const TabNavigator = () => {
 };
 
 export default TabNavigator;
-console.log(Platform);
+// console.log(Platform);
 const statusBarHeight = StatusBar.currentHeight ? StatusBar.currentHeight : 0
 const paddingTop = Platform.OS === 'android' || Platform.OS === 'web' ? 60 + statusBarHeight: 0
 const navBarHeight = Dimensions.get('screen').height - Dimensions.get('window').height - StatusBar.currentHeight;
-    console.log(navBarHeight);
+    // console.log(navBarHeight);
 const styles = StyleSheet.create({
     container: {
         // top: -20,

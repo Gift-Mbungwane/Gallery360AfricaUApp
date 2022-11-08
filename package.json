@@ -1,5 +1,5 @@
 {
-  "name": "gallery360africa",
+  "name": "g360",
   "version": "1.0.0",
   "scripts": {
     "start": "expo start --dev-client",

@@ -134,7 +134,7 @@ const image = require("../assets/images/home.png");
 const statusBarHeight = StatusBar.currentHeight ? StatusBar.currentHeight : 0
 const paddingTop = Platform.OS === 'android' || Platform.OS === 'web' ? 60 + statusBarHeight: 0
 const navBarHeight = Dimensions.get('screen').height - Dimensions.get('window').height - StatusBar.currentHeight;
-    console.log({ paddingTop });
+    // console.log({ paddingTop });
 const styles = StyleSheet.create({
   container: {
     // top: -20,

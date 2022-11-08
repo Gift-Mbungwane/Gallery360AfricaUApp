@@ -115,7 +115,7 @@ function CommentsModal({
     outputRange: [1000, 1000 - 720],
   });
   return (
-    <Modal animationType="fade" transparent={true} visible={isVisible} style={{ }}>
+    <Modal animationType="fade" transparent={true} visible={isVisible} style={{ minHeight: 500 }}>
       <KeyboardAvoidingView
         style={{
           flex: 1,
@@ -141,6 +141,7 @@ function CommentsModal({
           />
         </TouchableWithoutFeedback>
         <Animated.View
+          onPress={ () => {Keyboard.dismiss}}
           style={{
             position: "absolute",
             left: 0,
@@ -151,10 +152,13 @@ function CommentsModal({
             padding: 0,
             borderTopRightRadius: 24,
             borderTopLeftRadius: 24,
-            backgroundColor: "#fff"
+            backgroundColor: "#fff",
+            minHeight: 320,
+            
+            // maxHeight: 300
           }}
         >
-          <View style={{ flex: 6, paddingHorizontal: 0 }}>
+          <View style={{ flex: 6, paddingHorizontal: 0 }} onPress={ () => Keyboard.dismiss }>
             {/* <View style={{ height: 40, justifyContent: 'center'}}>
 
             </View> */}
@@ -264,11 +268,11 @@ function CommentsModal({
                   }}
                 >
                   {/* <Entypo style={{alignSelf: 'center'}} name="emoji-happy" color="#000" size={25}/> */}
-                  <TouchableOpacity onPress={addComments}>
+                  <TouchableOpacity onPress={addComments} disabled={ com.trim() === '' }>
                     <MaterialCommunityIcons
                       style={{ alignSelf: "center", marginVertical: 7 }}
                       name="send-outline"
-                      color="#000"
+                      color={ com.trim() === '' ? 'rgb(200,200,200)' : '#000' }
                       size={30}
                     />
                   </TouchableOpacity>

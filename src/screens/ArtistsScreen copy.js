@@ -14,9 +14,18 @@ import { globalStyles } from "../assets/styles/GlobalStyles";
 import { Ionicons } from "@expo/vector-icons";
 import { firestore, auth } from "../../Firebase";
 import Carousel from "react-native-snap-carousel";
-import LoaderImage from "../assets/components/LoaderImage";
 
-export default function ArtistsScreen({ navigation }) {
+export default function ArtistsScreen() {
+  return (
+    <View>
+      <Text>
+        Hi there
+      </Text>
+    </View>
+  )
+}
+
+function ArtistsScreens({ navigation }) {
   const SLIDER_WIDTH = Dimensions.get("window").width;
   const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.9);
   const ITEM_HEIGHT = Math.round((ITEM_WIDTH * 9) / 5);
@@ -24,7 +33,7 @@ export default function ArtistsScreen({ navigation }) {
   const [artist, setArtist] = useState([]);
 
   const getArtist = () => {
-    return firestore.collection("artists").orderBy("timeStamp", "desc").onSnapshot((snapShot) => {
+    return firestore.collection("artists").onSnapshot((snapShot) => {
       const allArtists = snapShot.docs.map((docSnap) => docSnap.data());
 
       setArtist(allArtists);
@@ -40,7 +49,7 @@ export default function ArtistsScreen({ navigation }) {
   const _renderItem = ({ item, index }) => {
     return (
       <View>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={() =>
             navigation.navigate("ArtistProfile", {
               description: item.description,
@@ -50,8 +59,8 @@ export default function ArtistsScreen({ navigation }) {
             })
           }
         >
-          <LoaderImage
-            uri={ item.photoUrl }
+          <Image
+            source={{ uri: item.photoUrl }}
             style={{ width: ITEM_WIDTH, height: ITEM_HEIGHT, borderRadius: 16 }}
           />
           <View
@@ -69,41 +78,15 @@ export default function ArtistsScreen({ navigation }) {
             <Text style={globalStyles.artNameTxt}>{item.artistName}</Text>
             <Text style={globalStyles.artTypeTxt}>Artist</Text>
           </View>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     );
   };
-
   return (
-    <ImageBackground
-      source={imageBg}
-      resizeMode="stretch"
-      style={globalStyles.container}
-    >
-      <View style={globalStyles.container}>
-        <View style={globalStyles.homeBody1}>
-          <SafeAreaView
-            style={{
-              width: "100%",
-              alignItems: "center",
-              alignSelf: "center",
-            }}
-          >
-            <Carousel
-              data={artist}
-              initialNumToRender={1}
-              windowSize={1}
-              sliderWidth={SLIDER_WIDTH}
-              itemWidth={ITEM_WIDTH}
-              renderItem={_renderItem}
-              onSnapToItem={(index) => setState({ index })}
-              useScrollView={false}
-            />
-          </SafeAreaView>
-        </View>
-      </View>
-    </ImageBackground>
-  );
+    <View style={{ flex: 1, justifyContent: 'center'}}>
+      {/* <Text>Hi</Text> */}
+    </View>
+  )
 }
 
 const imageBg = require("../assets/images/home.png");

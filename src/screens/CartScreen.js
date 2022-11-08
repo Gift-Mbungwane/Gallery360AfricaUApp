@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
-  ScrollView,
   Alert,
   Platform,
   StatusBar,
@@ -169,7 +168,7 @@ export default function CartScreen({ navigation, route }) {
     //   "https://gallery-360-africa.web.app/Payment" +
     //     `?id=${auth.currentUser.uid}`
     // );
-    let webResult = await WebBrowser.openBrowserAsync("https://gallery-360-africa.web.app/Payment" + `;id=${uid}`);
+    let webResult = await WebBrowser.openBrowserAsync(`https://gallery-360-africa.web.app/Payment/${uid}`);
     setResult(webResult);
     return;
     // const uid = auth.currentUser.uid;

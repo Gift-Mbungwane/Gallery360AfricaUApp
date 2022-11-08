@@ -9,11 +9,13 @@ import {
   SafeAreaView,
   Dimensions,
   Image,
+  BackHandler,
 } from "react-native";
 import { globalStyles } from "../assets/styles/GlobalStyles";
 import { Ionicons } from "@expo/vector-icons";
 import { firestore, auth } from "../../Firebase";
 import Carousel from "react-native-snap-carousel";
+import { StackActions } from "@react-navigation/native";
 
 export default function ArtWorksScreen({ route, navigation }) {
   const SLIDER_WIDTH = Dimensions.get("window").width;
@@ -38,6 +40,11 @@ export default function ArtWorksScreen({ route, navigation }) {
   useEffect(() => {
     getArt();
     // return () => getArt();
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", () =>{
+      const popAction = StackActions.pop(1);
+      navigation.dispatch(popAction);
+    })
+    return () => backHandler.remove()
   }, []);
 
   const _renderItem = ({ item, index }) => {

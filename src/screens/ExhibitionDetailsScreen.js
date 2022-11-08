@@ -11,6 +11,7 @@ import {
   Linking,
   ActivityIndicator,
   Platform,
+  Image
 } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 import { firestore, auth } from "../../Firebase";
@@ -19,7 +20,7 @@ import Constants from "expo-constants";
 // import Toast from "react-native-simple-toast";
 
 const STATUSBAR_HEIGHT = StatusBar.currentHeight;
-
+const LocationIcon = require('../assets/images/location.png')
 export default function ExhibitionDetailsScreen({ route, navigation }) {
   const [ExhibitionDetails, setExhibitionDetails] = useState(null);
   const [exhibitionUidState, setExhibitionUid] = useState("");
@@ -101,7 +102,7 @@ export default function ExhibitionDetailsScreen({ route, navigation }) {
 
   const likesState = async () => {
     const uid = auth.currentUser.uid;
-    console.log({ exhibitionUid, uid});
+    console.log({ exhibitionUid, uid });
     return await firestore
       .collection("exhibition")
       .doc(exhibitionUid)
@@ -186,7 +187,7 @@ export default function ExhibitionDetailsScreen({ route, navigation }) {
           <Text
             style={{
               color: "#000000",
-              paddingBottom: 25,
+              paddingBottom: 10,
               fontSize: 25,
               fontWeight: "bold",
               alignSelf: "center",
@@ -199,27 +200,34 @@ export default function ExhibitionDetailsScreen({ route, navigation }) {
               color: "#000000",
               paddingBottom: 15,
               fontSize: 14,
-              alignSelf: "center",
+              alignSelf: "flex-start",
             }}
           >
             {date}
           </Text>
-          <Text
-            style={{
-              color: "#000000",
-              paddingBottom: 15,
-              fontSize: 14,
-              alignSelf: "center",
-            }}
-          >
-            {address}
-          </Text>
+          <View style={{ maxHeight: 60, flexDirection: 'row', gap: 10, marginBottom: 10 }}>
+            <Image source={LocationIcon} style={{ width: 40, height: 40, alignSelf: 'center' }}/>
+            <Text
+              style={{
+                color: "#000000",
+                // paddingBottom: 15,
+                marginLeft: 20,
+                fontSize: 14,
+                alignSelf: "center",
+              }}
+            >
+              {address}
+            </Text>
+          </View>
+
           <Text
             style={{
               color: "#000000",
               paddingBottom: 40,
               fontSize: 14,
-              width: "95%",
+              width: "100%",
+              // borderColor: 'red',
+              // borderWidth: 1,
               alignSelf: "center",
             }}
           >

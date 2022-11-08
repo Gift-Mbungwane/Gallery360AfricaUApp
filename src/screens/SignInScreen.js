@@ -109,14 +109,14 @@ export default function SignInScreen({ navigation }) {
               source={require("../assets/images/signIn/bg.png")}
               style={globalStyles.imageBack}
             >
-              <View style={{ flex: 1 }}>
+              <View style={{ flex: 4 }}>
                 <View style={styles.gallery360logo}>
                   <Image
                     source={require("../assets/images/signIn/SignInLogo.png")}
                   />
                 </View>
               </View>
-              <View style={{ flex: 1, marginBottom: 18 }}>
+              <View style={{ flex: 6, marginBottom: 0  }}>
                 <View>
                   <View style={{ marginLeft: 33, marginBottom: 15 }}>
                     <Text style={{ fontSize: 36, color: "#22180E" }}>

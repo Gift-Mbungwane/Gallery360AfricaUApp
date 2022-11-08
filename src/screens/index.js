@@ -26,6 +26,8 @@ import Home from "./Home"
 import NotificationScreen from './NotificationScreen'
 import ScrollScreen from "./ScrollScreen";
 import ForgotPasswordScreen from './ForgotPasswordScreen'
+import TestScreen  from './TestScreen'
+import ArtistsScreenCopy from "./ArtistsScreen";
 
 export {
     UserSettingsScreen,
@@ -38,5 +40,5 @@ export {
     ArtWorksScreen, ArtistsScreen, SignUpScreen,
     SignInScreen, OnboardingScreen, SplashScreen, UserProfileScreen, SearchScreen, PreviewMoreScreen,PreviewScreen,
     TermsAndConditionsScreen, ShippingAddressScreen, DeliveryAddressScreen,
-    PayPalPaymentScreen, PaymentFailureScreen, PaymentSuccessScreen, Home, NotificationScreen, ScrollScreen, ForgotPasswordScreen
+    PayPalPaymentScreen, PaymentFailureScreen, PaymentSuccessScreen, Home, NotificationScreen, ScrollScreen, ForgotPasswordScreen, TestScreen, ArtistsScreenCopy
 }

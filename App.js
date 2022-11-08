@@ -6,7 +6,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { firestore, auth } from "./Firebase";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-// screens
+
 import {
   FontAwesome,
   MaterialCommunityIcons,
@@ -20,7 +20,7 @@ import { globalStyles } from "./src/assets/styles/GlobalStyles";
 import {
   UserSettingsScreen, CartScreen, ExhibitionDetailsScreen, ExhibitionScreen, ArtistProfileScreen, MarketScreen, ArtPreviewScreen, ArtWorksScreen, ArtistsScreen, SignUpScreen,
   SignInScreen, OnboardingScreen, SplashScreen, UserProfileScreen, SearchScreen, PreviewMoreScreen, PreviewScreen, TermsAndConditionsScreen, ShippingAddressScreen, DeliveryAddressScreen,
-  PayPalPaymentScreen, PaymentFailureScreen, PaymentSuccessScreen, NotificationScreen, ScrollScreen, ForgotPasswordScreen
+  PayPalPaymentScreen, PaymentFailureScreen, PaymentSuccessScreen, NotificationScreen, ScrollScreen, ForgotPasswordScreen, TestScreen, ArtistsScreenCopy
 }
   from './src/screens';
 import Home from './src/screens/Home';
@@ -102,7 +102,7 @@ export default function App({ navigation }) {
 
         }, (err) => {
           if (err.message === 'Failed to get document because the client is offline.') {
-            console.log(err.message);
+            // console.log(err.message);
           }
         })
 
@@ -116,7 +116,7 @@ export default function App({ navigation }) {
             setCartItem(cartItems);
           }, (err) => {
             if (err.message === 'Failed to get document because the client is offline.') {
-              console.log(err.message);
+              // console.log(err.message);
             }
           });
       } else {
@@ -134,16 +134,16 @@ export default function App({ navigation }) {
         .signOut()
         .then(() => {
           // Toast.show("You have signed out!", Toast.LONG, Toast.CENTER);
-          console.log(isLoggedIn);
+          // console.log(isLoggedIn);
           if (typeof isLoggedIn === 'boolean') {
-            console.log(isLoggedIn);
+            // console.log(isLoggedIn);
             toggleUserState(false)
           }
 
         })
         .catch((error) => alert(error));
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toggleUserState(false)
     }
   };
@@ -152,14 +152,14 @@ export default function App({ navigation }) {
   }, [imageLink])
   useEffect(() => {
     if (typeof isLoggedIn === 'boolean') {
-      console.log('isLogged in is a boolean: ', isLoggedIn);
+      // console.log('isLogged in is a boolean: ', isLoggedIn);
       // setUserStateBln(isLoggedIn)
     } else if (typeof isLoggedIn === 'undefined') {
-      console.log('isLogged in is undefined');
+      // console.log('isLogged in is undefined');
       AsyncStorage.setItem('isLoggedIn', JSON.stringify(false))
       // setUserStateBln(false)
     } else if (typeof isLoggedIn === 'object' || typeof isLoggedIn.then === 'function') {
-      console.log('isLoggedIn is a promise');
+      // console.log('isLoggedIn is a promise');
     }
   }, [isLoggedIn])
   const uuid = auth?.currentUser?.uid;
@@ -168,12 +168,12 @@ export default function App({ navigation }) {
     try {
       // await AsyncStorage.setItem('isLoggedIn', JSON.stringify(false));
       const val = await AsyncStorage.getItem('isLoggedIn');
-      console.log('val of loggedIn: ', val);
+      // console.log('val of loggedIn: ', val);
       if (isLoggedIn !== JSON.parse(val)) {
         setUserState(JSON.parse(val))
       }
     } catch (error) {
-      console.warn(error);
+      // console.warn(error);
       if (isLoggedIn !== false) {
         AsyncStorage.setItem('isLoggedIn')
         setUserState(false)
@@ -196,7 +196,7 @@ export default function App({ navigation }) {
       setInitialName(bln ? 'Home' : 'SignIn');
       setUserState(bln);
     } catch (error) {
-      console.warn(error);
+      // console.warn(error);
     }
   }
   const deactivateSplash = (bln = null) => {
@@ -417,6 +417,7 @@ export default function App({ navigation }) {
                       ),
                     })}
                   />
+
                   <Stack.Screen
                     name="ArtScroll"
                     component={ScrollScreen}
@@ -468,11 +469,22 @@ export default function App({ navigation }) {
                     name="PayPalPayment"
                     component={PayPalPaymentScreen}
                   />
+                                    <Stack.Screen 
+                    name="Test"
+                    component={TestScreen}
+                    options={({ navigation, route }) => ({
+                      headerTransparent: true,
+                      headerTintColor: "#fff",
+                      headerBackTitleVisible: false,
+                      headerBackVisible: false })}
+                    
+                  />
                   <Stack.Screen
                     options={({ navigation }) => ({
                       headerTransparent: true,
                       headerTintColor: "black",
-                      headerTitleStyle: "black",
+                      headerBackTitleVisible: false,
+                      headerBackVisible: false,
                       headerLeft: (props) => (
                         <BackIcon navigation={navigation} />
                       ),
@@ -539,7 +551,7 @@ export default function App({ navigation }) {
                         <BackIcon navigation={navigation} />
                       ),
                       headerRight: () => {
-                        console.log(LogoutIcon);
+                        // console.log(LogoutIcon);
                         return (
                           <TouchableOpacity style={{
                             height: 35,

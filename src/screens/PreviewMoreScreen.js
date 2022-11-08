@@ -15,6 +15,7 @@ import MasonryList from "@react-native-seoul/masonry-list";
 import { firestore } from "../../Firebase";
 
 import image from "../assets/images/home.png";
+import LoaderImage from "../assets/components/LoaderImage";
 
 function FurnitureCard({ item }) {
   const randomBool = useMemo(() => Math.random() < 0.5, []);
@@ -60,7 +61,7 @@ export default function PreviewMoreScreen({ route, navigation }) {
     // });
     // const art = docs.map(item => item.data())
     // return art
-    return firestore.collection('Market').orderBy('artName').onSnapshot(snapshot => {
+    return firestore.collection('Market').orderBy('timeStamp', 'desc').onSnapshot(snapshot => {
       const art = snapshot.docs.map( item => item.data());
       setArtwork(art)
       // return art
@@ -87,8 +88,8 @@ export default function PreviewMoreScreen({ route, navigation }) {
             })
           }
         >
-          <Image
-            source={{ uri: item.artUrl }}
+          <LoaderImage
+            uri={ item.artUrl }
             style={{
               height: height,
               alignSelf: "stretch",
@@ -103,7 +104,9 @@ export default function PreviewMoreScreen({ route, navigation }) {
           style={{
             marginTop: 5,
             alignSelf: "center",
-            marginBottom: 10
+            margin: 10,
+            marginTop: 5
+
           }}
         >
           {item.artName}
@@ -120,7 +123,7 @@ export default function PreviewMoreScreen({ route, navigation }) {
         style={styles.container}
       >
         {/* {console.log(datas, "the image of the thingy")} */}
-        <View style={{ marginTop: 0, height: viewHeight, width: viewWidth }}>
+        <View style={{ marginTop: 60, height: viewHeight, width: viewWidth }}>
         <MasonryList
           style={{ marginTop: 0 }}
           showsVerticalScrollIndicator={false}
@@ -141,12 +144,14 @@ export default function PreviewMoreScreen({ route, navigation }) {
   );
 }
 const statusBarHeight = StatusBar.currentHeight;
-const paddingOnTop = Platform.OS === 'android' || Platform.OS === 'web' ? 60 + statusBarHeight: 0
-console.log('bar height: ', statusBarHeight);
+console.log('padding: ', Platform.OS);
+const paddingOnTop = (Platform.OS === 'android' || Platform.OS === 'web') ? 60 + statusBarHeight: 0
+// console.log('bar height: ', statusBarHeight);
 const styles =StyleSheet.create({
   container: {
     height: "100%",
     width: "100%",
+    paddingTop: 60,
     paddingTop: paddingOnTop
     // backgroundColor: "red",
     // paddingBottom: 10

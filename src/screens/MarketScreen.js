@@ -11,6 +11,7 @@ import {
   ImageBackground,
   Platform,
   StatusBar,
+  ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import Carousel from "react-native-snap-carousel";
@@ -18,6 +19,7 @@ import Carousel from "react-native-snap-carousel";
 import { firestore } from "../../Firebase";
 import { globalStyles } from "../assets/styles/GlobalStyles";
 import Skeleton from "../assets/components/Skeleton";
+import LoaderImage from "../assets/components/LoaderImage";
 const background = require("../assets/images/home.png");
 //
 const SLIDER_WIDTH = Dimensions.get("window").width;
@@ -48,7 +50,7 @@ export default function MarketScreen({ navigation }) {
   const getArtist = () => {
     return firestore
       .collection("artists")
-      .orderBy("artistName")
+      .orderBy("timeStamp", "desc")
       .limit(3)
       .onSnapshot((snapShot) => {
         const allArtists1 = snapShot.docs.map((docSnap) => docSnap.data());
@@ -57,7 +59,7 @@ export default function MarketScreen({ navigation }) {
   };
 
   const getArtWorks = () => {
-    return firestore.collection('Market').orderBy('artName').limit(5).where('isEnabled', '==', true).onSnapshot((snapshot) => {
+    return firestore.collection('Market').orderBy("timeStamp", "desc").limit(5).where('isEnabled', '==', true).onSnapshot((snapshot) => {
       const art = snapshot.docs.map(item => ({ ...item.data(), isArt: true }))
 
       setArtwork([...art, { isArt: false, text: 'Show All' }])
@@ -132,17 +134,29 @@ export default function MarketScreen({ navigation }) {
             style={{
               height: ITEM_HEIGHT,
               maxHeight: ITEM_HEIGHT,
-              padding: 0
+              padding: 0,
+              // backgroundColor: 'red'
             }}
           >
-            <Image
+            {/* <Image
               source={{ uri: item.artUrl }}
+              placeholder
               style={{
                 width: ITEM_WIDTH,
                 height: ITEM_HEIGHT,
                 maxHeight: ITEM_HEIGHT,
                 borderRadius: 16,
                 padding: 0
+              }}
+            /> */}
+            <LoaderImage
+              uri={ item.artUrl }
+              style={{
+                width: ITEM_WIDTH,
+                height: ITEM_HEIGHT,
+                maxHeight: ITEM_HEIGHT,
+                borderRadius: 16,
+                padding: 0,
               }}
             />
             <View
@@ -167,9 +181,9 @@ export default function MarketScreen({ navigation }) {
       )
     } else {
       return (
-        <View style={{ flexDirection: "row" }}>
+        <View style={{ flexDirection: "row", zIndex: 1 }}>
           <TouchableOpacity style={styles.showMoreTextOpacity} onPress={() => navigation.navigate("PreviewMore", { datas: data })} >
-            <Text style={styles.showMoreText}>Show All</Text>
+            <Text style={styles.showMoreText} numberOfLines={1}>Show All</Text>
           </TouchableOpacity>
         </View>
       )
@@ -185,6 +199,7 @@ export default function MarketScreen({ navigation }) {
     const getArtData = firestore
       .collection("Market")
       .where("status", "==", "approved")
+      .orderBy("timeStamp", "desc")
       .onSnapshot((snapshot) => {
         const snap = snapshot.docs.map((document) => document.data());
         setData(snap);
@@ -228,7 +243,7 @@ export default function MarketScreen({ navigation }) {
                 renderItem={({ item }) => {
                   return (
                     <View style={styles.artistCard}>
-                      <View style={[styles.artistsView, {padding: 0}]}>
+                      <View style={styles.artistsView}>
                         <Skeleton height={102} width={102} variant="rectangle" radius={10} style={ styles.artistImage }></Skeleton>
                       </View>
                         
@@ -242,7 +257,7 @@ export default function MarketScreen({ navigation }) {
 
         <>
           <View style={styles.body}>
-            <SafeAreaView
+            <View
               style={{
                 width: "100%",
                 alignItems: "center",
@@ -252,27 +267,22 @@ export default function MarketScreen({ navigation }) {
             >
               <Carousel
                 data={artwork}
+                initialNumToRender={1}
+                windowSize={1}
                 sliderWidth={SLIDER_WIDTH}
                 itemWidth={ITEM_WIDTH}
                 renderItem={_renderItem}
                 onSnapToItem={(index) => setState({ index })}
-                useScrollView={true}
+                useScrollView={false}
               />
 
-            </SafeAreaView>
+            </View>
           </View>
           <View style={styles.footer}>
             <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-              <FlatList
-                style={{ paddingLeft: 15 }}
-                horizontal
-                bounces={false}
-                showsHorizontalScrollIndicator={false}
-                data={artist}
-                keyExtractor={(item) => `${item.artistUid}`}
-                renderItem={({ item }) => {
-                  return (
-                    <View
+              { artist.map(item => {
+                return (
+                  <View
                       style={styles.artistCard}
                     >
                       <TouchableOpacity
@@ -297,9 +307,8 @@ export default function MarketScreen({ navigation }) {
                         </View>
                       </TouchableOpacity>
                     </View>
-                  );
-                }}
-              />
+                )
+              })}
               <TouchableOpacity onPress={() => navigation.navigate("Artists")}>
                 <View style={styles.showAll}>
                   <Text
@@ -318,113 +327,7 @@ export default function MarketScreen({ navigation }) {
     // </ImageBackground>
 
   );
-  return (
-    // <ImageBackground source={background} style={{height: Dimensions.get('window').height, width: Dimensions.get('window').width}}>
-    <View style={styles.container}>
-      {showPlaceholder ? (
-        <>
 
-          <View style={styles.body}>
-            <Carousel
-              data={[{}, {}]}
-              sliderWidth={SLIDER_WIDTH}
-              itemWidth={ITEM_WIDTH}
-              renderItem={_renderSkeletonItem}
-              onSnapToItem={(index) => setState({ index })}
-              useScrollView={false}
-              scrollEnabled={false}
-            />
-
-          </View>
-          <View style={styles.footer}>
-            <View style={{ paddingVertical: 20, paddingHorizontal: 20, flex: 1, flexDirection: "row" }}>
-              <Skeleton height={102} width={102} variant='rectangle' radius={20} style={{ marginHorizontal: 5 }} />
-              <Skeleton height={102} width={102} variant='rectangle' radius={20} style={{ marginHorizontal: 5 }} />
-              <Skeleton height={102} width={102} variant='rectangle' radius={20} style={{ marginHorizontal: 5 }} />
-
-            </View>
-
-          </View>
-        </>
-      ) : (
-        <>
-          <View style={styles.body}>
-            <SafeAreaView
-              style={{
-                width: "100%",
-                alignItems: "center",
-                alignSelf: "center",
-                flexDirection: "row",
-              }}
-            >
-              <Carousel
-                data={artwork}
-                sliderWidth={SLIDER_WIDTH}
-                itemWidth={ITEM_WIDTH}
-                renderItem={_renderItem}
-                onSnapToItem={(index) => setState({ index })}
-                useScrollView={true}
-              />
-
-            </SafeAreaView>
-          </View>
-          <View style={styles.footer}>
-            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-              <FlatList
-                style={{ paddingLeft: 15 }}
-                horizontal
-                bounces={false}
-                showsHorizontalScrollIndicator={false}
-                data={artist}
-                keyExtractor={(item) => `${item.artistUid}`}
-                renderItem={({ item }) => {
-                  return (
-                    <View
-                      style={styles.artistCard}
-                    >
-                      <TouchableOpacity
-                        onPress={() =>
-                          navigation.navigate("ArtistProfile", {
-                            description: item.description,
-                            artistUid: item.artistUid,
-                            photoUrl: item.photoUrl,
-                            artistName: item.artistName,
-                            videoUrl: item.videoUrl,
-                          })
-                        }
-                      >
-                        <View style={styles.artistsView}>
-                          <Image
-                            source={{ uri: item.photoUrl }}
-                            style={styles.artistImage}
-                          />
-                          <View style={styles.artistNameContainer}>
-                            <Text style={styles.ArtistName}>{item.artistName}</Text>
-                          </View>
-                        </View>
-                      </TouchableOpacity>
-                    </View>
-                  );
-                }}
-              />
-              <TouchableOpacity onPress={() => navigation.navigate("Artists")}>
-                <View style={styles.showAll}>
-                  <Text
-                    style={{ color: "gray", textAlign: "center", fontSize: 15 }}
-                  >
-                    Show {"\n"}All
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            </ScrollView>
-          </View>
-        </>
-      )}
-
-    </View>
-    // </ImageBackground>
-
-  );
 }
 const paddingTop = Platform.OS === 'android' ? 60 : 0
 const styles = StyleSheet.create({
@@ -556,6 +459,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 15,
     marginVertical: 2,
     fontSize: 28,
+    paddingRight: 30
     // alignSelf: "flex-end",
 
 

@@ -43,11 +43,29 @@ export default function ArtPreviewScreen({ route, navigation }) {
   const [description, setDescription] = useState("");
   const [artUrl, setArtUrl] = useState("");
   const [itemOnCart, setItemOnCart] = useState(false)
+  const [defaultImg] = useState('https://via.placeholder.com/150/0000FF/808080%20?Text=Digital.comC/O%20https://placeholder.com/')
+  const [artHeight, setArtHeight] = useState(2);
+  const [artWidth, setArtWidth] = useState(2);
   console.log({ ...route.params });
   const { artistUid, imageUID } = route.params;
 
-  const [Data] = useState([{ photoURL, FullName, imageUID, title: 'why' },{ photoURL, FullName, imageUID, title: 'why' },{ photoURL, FullName, imageUID, title: 'why' }])
+  const [Data] = useState([{ photoURL, FullName, imageUID, title: 'why' }, { photoURL, FullName, imageUID, title: 'why' }, { photoURL, FullName, imageUID, title: 'why' }])
+  useEffect(() => {
+    try {
+      Image.getSize(artUrl, (width, height) => {
+        console.log({ width, height });
+        const screenWidth = Dimensions.get('window').width;
+        const scaleFactor = width / screenWidth;
+        const imgHeight = height / scaleFactor;
+        const imgWidth = width / scaleFactor;
+        setArtHeight(imgHeight)
+        setArtWidth(imgWidth)
+      })
+    } catch (error) {
+      
+    }
 
+  }, [artUrl])
   const getArtistDetailts = async () => {
     return firestore
       .collection("artists")
@@ -340,11 +358,25 @@ export default function ArtPreviewScreen({ route, navigation }) {
         style={styles.container}
       >
         <View style={globalStyles.tikTokContainer}>
-          {artUrl !== '' && <Image
-            source={{ uri: `${artUrl}` }}
-            resizeMode="cover"
-            style={globalStyles.video}
-          />}
+          {
+            artUrl !== '' && (
+              <>
+                <Image
+                  source={{ uri: `${artUrl}` }}
+                  resizeMode="cover"
+                  style={{ position: 'absolute', top: 0, height: 1000, width: 1000, zIndex: -1 }}
+                  blurRadius={150}
+                />
+                <Image
+                  source={{ uri: `${artUrl}` }}
+                  resizeMode="cover"
+                  style={{ position: 'absolute', top: artHeight / 2, height: artHeight, width: artWidth, zIndex: 0 }}
+                />
+
+              </>
+
+            )
+          }
           {displayContent ? (
             <View style={globalStyles.uiContainer}>
               {isModalVisible && (
@@ -357,27 +389,29 @@ export default function ArtPreviewScreen({ route, navigation }) {
                 />
               )}
               <View style={globalStyles.rightContainer}>
-                {following === true ? (
-                  <View>
-                    <TouchableOpacity
-                      style={{ marginVertical: 0 }}
-                      title="following"
-                      onPress={onUnFollowing}
-                    >
-                      <FontAwesome name="user-times" size={30} color={"#40e0d0"} />
-                    </TouchableOpacity>
-                  </View>
-                ) : (
-                  <View>
-                    <TouchableOpacity
-                      style={{ marginVertical: 0 }}
-                      title="following"
-                      onPress={onFollow}
-                    >
-                      <FontAwesome name="user-plus" size={30} color={"#F5F5F5"} />
-                    </TouchableOpacity>
-                  </View>
-                )}
+                {/* {
+                  following === true ? (
+                    <View>
+                      <TouchableOpacity
+                        style={{ marginVertical: 0 }}
+                        title="following"
+                        onPress={onUnFollowing}
+                      >
+                        <FontAwesome name="user-times" size={30} color={"#40e0d0"} />
+                      </TouchableOpacity>
+                    </View>
+                  ) : (
+                    <View>
+                      <TouchableOpacity
+                        style={{ marginVertical: 0 }}
+                        title="following"
+                        onPress={onFollow}
+                      >
+                        <FontAwesome name="user-plus" size={30} color={"#F5F5F5"} />
+                      </TouchableOpacity>
+                    </View>
+                  )
+                } */}
 
                 <TouchableOpacity
                   style={{ marginVertical: 0 }}
@@ -453,27 +487,38 @@ export default function ArtPreviewScreen({ route, navigation }) {
                         })
                       }
                     >
-                      {artistPhoto !== '' && <Image
-                        source={{ uri: `${artistPhoto}` }}
+                      <Image
+                        source={{ uri: artistPhoto !== '' ? `${artistPhoto}` : defaultImg }}
                         style={globalStyles.artistImg}
-                      />}
+                      />
                     </TouchableOpacity>
 
                     <View
                       style={{
                         marginHorizontal: 10,
-                        marginVertical: 7,
+                        marginVertical: 0,
                         width: "80%",
+                        // borderColor: 'red',
+                        // borderWidth: 1,
+                        // height: 500,
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        alignContent: 'center'
                       }}
                     >
-                      <Text style={globalStyles.artistName}>{artistName}</Text>
+
 
                       <View
                         style={{
-                          flexDirection: "row",
+                          flexDirection: "column",
                           justifyContent: "space-between",
+                          // borderColor: 'yellow',
+                          flex: 8,
+                          // borderWidth: 1
                         }}
                       >
+                        <Text style={globalStyles.artistName}>{artistName}</Text>
                         <Text
                           style={{
                             color: "#F5F5F5",
@@ -482,22 +527,29 @@ export default function ArtPreviewScreen({ route, navigation }) {
                           {artType}
                         </Text>
 
-                        <Text
-                          style={{
-                            color: "#F5F5F5",
-                            paddingTop: 0,
-                            fontWeight: "bold",
-                          }}
-                        >
-                          {`R${price}.00`}
-                        </Text>
-                      </View>
 
+                      </View>
+                      <Text
+                        style={{
+                          color: "#F5F5F5",
+                          paddingTop: 0,
+                          fontWeight: "bold",
+                          minWidth: 50,
+                          // alignSelf: 'flex-end',
+                          textAlign: 'right',
+                          // borderColor: 'red',
+                          // borderWidth: 1,
+                          flex: 2
+                        }}
+                      >
+                        {`R${price}.00`}
+                      </Text>
                       <Text
                         style={{
                           fontSize: 11,
                           paddingTop: 3,
                           color: "#F5F5F5",
+                          display: 'none'
                         }}
                       >
                         {artSize ? (
@@ -548,7 +600,7 @@ export default function ArtPreviewScreen({ route, navigation }) {
                         width: "80%",
                       }}
                     >
-                      <Text style={globalStyles.artistName}>{artistName}</Text>
+                      <Text style={globalStyles.artistName}>{artistName !== '' ? artistName : 'Artist'}</Text>
                     </View>
                   </View>
                 </View>
@@ -560,8 +612,8 @@ export default function ArtPreviewScreen({ route, navigation }) {
     )
 
   }
-  return(
-    <RenderScrollView photoURL={photoURL} FullName={FullName} imageUID={imageUID} style={{ borderColor: 'red', borderWidth: 1}} />
+  return (
+    <RenderScrollView photoURL={photoURL} FullName={FullName} imageUID={imageUID} style={{ borderColor: 'red', borderWidth: 1 }} />
   )
   return (
     <View style={styles.container}>
@@ -618,7 +670,7 @@ const paddingOnTop = Platform.OS === 'android' || Platform.OS === 'web' ? 60 + s
 // const navBarHeight
 const styles = StyleSheet.create({
   container: {
-    width: "100%", height: Dimensions.get('window').height, overflow:'hidden',
+    width: "100%", height: Dimensions.get('window').height, overflow: 'hidden',
     // paddingTop: paddingOnTop
     top: statusBarHeight
   },

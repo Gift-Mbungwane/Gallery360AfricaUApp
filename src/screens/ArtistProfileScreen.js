@@ -7,11 +7,11 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
-  ScrollView,
   SafeAreaView,
   Dimensions,
   StatusBar,
   Platform,
+  ActivityIndicator,
 } from "react-native";
 // import Toast from "react-native-simple-toast";
 //
@@ -24,22 +24,23 @@ import VideoPlayer from "expo-video-player";
 //
 export default function ArtistProfileScreen({ route, navigation }) {
   //
-  const { artistUid, photoUrl, artistName, description, videoUrl } =
-    route.params;
-
+  const { artistUid, photoUrl, artistName, description } = route.params;
+  // console.log('params: ', route.params)
   //
   const [playing, setPlaying] = useState(false);
   const [isMute, setMute] = useState(false);
   const [followingBoolean, setFollowingBoolean] = useState(false);
   const [following, setFollowing] = useState("");
   const [photoURL, setPhotoURL] = useState(null);
+  const [videoUrl, setVideoUrl] = useState(null)
   const [FullName, setFullName] = useState(null);
   const [art, setArt] = useState(null);
   const [size, setSize] = useState(0);
   const [videoViewSize, setVideoViewSize] = useState(100)
-
+  const video = useRef(null)
   const controlRef = useRef();
   const videoViewRef = useRef(null);
+  const [status, setStatus] = React.useState({});
 
   //  video
   const onStateChange = (state) => {
@@ -67,7 +68,25 @@ export default function ArtistProfileScreen({ route, navigation }) {
         setArt(allArt);
       });
   };
-
+  const getArtistData = () => {
+    console.log('data: ', artistUid)
+    return firestore.collection('artists').doc(artistUid).get().then( doc => {
+      
+      if(doc.exists) {
+        console.log('data exists')
+        setVideoUrl(doc.data().introClip ? doc.data().introClip : 'no video')
+        // setVideoUrl(doc.data().videoUrl)
+      } else {
+        console.log('data does not exist')
+      }
+      console.log(doc.data())
+    }).catch( err => {
+      console.log(err)
+    })
+  }
+  useEffect( () => {
+    console.log('url: ', videoUrl)
+  }, [videoUrl])
   const getNumberOfImage = async () => {
     // console.log('artistUid: ', artistUid);
     return await firestore
@@ -170,6 +189,7 @@ export default function ArtistProfileScreen({ route, navigation }) {
     getArt();
     getNumberOfImage();
     followState();
+    getArtistData();
     // const ref = videoViewRef.current
     // console.log('ref: ', ref.contentSizeChange);
     // return () => followState();
@@ -177,12 +197,12 @@ export default function ArtistProfileScreen({ route, navigation }) {
     // return () => getNumberOfImage();
     setTimeout(() => {
       console.log(VideoPlayer);
-      console.log(videoViewRef.current.playAsync())
+      // console.log(videoViewRef.current.playAsync())
     }, 3000)
 
     return () => {
       console.log(Video);
-      videoViewRef.current.pauseAsync()
+      // videoViewRef.current.pauseAsync()
     }
   }, []);
   useEffect(() => {
@@ -194,6 +214,13 @@ export default function ArtistProfileScreen({ route, navigation }) {
     console.log(size);
     setVideoViewSize(size)
   }
+  const CenterMarginView = ({children}) => {
+    return (
+      <View style={{ justifyContent: 'center', alignItems: 'center'}}>
+        {children}
+      </View>
+    )
+  } 
   return (
     <ImageBackground
       source={imageBg}
@@ -201,7 +228,7 @@ export default function ArtistProfileScreen({ route, navigation }) {
       style={styles.container}
     >
       <View style={styles.TopContainer} >
-        <View onLayout={(e) => setVideoSize(e.nativeEvent.layout.height)} style={{ marginVertical: 0, padding: 0, width: Dimensions.get('window').width, height: '100%', flexDirection: 'column', justifyContent: 'center', alignContent: 'center', backgroundColor: 'black', marginVertical: 'auto' /* overflow: 'hidden' */ }}>
+        <View onLayout={(e) => setVideoSize(e.nativeEvent.layout.height)} style={{ marginVertical: 0, padding: 0, width: Dimensions.get('window').width, height: '100%', flexDirection: 'column', justifyContent: 'center', alignContent: 'center', backgroundColor: '#000', marginVertical: 'auto' /* overflow: 'hidden' */ }}>
           {/* <VideoPlayer
             defaultControlsVisible={true}
 
@@ -216,18 +243,42 @@ export default function ArtistProfileScreen({ route, navigation }) {
               },
             }}
           /> */}
-          <Video
-            style={{zIndex: 10000, height: videoViewSize}}
-            ref={videoViewRef}
-            // style={{ height: videoViewSize, maxWidth: '100%', padding: 0, alignSelf: 'center' }}
-            // style={{ height: videoViewSize, backgroundColor: 'yellow'}}
-            shouldPlay={false}
-            useNativeControls
-            resizeMode={ResizeMode.CONTAIN}
-            source={{
-              uri: videoUrl,
-            }}
-          />
+          { !videoUrl ? (
+            <CenterMarginView>
+              <ActivityIndicator size="large" color='white'/>
+            </CenterMarginView>
+            ) : videoUrl === 'no video' ? (
+              <CenterMarginView>
+                <Text style={{ color: 'white', fontSize: 24 }}>No video found</Text>
+              </CenterMarginView>
+            ) : (
+              <Video
+                      style={{ zIndex: 10000, flex: 1 }}
+                      ref={videoViewRef}
+                      // style={{ height: videoViewSize, maxWidth: '100%', padding: 0, alignSelf: 'center' }}
+                      // style={{ height: videoViewSize, backgroundColor: 'yellow'}}
+                      shouldPlay={false}
+                      useNativeControls
+                      resizeMode='contain'
+                      source={{
+                        uri: videoUrl,
+                        // uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4'
+                      }}
+                    />
+            )}
+
+
+                {/* <Video
+        ref={video}
+        style={{ height: 100, width: 100}}
+        source={{
+          uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4',
+        }}
+        useNativeControls
+        resizeMode="contain"
+        isLooping
+        onPlaybackStatusUpdate={status => setStatus(() => status)}
+      /> */}
           {/* <Text style={{ backgroundColor: 'yellow'}}>Hi</Text> */}
         </View>
       </View>
@@ -377,8 +428,8 @@ export default function ArtistProfileScreen({ route, navigation }) {
 const imageBg = require("../assets/images/home.png");
 const statusBarHeight = StatusBar.currentHeight;
 const paddingOnTop = Platform.OS === 'android' ? 60 + statusBarHeight : 60
-console.log({ paddingOnTop });
-console.log('here is the fact');
+// console.log({ paddingOnTop });
+// console.log('here is the fact');
 // console.log('bar height: ', statusBarHeight);
 const styles = StyleSheet.create({
   container: {
