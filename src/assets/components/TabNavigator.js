@@ -45,8 +45,8 @@ const styles = StyleSheet.create({
         width: "100%", 
         paddingTop: paddingTop,
         paddingBottom: Platform.OS === 'android' ? navBarHeight : 0,
-        // borderWidth: 1,
-        // borderColor: 'red',
+        borderWidth: 1,
+        borderColor: 'blue',
         // backgroundColor: 'blue',
         zIndex: 1
     },

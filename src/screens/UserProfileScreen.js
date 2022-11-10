@@ -280,7 +280,9 @@ const pageHeight = Dimensions.get('window').height
 const styles = StyleSheet.create({
   areaView: {
     height: viewHeight - 80,
-    paddingTop: 80
+    paddingTop: 80,
+    borderColor: 'blue',
+    borderWidth: 3
   },
   topLevelView: {
     height: viewHeight - 80,
@@ -291,7 +293,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     // borderColor: 'blue',
     // borderWidth: 1,
-    // backgroundColor: 'red'
+    backgroundColor: 'red'
     // height
   },
   editBtn: {
