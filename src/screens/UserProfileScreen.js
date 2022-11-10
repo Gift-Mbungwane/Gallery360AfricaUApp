@@ -95,7 +95,7 @@ export default function UserProfileScreen({ route, navigation }) {
       // });
     } else {
       console.log(result.uri);
-      if(result.uri) setimageUri(result.uri)
+      if (result.uri) setimageUri(result.uri)
     }
   };
 
@@ -128,7 +128,7 @@ export default function UserProfileScreen({ route, navigation }) {
     // StatusBar.setHidden(true)
     firestore.collection('users').doc(uuid).get().then(res => {
       // console.log(res.data())
-      if(res.data()) {
+      if (res.data()) {
         setUserName(res.data().fullName);
         setPhotoUri(res.data().photoURL);
       }
@@ -140,53 +140,53 @@ export default function UserProfileScreen({ route, navigation }) {
       <SafeAreaView style={styles.areaView}>
         <View style={styles.topLevelView}>
           <Modal visible={modalOpen}>
-            <View style={ globalStyles.modalFullView }>
-            <View style={globalStyles.modalContainer}>
-              <View style={globalStyles.closeBtnContaainer}>
-                <EvilIcons
-                  onPress={() => setModalOpen(false)}
-                  name="close"
-                  size={35}
-                  color="white"
-                />
-              </View>
-              <View style={globalStyles.editprofileImgContainer}>
-                
-                <LoaderImage
-                  uri={ imageUri }
-                  style={globalStyles.uploadedImage}
-                />
-                {!submit ? (
-                  <AntDesign
-                    onPress={() => openImageLibrary()}
-                    style={globalStyles.imgAddIcon}
-                    name="pluscircle"
+            <View style={globalStyles.modalFullView}>
+              <View style={globalStyles.modalContainer}>
+                <View style={globalStyles.closeBtnContaainer}>
+                  <EvilIcons
+                    onPress={() => setModalOpen(false)}
+                    name="close"
                     size={35}
-                    color="#E3E3E3"
+                    color="white"
                   />
-                ) : (
-                  <View  style={{ position: 'absolute', height: 200, width: 200, backgroundColor: 'rgba(200, 200, 200, .5)', justifyContent: 'center', alignContent: 'center' }}>
-                                      <ActivityIndicator
-                    style={{ }}
-                    color="black"
-                    size="large"
-                  />
-                  </View>
+                </View>
+                <View style={globalStyles.editprofileImgContainer}>
 
-                )}
+                  <LoaderImage
+                    uri={imageUri}
+                    style={globalStyles.uploadedImage}
+                  />
+                  {!submit ? (
+                    <AntDesign
+                      onPress={() => openImageLibrary()}
+                      style={globalStyles.imgAddIcon}
+                      name="pluscircle"
+                      size={35}
+                      color="#E3E3E3"
+                    />
+                  ) : (
+                    <View style={{ position: 'absolute', height: 200, width: 200, backgroundColor: 'rgba(200, 200, 200, .5)', justifyContent: 'center', alignContent: 'center' }}>
+                      <ActivityIndicator
+                        style={{}}
+                        color="black"
+                        size="large"
+                      />
+                    </View>
+
+                  )}
+                </View>
+                <TextInput
+                  placeholder="Edit Username"
+                  onChangeText={(fullName) => setUserName(fullName)}
+                  style={globalStyles.editUserInput}
+                />
+                <TouchableOpacity
+                  style={globalStyles.updateBtn}
+                  onPress={updateUser}
+                >
+                  <Text style={globalStyles.modalText}>Update</Text>
+                </TouchableOpacity>
               </View>
-              <TextInput
-                placeholder="Edit Username"
-                onChangeText={(fullName) => setUserName(fullName)}
-                style={globalStyles.editUserInput}
-              />
-              <TouchableOpacity
-                style={globalStyles.updateBtn}
-                onPress={updateUser}
-              >
-                <Text style={globalStyles.modalText}>Update</Text>
-              </TouchableOpacity>
-            </View>
             </View>
 
           </Modal>
@@ -194,23 +194,26 @@ export default function UserProfileScreen({ route, navigation }) {
 
           <View style={styles.profileContainer}>
             <View style={globalStyles.profileImgContainer}>
-              {photoUri ? (
-                <LoaderImage
-                  uri={ photoUri }
-                  style={globalStyles.profileImg}
-                />
-              ) : (
-                <Image
-                  source={{
-                    uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTet-jk67T6SYdHW04eIMLygHzEeJKobi9zdg&usqp=CAU",
-                  }}
-                  style={globalStyles.profileImg}
-                />
-              )}
+              <View style={{ position: 'absolute', height: '90%', aspectRatio: 1, top: '-45%' }}>
+                {photoUri ? (
+                  <LoaderImage
+                    uri={photoUri}
+                    style={globalStyles.profileImg}
+                  />
+                ) : (
+                  <Image
+                    source={{
+                      uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTet-jk67T6SYdHW04eIMLygHzEeJKobi9zdg&usqp=CAU",
+                    }}
+                    style={globalStyles.profileImg}
+                  />
+                )}
+              </View>
+
               <Text style={globalStyles.userNameText}>{userName}</Text>
               <TouchableOpacity
                 onPress={() => setModalOpen(true)}
-                style={ styles.editBtn }
+                style={styles.editBtn}
               >
                 <Text style={globalStyles.btnText}>Edit Profile</Text>
               </TouchableOpacity>
@@ -235,10 +238,10 @@ export default function UserProfileScreen({ route, navigation }) {
                   left: 10
                 }}
               />
-              <Text style={ styles.optionsText }>
+              <Text style={styles.optionsText}>
                 My Cart
               </Text>
-              </TouchableOpacity>
+            </TouchableOpacity>
 
             <TouchableOpacity
               onPress={() => navigation.navigate("TermsAndConditions")}
@@ -258,7 +261,7 @@ export default function UserProfileScreen({ route, navigation }) {
             </TouchableOpacity>
 
             <View style={styles.options}>
-              <Text style={ styles.optionsText }>
+              <Text style={styles.optionsText}>
                 App Version
               </Text>
               <Text style={{ color: "gray", fontSize: 12 }}>v1.0.0</Text>
@@ -316,6 +319,6 @@ const styles = StyleSheet.create({
     // borderWidth: 1
   },
   optionsText: {
-    color: "#0E1822", fontSize: 16, fontWeight: "600" 
+    color: "#0E1822", fontSize: 16, fontWeight: "600"
   }
 })

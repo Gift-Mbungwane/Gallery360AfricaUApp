@@ -637,12 +637,16 @@ const globalStyles = StyleSheet.create({
   },
 
   profileImg: {
-    position: 'absolute',
-    height: '90%',
-    aspectRatio: 1,
+    // position: 'relative',
+    // flex: 1,
+    height: '100%',
+    width: '100%',
+    // borderColor: 'red',
+    // borderWidth: 1,
+    // aspectRatio: 1,
     // height: '90%',
     borderRadius: 300,
-    top: '-45%',
+    // top: '-45%',
     // bottom: 150,
     // marginBottom: -150
   },
@@ -651,6 +655,7 @@ const globalStyles = StyleSheet.create({
     marginBottom: 20,
     width: "80%",
     height: '65%',
+    
     borderRadius: 15,
     flexDirection: 'column',
     alignContent: 'flex-end',

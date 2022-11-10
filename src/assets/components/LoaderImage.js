@@ -5,10 +5,11 @@ import { Image } from 'react-native-elements'
 const LoaderImage = ({ uri, style }) => {
     return (
         <Image
-            source={uri}
+            source={{ uri }}
             placeholderStyle={{ backgroundColor: 'rgb(200, 200, 200)' }}
             PlaceholderContent={<ActivityIndicator size="large" color={"#000"} />}
-            style={ style }
+            containerStyle={ style }
+            // style={ style }
         />
     )
 }
