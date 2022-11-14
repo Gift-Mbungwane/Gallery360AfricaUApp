@@ -140,7 +140,7 @@ export default function UserProfileScreen({ route, navigation }) {
     <ImageBackground source={background} style={globalStyles.backgroundImg}>
       <SafeAreaView style={styles.areaView}>
         <View style={styles.topLevelView}>
-          <Modal visible={modalOpen}>
+          {/* <Modal visible={modalOpen}>
             <View style={globalStyles.modalFullView}>
               <View style={globalStyles.modalContainer}>
                 <View style={globalStyles.closeBtnContaainer}>
@@ -267,7 +267,7 @@ export default function UserProfileScreen({ route, navigation }) {
               </Text>
               <Text style={{ color: "gray", fontSize: 12 }}>v1.0.0</Text>
             </View>
-          </View>
+          </View> */}
         </View>
       </SafeAreaView>
     </ImageBackground>
@@ -277,19 +277,23 @@ export default function UserProfileScreen({ route, navigation }) {
 const screenHeight = Dimensions.get('screen').height;
 const viewHeight = Dimensions.get('window').height;
 const viewWidth = Dimensions.get('window').width;
-const pageHeight = Dimensions.get('window').height
+const pageHeight = Dimensions.get('window').height;
+const statusBarHeight = StatusBar.currentHeight;
 const styles = StyleSheet.create({
   areaView: {
-    height: viewHeight,
-    paddingTop: 60,
+    // height: viewHeight,
+    // marginTop: 60,
+    // paddingTop: 60,
+    flex: 1,
     borderColor: 'blue',
     borderWidth: 3
   },
   topLevelView: {
-    height: viewHeight,
-    marginTop: 0,
+    maxHeight: viewHeight,
+    flex: 1,
+    // marginTop: 0,
     borderColor: 'green',
-    borderWidth: 1
+    borderWidth: 10
   },
   profileContainer: {
     flex: 7,
