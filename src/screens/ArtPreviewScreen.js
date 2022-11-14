@@ -641,7 +641,7 @@ const styles = StyleSheet.create({
     // top: statusBarHeight
     flex: 1,
     alignSelf: 'center',
-    backgroundColor: 'red'
+    // backgroundColor: 'red'
   },
   tikTokView: {
     height: Dimensions.get('window').height
