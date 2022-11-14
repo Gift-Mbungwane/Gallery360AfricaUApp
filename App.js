@@ -635,6 +635,10 @@ export default function App({ navigation }) {
                       headerLeft: (props) => (
                         <BackIcon navigation={navigation} />
                       ),
+                      headerStyle: {
+                        height: 60,
+                        backgroundColor: 'green'
+                      }
                     })}
                     name="Cart"
                     component={CartScreen}
