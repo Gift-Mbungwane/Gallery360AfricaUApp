@@ -21,6 +21,7 @@ import { FontAwesome } from "@expo/vector-icons";
 //
 import { Video, ResizeMode } from "expo-av";
 import VideoPlayer from "expo-video-player";
+import { useHeaderHeight } from "@react-navigation/elements";
 //
 export default function ArtistProfileScreen({ route, navigation }) {
   //
@@ -41,6 +42,7 @@ export default function ArtistProfileScreen({ route, navigation }) {
   const controlRef = useRef();
   const videoViewRef = useRef(null);
   const [status, setStatus] = React.useState({});
+  const headerHeight = useHeaderHeight()
 
   //  video
   const onStateChange = (state) => {
@@ -70,9 +72,9 @@ export default function ArtistProfileScreen({ route, navigation }) {
   };
   const getArtistData = () => {
     console.log('data: ', artistUid)
-    return firestore.collection('artists').doc(artistUid).get().then( doc => {
-      
-      if(doc.exists) {
+    return firestore.collection('artists').doc(artistUid).get().then(doc => {
+
+      if (doc.exists) {
         console.log('data exists')
         setVideoUrl(doc.data().introClip ? doc.data().introClip : 'no video')
         // setVideoUrl(doc.data().videoUrl)
@@ -80,11 +82,11 @@ export default function ArtistProfileScreen({ route, navigation }) {
         console.log('data does not exist')
       }
       console.log(doc.data())
-    }).catch( err => {
+    }).catch(err => {
       console.log(err)
     })
   }
-  useEffect( () => {
+  useEffect(() => {
     console.log('url: ', videoUrl)
   }, [videoUrl])
   const getNumberOfImage = async () => {
@@ -214,23 +216,24 @@ export default function ArtistProfileScreen({ route, navigation }) {
     console.log(size);
     setVideoViewSize(size)
   }
-  const CenterMarginView = ({children}) => {
+  const CenterMarginView = ({ children }) => {
     return (
-      <View style={{ justifyContent: 'center', alignItems: 'center'}}>
+      <View style={{ justifyContent: 'center', alignItems: 'center' }}>
         {children}
       </View>
     )
-  } 
+  }
   return (
     <ImageBackground
       source={imageBg}
       resizeMode="stretch"
       style={styles.container}
     >
-      <SafeAreaView>
-      <View style={styles.TopContainer} >
-        <View onLayout={(e) => setVideoSize(e.nativeEvent.layout.height)} style={{ marginVertical: 0, padding: 0, width: Dimensions.get('window').width, height: '100%', flexDirection: 'column', justifyContent: 'center', alignContent: 'center', backgroundColor: '#000', marginVertical: 'auto' /* overflow: 'hidden' */ }}>
-          {/* <VideoPlayer
+      <SafeAreaView style={{ flex: 1 }}>
+        <View style={[ {marginTop: headerHeight, flex: 1, borderColor: 'red', borderWidth: 1 } ]}>
+          <View style={[ styles.TopContainer]} >
+            <View onLayout={(e) => setVideoSize(e.nativeEvent.layout.height)} style={{ marginVertical: 0, padding: 0, width: Dimensions.get('window').width, height: '100%', flexDirection: 'column', justifyContent: 'center', alignContent: 'center', backgroundColor: '#000', marginVertical: 'auto' /* overflow: 'hidden' */ }}>
+              {/* <VideoPlayer
             defaultControlsVisible={true}
 
             style={{ height: videoViewSize, padding: 20 }}
@@ -244,32 +247,32 @@ export default function ArtistProfileScreen({ route, navigation }) {
               },
             }}
           /> */}
-          { !videoUrl ? (
-            <CenterMarginView>
-              <ActivityIndicator size="large" color='white'/>
-            </CenterMarginView>
-            ) : videoUrl === 'no video' ? (
-              <CenterMarginView>
-                <Text style={{ color: 'white', fontSize: 24 }}>No video found</Text>
-              </CenterMarginView>
-            ) : (
-              <Video
-                      style={{ zIndex: 10000, flex: 1 }}
-                      ref={videoViewRef}
-                      // style={{ height: videoViewSize, maxWidth: '100%', padding: 0, alignSelf: 'center' }}
-                      // style={{ height: videoViewSize, backgroundColor: 'yellow'}}
-                      shouldPlay={false}
-                      useNativeControls
-                      resizeMode='contain'
-                      source={{
-                        uri: videoUrl,
-                        // uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4'
-                      }}
-                    />
-            )}
+              {!videoUrl ? (
+                <CenterMarginView>
+                  <ActivityIndicator size="large" color='white' />
+                </CenterMarginView>
+              ) : videoUrl === 'no video' ? (
+                <CenterMarginView>
+                  <Text style={{ color: 'white', fontSize: 24 }}>No video found</Text>
+                </CenterMarginView>
+              ) : (
+                <Video
+                  style={{ zIndex: 10000, flex: 1 }}
+                  ref={videoViewRef}
+                  // style={{ height: videoViewSize, maxWidth: '100%', padding: 0, alignSelf: 'center' }}
+                  // style={{ height: videoViewSize, backgroundColor: 'yellow'}}
+                  shouldPlay={false}
+                  useNativeControls
+                  resizeMode='contain'
+                  source={{
+                    uri: videoUrl,
+                    // uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4'
+                  }}
+                />
+              )}
 
 
-                {/* <Video
+              {/* <Video
         ref={video}
         style={{ height: 100, width: 100}}
         source={{
@@ -280,148 +283,149 @@ export default function ArtistProfileScreen({ route, navigation }) {
         isLooping
         onPlaybackStatusUpdate={status => setStatus(() => status)}
       /> */}
-          {/* <Text style={{ backgroundColor: 'yellow'}}>Hi</Text> */}
-        </View>
-      </View>
-
-      <View style={styles.MiddleContainer}>
-        <View style={styles.listItem}>
-          <View style={{ flexDirection: "row", width: "91%" }}>
-            <Image source={{ uri: `${photoUrl}` }} style={styles.img2} />
-
-            <View style={{ width: "100%" }}>
-              <Text
-                style={{
-                  color: "#000000",
-                  marginLeft: 10,
-                  top: 6,
-                  fontSize: 20,
-                }}
-              >
-                {artistName}
-              </Text>
-              <Text style={{ color: "#ceb89e", marginLeft: 10, top: 3 }}>
-                Artist
-              </Text>
-
-              {following == artistUid ? (
-                <View>
-                  <TouchableOpacity
-                    style={{
-                      alignSelf: "flex-end",
-                      marginVertical: -25,
-                      marginHorizontal: 70,
-                      bottom: 10,
-                    }}
-                    title="following"
-                    onPress={() => onUnFollowing()}
-                  >
-                    <Text style={{ color: "#dc143c", fontSize: 16 }}>
-                      Unfollow
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              ) : (
-                <View>
-                  <TouchableOpacity
-                    style={{
-                      alignSelf: "flex-end",
-                      marginVertical: -25,
-                      marginHorizontal: 70,
-                      bottom: 10,
-                    }}
-                    title="following"
-                    onPress={() => onFollow()}
-                  >
-                    <Text style={{ color: "#deb887", fontSize: 16 }}>
-                      Follow
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              )}
+              {/* <Text style={{ backgroundColor: 'yellow'}}>Hi</Text> */}
             </View>
           </View>
 
-          <View style={{ width: "95%", top: 15 }}>
-            <Text style={{ color: "#000000" }}>{description}</Text>
-          </View>
-        </View>
-      </View>
+          <View style={styles.MiddleContainer}>
+            <View style={styles.listItem}>
+              <View style={{ flexDirection: "row", width: "91%" }}>
+                <Image source={{ uri: `${photoUrl}` }} style={styles.img2} />
 
-      <View style={styles.BottomContainer}>
-        <Text style={styles.moreText}>More Works</Text>
-        {art && art.length > 0 ?
-          <SafeAreaView style={{ flexDirection: "row" }}>
-            <FlatList
-              scrollEnabled={false}
-              horizontal={true}
-              data={art}
-              keyExtractor={(item) => `${item.ImageUid}`}
-              renderItem={({ item }) => {
-                return (
-                  <View style={styles.listItem2}>
+                <View style={{ width: "100%" }}>
+                  <Text
+                    style={{
+                      color: "#000000",
+                      marginLeft: 10,
+                      top: 6,
+                      fontSize: 20,
+                    }}
+                  >
+                    {artistName}
+                  </Text>
+                  <Text style={{ color: "#ceb89e", marginLeft: 10, top: 3 }}>
+                    Artist
+                  </Text>
+
+                  {following == artistUid ? (
+                    <View>
+                      <TouchableOpacity
+                        style={{
+                          alignSelf: "flex-end",
+                          marginVertical: -25,
+                          marginHorizontal: 70,
+                          bottom: 10,
+                        }}
+                        title="following"
+                        onPress={() => onUnFollowing()}
+                      >
+                        <Text style={{ color: "#dc143c", fontSize: 16 }}>
+                          Unfollow
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  ) : (
+                    <View>
+                      <TouchableOpacity
+                        style={{
+                          alignSelf: "flex-end",
+                          marginVertical: -25,
+                          marginHorizontal: 70,
+                          bottom: 10,
+                        }}
+                        title="following"
+                        onPress={() => onFollow()}
+                      >
+                        <Text style={{ color: "#deb887", fontSize: 16 }}>
+                          Follow
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                </View>
+              </View>
+
+              <View style={{ width: "95%", top: 15 }}>
+                <Text style={{ color: "#000000" }}>{description}</Text>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.BottomContainer}>
+            <Text style={styles.moreText}>More Works</Text>
+            {art && art.length > 0 ?
+              <SafeAreaView style={{ flexDirection: "row" }}>
+                <FlatList
+                  scrollEnabled={false}
+                  horizontal={true}
+                  data={art}
+                  keyExtractor={(item) => `${item.ImageUid}`}
+                  renderItem={({ item }) => {
+                    return (
+                      <View style={styles.listItem2}>
+                        <TouchableOpacity
+                          onPress={() =>
+                            navigation.navigate("ArtPreview", {
+                              artistUid: artistUid,
+                              price: item.price,
+                              description: item.description,
+                              artUrl: item.artUrl,
+                              artistPhoto: item.artistPhoto,
+                              artistName: item.artistName,
+                              imageUID: item.ImageUid,
+                              artType: item.artType,
+                              description: description,
+                            })
+                          }
+                        >
+                          <Image source={{ uri: item.artUrl }} style={styles.img} />
+                          <View style={styles.priceView}>
+                            <Text style={styles.price}>R {item.price}</Text>
+                          </View>
+                        </TouchableOpacity>
+                      </View>
+                    );
+                  }}
+                />
+                {size > 0 ? (
+                  <View
+                    style={{ backfaceVisibility: "hidden", marginHorizontal: -35 }}
+                  >
                     <TouchableOpacity
                       onPress={() =>
-                        navigation.navigate("ArtPreview", {
-                          artistUid: artistUid,
-                          price: item.price,
-                          description: item.description,
-                          artUrl: item.artUrl,
-                          artistPhoto: item.artistPhoto,
-                          artistName: item.artistName,
-                          imageUID: item.ImageUid,
-                          artType: item.artType,
+                        navigation.navigate("ArtWorks", {
                           description: description,
+                          artistUid: artistUid,
+                          photoUrl: photoUrl,
+                          artistName: artistName,
                         })
                       }
+                      style={{
+                        borderWidth: 1,
+                        borderColor: "gray",
+                        width: 120,
+                        height: 150,
+                        borderRadius: 15,
+                        left: 10,
+                        top: 20,
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
                     >
-                      <Image source={{ uri: item.artUrl }} style={styles.img} />
-                      <View style={styles.priceView}>
-                        <Text style={styles.price}>R {item.price}</Text>
-                      </View>
+                      <Text style={{ fontSize: 18, color: "gray" }}> +{size}</Text>
+                      {/* <Text style={{color:'blue', fontSize:20, fontWeight:'700'}}>See All</Text> */}
                     </TouchableOpacity>
                   </View>
-                );
-              }}
-            />
-            {size > 0 ? (
-              <View
-                style={{ backfaceVisibility: "hidden", marginHorizontal: -35 }}
-              >
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate("ArtWorks", {
-                      description: description,
-                      artistUid: artistUid,
-                      photoUrl: photoUrl,
-                      artistName: artistName,
-                    })
-                  }
-                  style={{
-                    borderWidth: 1,
-                    borderColor: "gray",
-                    width: 120,
-                    height: 150,
-                    borderRadius: 15,
-                    left: 10,
-                    top: 20,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Text style={{ fontSize: 18, color: "gray" }}> +{size}</Text>
-                  {/* <Text style={{color:'blue', fontSize:20, fontWeight:'700'}}>See All</Text> */}
-                </TouchableOpacity>
+                ) : (
+                  <View></View>
+                )}
+              </SafeAreaView> : <View style={styles.noArtView}>
+                <Text style={styles.noArtText}>No artworks are currently available from {artistName}</Text>
               </View>
-            ) : (
-              <View></View>
-            )}
-          </SafeAreaView> : <View style={styles.noArtView}>
-            <Text style={styles.noArtText}>No artworks are currently available from {artistName}</Text>
-          </View>
-        }
+            }
 
-      </View>
+          </View>
+        </View>
       </SafeAreaView>
     </ImageBackground>
   );
@@ -437,8 +441,8 @@ const styles = StyleSheet.create({
   container: {
     height: "100%",
     width: "100%",
-    paddingTop: paddingOnTop,
-    // backgroundColor: "#fff",
+    // paddingTop: paddingOnTop,
+    backgroundColor: "red",
   },
   topLevelView: {
     flex: 1,
@@ -447,6 +451,7 @@ const styles = StyleSheet.create({
   TopContainer: {
     // top: statusBarHeight ? statusBarHeight : 0,
     // paddingTop: paddingOnTop,
+    flex: 1,
     top: 0,
     padding: 0,
     flex: 2,

@@ -123,7 +123,7 @@ export default function PreviewMoreScreen({ route, navigation }) {
         style={styles.container}
       >
 
-        <SafeAreaView style={{ height: viewHeight, width: viewWidth, backgroundColor: 'red' }}>
+        <SafeAreaView style={{ height: viewHeight, width: viewWidth }}>
         <MasonryList
           style={{ marginTop: 0 }}
           showsVerticalScrollIndicator={false}
