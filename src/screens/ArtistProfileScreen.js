@@ -7,7 +7,7 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
-  SafeAreaView,
+  // SafeAreaView,
   Dimensions,
   StatusBar,
   Platform,
@@ -22,6 +22,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import { Video, ResizeMode } from "expo-av";
 import VideoPlayer from "expo-video-player";
 import { useHeaderHeight } from "@react-navigation/elements";
+import { SafeAreaView } from "react-native-safe-area-context";
 //
 export default function ArtistProfileScreen({ route, navigation }) {
   //
@@ -230,7 +231,7 @@ export default function ArtistProfileScreen({ route, navigation }) {
       style={styles.container}
     >
       <SafeAreaView style={{ flex: 1 }}>
-        <View style={[ {marginTop: headerHeight, flex: 1, borderColor: 'red', borderWidth: 1 } ]}>
+        <View style={[ {marginTop: headerHeight, maxHeight: Dimensions.get('window').height - headerHeight, flex: 1, borderColor: 'red', borderWidth: 1 } ]}>
           <View style={[ styles.TopContainer]} >
             <View onLayout={(e) => setVideoSize(e.nativeEvent.layout.height)} style={{ marginVertical: 0, padding: 0, width: Dimensions.get('window').width, height: '100%', flexDirection: 'column', justifyContent: 'center', alignContent: 'center', backgroundColor: '#000', marginVertical: 'auto' /* overflow: 'hidden' */ }}>
               {/* <VideoPlayer
@@ -439,7 +440,8 @@ const paddingOnTop = Platform.OS === 'android' ? 60 : 60
 // console.log('bar height: ', statusBarHeight);
 const styles = StyleSheet.create({
   container: {
-    height: "100%",
+    // height: "100%",
+    height: Dimensions.get('screen').height,
     width: "100%",
     // paddingTop: paddingOnTop,
     backgroundColor: "red",
