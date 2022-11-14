@@ -31,6 +31,7 @@ import { globalStyles } from "../assets/styles/GlobalStyles";
 import { UserContext } from "../Context/UserContext";
 import LoaderImage from "../assets/components/LoaderImage";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useHeaderHeight } from '@react-navigation/elements';
 // import Toast from "react-native-simple-toast";
 
 const background = require("../assets/images/home.png");
@@ -48,6 +49,11 @@ export default function UserProfileScreen({ route, navigation }) {
   const viewHeight = Dimensions.get('window').height;
   const viewWidth = Dimensions.get('window').width;
   const pageHeight = Dimensions.get('window').height
+  const headerHeight = useHeaderHeight()
+
+
+
+
   // console.log({ viewHeight, screenHeight });
 
   const openImageLibrary = async () => {
@@ -139,8 +145,8 @@ export default function UserProfileScreen({ route, navigation }) {
   return (
     <ImageBackground source={background} style={globalStyles.backgroundImg}>
       <SafeAreaView style={styles.areaView}>
-        <View style={styles.topLevelView}>
-          {/* <Modal visible={modalOpen}>
+        <View style={[ { marginTop: headerHeight, height: Dimensions.get('window').height - headerHeight}]}>
+          <Modal visible={modalOpen}>
             <View style={globalStyles.modalFullView}>
               <View style={globalStyles.modalContainer}>
                 <View style={globalStyles.closeBtnContaainer}>
@@ -267,7 +273,7 @@ export default function UserProfileScreen({ route, navigation }) {
               </Text>
               <Text style={{ color: "gray", fontSize: 12 }}>v1.0.0</Text>
             </View>
-          </View> */}
+          </View>
         </View>
       </SafeAreaView>
     </ImageBackground>
@@ -286,10 +292,10 @@ const styles = StyleSheet.create({
     // paddingTop: 60,
     flex: 1,
     borderColor: 'blue',
-    borderWidth: 3
+    // borderWidth: 3
   },
   topLevelView: {
-    maxHeight: viewHeight,
+    // maxHeight: viewHeight,
     flex: 1,
     // marginTop: 0,
     borderColor: 'green',
@@ -300,7 +306,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     // borderColor: 'blue',
     // borderWidth: 1,
-    backgroundColor: 'red'
+    // backgroundColor: 'red'
     // height
   },
   editBtn: {
