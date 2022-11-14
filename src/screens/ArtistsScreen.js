@@ -41,6 +41,7 @@ export default function ArtistsScreen({ navigation }) {
     return (
       <View>
         <TouchableOpacity
+          style={{ }}
           onPress={() =>
             navigation.navigate("ArtistProfile", {
               description: item.description,
@@ -51,7 +52,7 @@ export default function ArtistsScreen({ navigation }) {
           }
         >
           <LoaderImage
-            uri={ item.photoUrl }
+            uri={item.photoUrl}
             style={{ width: ITEM_WIDTH, height: ITEM_HEIGHT, borderRadius: 16 }}
           />
           <View
@@ -78,30 +79,37 @@ export default function ArtistsScreen({ navigation }) {
     <ImageBackground
       source={imageBg}
       resizeMode="stretch"
-      style={globalStyles.container}
+      style={[globalStyles.container, styles.container]}
     >
-      <View style={globalStyles.container}>
-        <View style={globalStyles.homeBody1}>
-          <SafeAreaView
-            style={{
-              width: "100%",
-              alignItems: "center",
-              alignSelf: "center",
-            }}
-          >
-            <Carousel
-              data={artist}
-              initialNumToRender={1}
-              windowSize={1}
-              sliderWidth={SLIDER_WIDTH}
-              itemWidth={ITEM_WIDTH}
-              renderItem={_renderItem}
-              onSnapToItem={(index) => setState({ index })}
-              useScrollView={false}
-            />
-          </SafeAreaView>
+      {/* <View style={globalStyles.container}>
+        <View style={globalStyles.homeBody1}> */}
+      <SafeAreaView
+        style={{
+          flex: 1,
+          width: "100%",
+          alignItems: "center",
+          // alignSelf: "center",
+          // backgroundColor: 'red',
+          alignContent: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <View style={{ height: "90%", justifyContent: 'center', alignItems: 'center' }}>
+          <Carousel
+            data={artist}
+            initialNumToRender={1}
+            windowSize={1}
+            sliderWidth={SLIDER_WIDTH}
+            itemWidth={ITEM_WIDTH}
+            renderItem={_renderItem}
+            onSnapToItem={(index) => setState({ index })}
+            useScrollView={false}
+          />
         </View>
-      </View>
+
+      </SafeAreaView>
+      {/* </View>
+      </View> */}
     </ImageBackground>
   );
 }
@@ -109,6 +117,9 @@ export default function ArtistsScreen({ navigation }) {
 const imageBg = require("../assets/images/home.png");
 
 const styles = StyleSheet.create({
+  container: {
+    paddingTop: 60
+  },
   searchInput: {
     width: "70%",
     height: 50,

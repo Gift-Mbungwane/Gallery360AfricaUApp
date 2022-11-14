@@ -14,7 +14,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-       "bundleIdentifier": "com.gallery360africa.Gallery360Africa",
+      "bundleIdentifier": "com.gallery360africa.Gallery360Africa",
       "buildNumber": "1.0.1"
     },
     "android": {
@@ -27,6 +27,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e2fce5e3-e1b3-42e9-a1a9-d8ed804d7fb5"
+      }
     }
   }
 }

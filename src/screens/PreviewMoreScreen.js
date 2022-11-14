@@ -116,14 +116,14 @@ export default function PreviewMoreScreen({ route, navigation }) {
   };
 
   return (
-    <SafeAreaView style={backgroundStyle}>
+
       <ImageBackground
         source={image}
         resizeMode="stretch"
         style={styles.container}
       >
-        {/* {console.log(datas, "the image of the thingy")} */}
-        <View style={{ marginTop: 60, height: viewHeight, width: viewWidth }}>
+
+        <SafeAreaView style={{ height: viewHeight, width: viewWidth, backgroundColor: 'red' }}>
         <MasonryList
           style={{ marginTop: 0 }}
           showsVerticalScrollIndicator={false}
@@ -137,23 +137,28 @@ export default function PreviewMoreScreen({ route, navigation }) {
           data={artwork}
           renderItem={renderItem}
         />
-        </View>
+        </SafeAreaView>
 
       </ImageBackground>
-    </SafeAreaView>
+
   );
 }
 const statusBarHeight = StatusBar.currentHeight;
 console.log('padding: ', Platform.OS);
-const paddingOnTop = (Platform.OS === 'android' || Platform.OS === 'web') ? 60 + statusBarHeight: 0
+const paddingOnTop = (Platform.OS === 'android' || Platform.OS === 'web') ? 60 : 0
 // console.log('bar height: ', statusBarHeight);
 const styles =StyleSheet.create({
   container: {
-    height: "100%",
+    height: Dimensions.get('screen').height,
     width: "100%",
     paddingTop: 60,
     paddingTop: paddingOnTop
     // backgroundColor: "red",
     // paddingBottom: 10
   },
+  areaView: {
+    height: Dimensions.get('window').height,
+    flex: 1,
+    
+  }
 })

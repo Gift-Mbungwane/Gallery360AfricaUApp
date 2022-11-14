@@ -227,6 +227,7 @@ export default function ArtistProfileScreen({ route, navigation }) {
       resizeMode="stretch"
       style={styles.container}
     >
+      <SafeAreaView>
       <View style={styles.TopContainer} >
         <View onLayout={(e) => setVideoSize(e.nativeEvent.layout.height)} style={{ marginVertical: 0, padding: 0, width: Dimensions.get('window').width, height: '100%', flexDirection: 'column', justifyContent: 'center', alignContent: 'center', backgroundColor: '#000', marginVertical: 'auto' /* overflow: 'hidden' */ }}>
           {/* <VideoPlayer
@@ -421,13 +422,14 @@ export default function ArtistProfileScreen({ route, navigation }) {
         }
 
       </View>
+      </SafeAreaView>
     </ImageBackground>
   );
 }
 
 const imageBg = require("../assets/images/home.png");
 const statusBarHeight = StatusBar.currentHeight;
-const paddingOnTop = Platform.OS === 'android' ? 60 + statusBarHeight : 60
+const paddingOnTop = Platform.OS === 'android' ? 60 : 60
 // console.log({ paddingOnTop });
 // console.log('here is the fact');
 // console.log('bar height: ', statusBarHeight);
@@ -437,6 +439,10 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingTop: paddingOnTop,
     // backgroundColor: "#fff",
+  },
+  topLevelView: {
+    flex: 1,
+    backgroundColor: 'red'
   },
   TopContainer: {
     // top: statusBarHeight ? statusBarHeight : 0,

@@ -6,7 +6,7 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  SafeAreaView,
+  // SafeAreaView,
   Dimensions,
   Image,
   BackHandler,
@@ -16,6 +16,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { firestore, auth } from "../../Firebase";
 import Carousel from "react-native-snap-carousel";
 import { StackActions } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ArtWorksScreen({ route, navigation }) {
   const SLIDER_WIDTH = Dimensions.get("window").width;
@@ -87,9 +88,9 @@ export default function ArtWorksScreen({ route, navigation }) {
     <ImageBackground
       source={imageBg}
       resizeMode="stretch"
-      style={globalStyles.container}
+      style={[globalStyles.container, styles.container ]}
     >
-      <View style={globalStyles.container}>
+      <SafeAreaView style={styles.topLevelView}>
         {/* <View style={styles.searchBarContainer}>
           <Ionicons style={{left:55, top:10}} name="search" size={25} color={'black'} />
                         
@@ -103,8 +104,8 @@ export default function ArtWorksScreen({ route, navigation }) {
             </TouchableOpacity>
         </View> */}
 
-        <View style={globalStyles.homeBody1}>
-          <SafeAreaView
+        <View style={[ globalStyles.homeBody1, {backgroundColor: 'blue' } ]}>
+          <View
             style={{
               width: "100%",
               alignItems: "center",
@@ -119,9 +120,9 @@ export default function ArtWorksScreen({ route, navigation }) {
               onSnapToItem={(index) => setState({ index })}
               useScrollView={true}
             />
-          </SafeAreaView>
+          </View>
         </View>
-      </View>
+      </SafeAreaView>
     </ImageBackground>
   );
 }
@@ -129,6 +130,13 @@ export default function ArtWorksScreen({ route, navigation }) {
 const imageBg = require("../assets/images/home.png");
 
 const styles = StyleSheet.create({
+  container: {
+    
+  },
+  topLevelView: {
+    flex: 1,
+    // backgroundColor: 'red'
+  },
   searchInput: {
     width: "70%",
     height: 50,

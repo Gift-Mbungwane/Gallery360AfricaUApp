@@ -18,6 +18,7 @@ import { globalStyles } from "../assets/styles/GlobalStyles";
 // import { AntDesign, Entypo, Fontisto, MaterialIcons } from "@expo/vector-icons";
 import CommentsModal from "../assets/components/CommentsModal";
 import { AntDesign, Entypo, FontAwesome, FontAwesome5, Fontisto } from "@expo/vector-icons";
+import LoaderImage from "../assets/components/LoaderImage";
 
 // import Toast from "react-native-simple-toast";
 
@@ -357,7 +358,7 @@ export default function ArtPreviewScreen({ route, navigation }) {
         }
         style={styles.container}
       >
-        <View style={globalStyles.tikTokContainer}>
+        <View style={[ globalStyles.tikTokContainer ]}>
           {
             artUrl !== '' && (
               <>
@@ -372,7 +373,7 @@ export default function ArtPreviewScreen({ route, navigation }) {
                   resizeMode="cover"
                   style={{ position: 'absolute', top: artHeight / 2, height: artHeight, width: artWidth, zIndex: 0 }}
                 />
-
+                {/* <LoaderImage uri={ artUrl } mode={'cover'} style={{ position: 'absolute', top: artHeight / 2, height: artHeight, width: artWidth, zIndex: 0 }} /> */}
               </>
 
             )
@@ -613,66 +614,34 @@ export default function ArtPreviewScreen({ route, navigation }) {
 
   }
   return (
-    <RenderScrollView photoURL={photoURL} FullName={FullName} imageUID={imageUID} style={{ borderColor: 'red', borderWidth: 1 }} />
+    <RenderScrollView 
+      photoURL={photoURL}
+      FullName={FullName}
+      imageUID={imageUID}
+      style={{ 
+        borderColor: 'red',
+        borderWidth: 1,
+        alignSelf: 'center',
+        flex: 1,
+        backgroundColor: 'red',
+        height: Dimensions.get('window').height,
+        width: Dimensions.get('window').width
+      }}
+    />
   )
-  return (
-    <View style={styles.container}>
-      {/* <ScrollView
-        data={[{ photoURL, FullName, imageUID }, { photoURL, FullName, imageUID }]}
-        renderItem={(item) => <RenderScrollView />}
-        snapToAlignment='start'
-        horizontal={false}
-        decelerationRate={0}
-        snapToInterval={800}
-        overScrollMode="never"
-        scroll
-        contentInset={{
-          top: 0,
-          left: 0,
-          bottom: 0,
-          right: 0,
-        }}
-      >
-        <RenderScrollView />
-        <RenderScrollView />
-        <RenderScrollView />
-        <RenderScrollView />
-      </ScrollView> */}
-      <FlatList
-        data={Data}
-        renderItem={({ item }) => (
-          <View
-            style={{
-              height: Dimensions.get('window').height,
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: 'red'
-            }}>
-            <Text style={{ fontWeight: 'bold', color: 'white' }}>{item.title}</Text>
-          </View>
-        )}
-        keyExtractor={(_, index) => index.toString()}
 
-        getItemLayout={(_, index) => {
-          return { length: Dimensions.get('window').height, offset: Dimensions.get('window').height * index, index };
-        }}
-        initialScrollIndex={21}
-        showsVerticalScrollIndicator={false}
-        initialNumToRender={3}
-        windowSize={9}
-        snapToOffsets={Data.map((x, i) => (i * Dimensions.get('window').height))}
-      />
-    </View>
-  );
 }
 const statusBarHeight = StatusBar.currentHeight;
-const paddingOnTop = Platform.OS === 'android' || Platform.OS === 'web' ? 60 + statusBarHeight : 0
+const paddingOnTop = Platform.OS === 'android' || Platform.OS === 'web' ? 60 : 0
 // const navBarHeight
 const styles = StyleSheet.create({
   container: {
     width: "100%", height: Dimensions.get('window').height, overflow: 'hidden',
-    // paddingTop: paddingOnTop
-    top: statusBarHeight
+    paddingTop: statusBarHeight,
+    // top: statusBarHeight
+    flex: 1,
+    alignSelf: 'center',
+    backgroundColor: 'red'
   },
   tikTokView: {
     height: Dimensions.get('window').height

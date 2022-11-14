@@ -9,7 +9,7 @@ import {
   Modal,
   TextInput,
   FlatList,
-  SafeAreaView,
+  // SafeAreaView,
   ActivityIndicator,
   Dimensions,
   StatusBar
@@ -30,6 +30,7 @@ import { globalStyles } from "../assets/styles/GlobalStyles";
 
 import { UserContext } from "../Context/UserContext";
 import LoaderImage from "../assets/components/LoaderImage";
+import { SafeAreaView } from "react-native-safe-area-context";
 // import Toast from "react-native-simple-toast";
 
 const background = require("../assets/images/home.png");
@@ -279,14 +280,16 @@ const viewWidth = Dimensions.get('window').width;
 const pageHeight = Dimensions.get('window').height
 const styles = StyleSheet.create({
   areaView: {
-    height: viewHeight - 80,
-    paddingTop: 80,
+    height: viewHeight,
+    paddingTop: 60,
     borderColor: 'blue',
     borderWidth: 3
   },
   topLevelView: {
-    height: viewHeight - 80,
-    marginTop: 0
+    height: viewHeight,
+    marginTop: 0,
+    borderColor: 'green',
+    borderWidth: 1
   },
   profileContainer: {
     flex: 7,

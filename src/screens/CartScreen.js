@@ -19,6 +19,7 @@ import { globalStyles } from "../assets/styles/GlobalStyles";
 // import Toast from "react-native-simple-toast";
 import Constants from "expo-constants";
 import * as Linking from "expo-linking";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 // import * as AuthSession from "expo-auth-session/src/AuthSession";
 
@@ -36,11 +37,11 @@ export default function CartScreen({ navigation, route }) {
   const [accessToken, setAccessToken] = useState();
   const [baseUri, setBaseUri] = useState("");
   const [webResult, setWebResult] = useState(null);
-  
+
   // const [request, response, promptAsync] = AuthSession.getDefaultReturnUrl(
   //   "/",
   //   Linking.createURL("/?")
-    // );
+  // );
   const getCart = () => {
     return firestore
       .collection("cartItem")
@@ -122,45 +123,45 @@ export default function CartScreen({ navigation, route }) {
     console.log(redirectData, "the handled link from listeners");
   };
   const createTwoButtonAlert = () =>
-  setTimeout( () => {
+    setTimeout(() => {
 
-  }, 300)
+    }, 300)
   firestore
-  .collection("cartItem")
-  .doc(uuid)
-  .onSnapshot((snapShot1) => {
-    const data = snapShot1.data()
-    console.log(snapShot1.data());
-    console.log('here')
-    // console.log(snapShot1.data().status);
-    console.log(uuid)
-    if(data && data.status === 'failed') {
-      console.log('failed');
-      firestore
-      .collection("cartItem")
-      .doc(uuid).update({status: 'read', readStatus: data.status})
+    .collection("cartItem")
+    .doc(uuid)
+    .onSnapshot((snapShot1) => {
+      const data = snapShot1.data()
+      console.log(snapShot1.data());
+      console.log('here')
+      // console.log(snapShot1.data().status);
+      console.log(uuid)
+      if (data && data.status === 'failed') {
+        console.log('failed');
+        firestore
+          .collection("cartItem")
+          .doc(uuid).update({ status: 'read', readStatus: data.status })
 
-      
-      Alert.alert('Alert Title', data.status, [
 
-        { text: 'OK', onPress: () => console.log('OK Pressed') },
-      ]);
+        Alert.alert('Alert Title', data.status, [
 
-    } else if(data && data.status === 'authorized') {
-      console.log('authorized');
-      firestore
-      .collection("cartItem")
-      .doc(uuid).update({status: 'read', readStatus: data.status})
-      firestore
-      .collection("cartItem").doc(uuid).delete()
-      Alert.alert('Alert Title', data.status, [
+          { text: 'OK', onPress: () => console.log('OK Pressed') },
+        ]);
 
-        { text: 'OK', onPress: () => navigation.navigate('Home') },
-      ]);
+      } else if (data && data.status === 'authorized') {
+        console.log('authorized');
+        firestore
+          .collection("cartItem")
+          .doc(uuid).update({ status: 'read', readStatus: data.status })
+        firestore
+          .collection("cartItem").doc(uuid).delete()
+        Alert.alert('Alert Title', data.status, [
 
-    }
+          { text: 'OK', onPress: () => navigation.navigate('Home') },
+        ]);
 
-  });
+      }
+
+    });
 
   const openBrowser = async () => {
     const uid = auth.currentUser.uid;
@@ -264,8 +265,9 @@ export default function CartScreen({ navigation, route }) {
       resizeMode="cover"
       style={[globalStyles.container, styles.container]}
     >
-      <View style={{ flex: 6 }}>
-        {/* <View style={globalStyles.Top}> */}
+      <SafeAreaView style={styles.topLevelView}>
+        <View style={{ flex: 6 }}>
+          {/* <View style={globalStyles.Top}> */}
           {/* <View style={globalStyles.backButtonView}>
             <TouchableOpacity 
               onPress={() => navigation.goBack(null)}
@@ -282,156 +284,162 @@ export default function CartScreen({ navigation, route }) {
           {/* <View>
             <Text style={globalStyles.title}>Cart</Text>
           </View> */}
-        {/* </View> */}
+          {/* </View> */}
 
-        {cartItem > 0 ? (
-          <FlatList
-            style={{marginLeft: 10, marginRight: 10 }}
-            data={cart}
-            showsHorizontalScrollIndicator={false}
-            keyExtractor={(item) => `${item.artUrl}`}
-            renderItem={({ item }) => {
-              return (
-                <View>
-                  <Items
-                    imageUrl={item.artUrl}
-                    name={item.artType}
-                    price={item.price}
-                    keyy={item.imageUid}
-                  />
-                </View>
-              );
-            }}
-          />
-        ) : (
-          <View
-            style={{
-              width: "70%",
-              height: 80,
-              backgroundColor: "lightgrey",
-              borderRadius: 20,
-              alignSelf: "center",
-              justifyContent: 'center',
-              top: 30,
-            }}
-          >
-            <Text
-              style={{ color: "#fff", alignSelf: "center", marginVertical: 0, fontSize: 16, fontWeight: 'bold' }}
+          {cartItem > 0 ? (
+            <FlatList
+              style={{ marginLeft: 10, marginRight: 10 }}
+              data={cart}
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={(item) => `${item.artUrl}`}
+              renderItem={({ item }) => {
+                return (
+                  <View>
+                    <Items
+                      imageUrl={item.artUrl}
+                      name={item.artType}
+                      price={item.price}
+                      keyy={item.imageUid}
+                    />
+                  </View>
+                );
+              }}
+            />
+          ) : (
+            <View
+              style={{
+                width: "70%",
+                height: 80,
+                backgroundColor: "lightgrey",
+                borderRadius: 20,
+                alignSelf: "center",
+                justifyContent: 'center',
+                top: 30,
+              }}
             >
-              No art has been added to cart
-            </Text>
-          </View>
-        )}
-      </View>
+              <Text
+                style={{ color: "#fff", alignSelf: "center", marginVertical: 0, fontSize: 16, fontWeight: 'bold' }}
+              >
+                No art has been added to cart
+              </Text>
+            </View>
+          )}
+        </View>
 
-      <View style={{ marginHorizontal: 20, height: 150 }}>
-        { cartItem > 0 ? (
-                  <View
+        <View style={{ marginHorizontal: 20, height: 150 }}>
+          {cartItem > 0 ? (
+            <View
+              style={{
+                borderRadius: 30,
+                width: '100%',
+                height: 150,
+                backgroundColor: "#FFFFFF",
+                alignSelf: "center",
+                marginVertical: 0,
+                borderWidth: 1,
+                borderColor: "lightgray",
+                // top: 55,
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  marginHorizontal: 20,
+                  marginVertical: 5,
+                }}
+              >
+                <View
                   style={{
-                    borderRadius: 30,
-                    width: '100%',
-                    height: 150,
-                    backgroundColor: "#FFFFFF",
-                    alignSelf: "center",
-                    marginVertical: 0,
-                    borderWidth: 1,
-                    borderColor: "lightgray",
-                    // top: 55,
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    width: 150,
+                    marginVertical: 10,
                   }}
                 >
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      marginHorizontal: 20,
-                      marginVertical: 5,
-                    }}
-                  >
-                    <View
-                      style={{
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        width: 150,
-                        marginVertical: 10,
-                      }}
-                    >
-                      <Text style={{ fontSize: 16, color: "gray" }}>Items</Text>
-                      {cartItem > 0 ? (
-                        <Text style={{ fontSize: 16, color: "black" }}>
-                          {cartItem} Items
-                        </Text>
-                      ) : (
-                        <Text style={{ fontSize: 16, color: "black" }}>No Items</Text>
-                      )}
-                    </View>
-        
-                    <View
-                      style={{
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        width: 140,
-                        marginVertical: 10,
-                      }}
-                    >
-                      <Text style={{ fontSize: 16, color: "gray" }}>Total Amount</Text>
-                      {totalAmount > 0 ? (
-                        <Text
-                          style={{ fontSize: 24, color: "black", fontWeight: "bold" }}
-                        >{`R${totalAmount}.00`}</Text>
-                      ) : (
-                        <Text
-                          style={{ fontSize: 24, color: "black", fontWeight: "bold" }}
-                        >
-                          R0.00
-                        </Text>
-                      )}
-                    </View>
-                  </View>
-        
-                  <View
-                    style={{
-                      width: "90%",
-                      height: 50,
-                      borderRadius: 20,
-                      backgroundColor: "black",
-                      alignSelf: "center",
-                      justifyContent: "center",
-                      marginVertical: -10,
-                    }}
-                  >
-                    <TouchableOpacity
-                      onPress={
-                        () => openBrowser()
-                        // navigation.navigate("PayPalPayment", {
-                        //   uuid: uuid,
-                        //   amount: totalAmount,
-                        // })
-                      }
-                    >
-                      <Text
-                        style={{ fontSize: 16, color: "#FFFFFF", textAlign: "center" }}
-                      >
-                        Proceed to Payment
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
+                  <Text style={{ fontSize: 16, color: "gray" }}>Items</Text>
+                  {cartItem > 0 ? (
+                    <Text style={{ fontSize: 16, color: "black" }}>
+                      {cartItem} Items
+                    </Text>
+                  ) : (
+                    <Text style={{ fontSize: 16, color: "black" }}>No Items</Text>
+                  )}
                 </View>
-        ) : (
-          <></>
-        )}  
 
-      </View>
+                <View
+                  style={{
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    width: 140,
+                    marginVertical: 10,
+                  }}
+                >
+                  <Text style={{ fontSize: 16, color: "gray" }}>Total Amount</Text>
+                  {totalAmount > 0 ? (
+                    <Text
+                      style={{ fontSize: 24, color: "black", fontWeight: "bold" }}
+                    >{`R${totalAmount}.00`}</Text>
+                  ) : (
+                    <Text
+                      style={{ fontSize: 24, color: "black", fontWeight: "bold" }}
+                    >
+                      R0.00
+                    </Text>
+                  )}
+                </View>
+              </View>
+
+              <View
+                style={{
+                  width: "90%",
+                  height: 50,
+                  borderRadius: 20,
+                  backgroundColor: "black",
+                  alignSelf: "center",
+                  justifyContent: "center",
+                  marginVertical: -10,
+                }}
+              >
+                <TouchableOpacity
+                  onPress={
+                    () => openBrowser()
+                    // navigation.navigate("PayPalPayment", {
+                    //   uuid: uuid,
+                    //   amount: totalAmount,
+                    // })
+                  }
+                >
+                  <Text
+                    style={{ fontSize: 16, color: "#FFFFFF", textAlign: "center" }}
+                  >
+                    Proceed to Payment
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          ) : (
+            <></>
+          )}
+
+        </View>
+      </SafeAreaView>
+
     </ImageBackground>
   );
 }
 
 const image = require("../assets/images/home.png");
 const statusBarHeight = StatusBar.currentHeight;
-const paddingOnTop = Platform.OS === 'android' ? 60 + statusBarHeight : 60;
+const paddingOnTop = Platform.OS === 'android' ? 60 : 60;
 const navBarHeight = Dimensions.get('screen').height - Dimensions.get('window').height - StatusBar.currentHeight;
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: paddingOnTop,
-    paddingBottom: Platform.OS === 'android' ? navBarHeight + 20 : 20,
+    // paddingTop: paddingOnTop,
+    // paddingBottom: Platform.OS === 'android' ? navBarHeight + 20 : 20,
+  },
+  topLevelView: {
+    height: Dimensions.get('window').height,
+    backgroundColor: 'red'
   }
 });
