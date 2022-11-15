@@ -143,7 +143,7 @@ export default function UserProfileScreen({ route, navigation }) {
   }, [])
 
   return (
-    <ImageBackground source={background} style={globalStyles.backgroundImg}>
+    // <ImageBackground source={background} style={globalStyles.backgroundImg}>
       <SafeAreaView style={styles.areaView}>
         <View style={[ { marginTop: headerHeight, height: Dimensions.get('window').height - headerHeight}]}>
           <Modal visible={modalOpen}>
@@ -276,7 +276,7 @@ export default function UserProfileScreen({ route, navigation }) {
           </View>
         </View>
       </SafeAreaView>
-    </ImageBackground>
+    // </ImageBackground>
   )
 }
 

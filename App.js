@@ -214,7 +214,16 @@ export default function App({ navigation }) {
         <UserContext.Provider value={{ isLoggedIn, toggleUserState }} style={styles.fullWidth}>
           {/* <ImageBackground source={background} style={{ height: Dimensions.get('window').height, width: Dimensions.get('window').width }}> */}
 
-          <NavigationContainer theme={navTheme}>
+          <NavigationContainer
+            theme={navTheme}
+            screenOptions={{
+              cardStyle: {
+                backgroundColor: 'transperent'
+
+              }
+              
+            }}
+          >
             <Stack.Navigator
               initialRouteName={'Home'}
               screenOptions={{
@@ -222,6 +231,9 @@ export default function App({ navigation }) {
                 headerTitleStyle: {
                   color: "#000",
                 },
+                cardStyle: {
+                  backgroundColor:'transperent'
+                }
               }}
             >
 
@@ -547,6 +559,9 @@ export default function App({ navigation }) {
                       headerShown: true,
                       headerTransparent: true,
                       headerBackVisible: false,
+                      cardStyle: {
+                        backgroundColor: 'red'
+                      },
                       headerLeft: (props) => (
                         <BackIcon navigation={navigation} />
                       ),
