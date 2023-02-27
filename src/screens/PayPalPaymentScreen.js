@@ -20,11 +20,11 @@ export default function PayPalPaymentScreen({ route, navigation }) {
     //  console.log(navState);
     const { url, title } = navState;
     if (title == "PayPal Sucess") {
-      console.log("url", url);
+      // console.log("url", url);
       let spliturl = url.split("?");
       // console.log("spliturl",spliturl);
       let splitotherhalf = spliturl[1].split("&");
-      console.log("splitotherhalf", splitotherhalf);
+      // console.log("splitotherhalf", splitotherhalf);
       let paymentId = splitotherhalf[0].replace("paymentId=", "");
       let token = splitotherhalf[1].replace("token=", "");
       let PayerID = splitotherhalf[2].replace("PayerID=", "");

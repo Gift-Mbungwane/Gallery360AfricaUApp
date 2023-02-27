@@ -102,7 +102,7 @@ export default function ExhibitionDetailsScreen({ route, navigation }) {
 
   const likesState = async () => {
     const uid = auth.currentUser.uid;
-    console.log({ exhibitionUid, uid });
+    // console.log({ exhibitionUid, uid });
     return await firestore
       .collection("exhibition")
       .doc(exhibitionUid)

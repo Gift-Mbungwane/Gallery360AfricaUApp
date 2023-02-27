@@ -20,6 +20,7 @@ import { globalStyles } from "../assets/styles/GlobalStyles";
 import Constants from "expo-constants";
 import * as Linking from "expo-linking";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useHeaderHeight } from "@react-navigation/elements";
 
 // import * as AuthSession from "expo-auth-session/src/AuthSession";
 
@@ -37,6 +38,7 @@ export default function CartScreen({ navigation, route }) {
   const [accessToken, setAccessToken] = useState();
   const [baseUri, setBaseUri] = useState("");
   const [webResult, setWebResult] = useState(null);
+  const headerHeight = useHeaderHeight()
 
   // const [request, response, promptAsync] = AuthSession.getDefaultReturnUrl(
   //   "/",
@@ -47,7 +49,7 @@ export default function CartScreen({ navigation, route }) {
       .collection("cartItem")
       .doc(uuid)
       .onSnapshot((snapShot1) => {
-        console.log(snapShot1.data());
+        // console.log(snapShot1.data());
         const getData = snapShot1.ref
           .collection("items")
           .where("uuid", "==", uuid)
@@ -86,7 +88,7 @@ export default function CartScreen({ navigation, route }) {
 
   const deleteCart = async (keyy) => {
     const deleteItem = () => {
-      console.log('key: ', keyy);
+      // console.log('key: ', keyy);
       return firestore
         .collection("cartItem")
         .doc(uuid)
@@ -94,11 +96,11 @@ export default function CartScreen({ navigation, route }) {
         .doc(keyy)
         .delete()
         .then(() => {
-          console.log('item deleted');
+          // console.log('item deleted');
           // Toast.show("Your item has been deleted! ", Toast.LONG, Toast.CENTER);
         })
         .catch((error) => {
-          console.log('failed to delete');
+          // console.log('failed to delete');
           // Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
         });
     }
@@ -120,7 +122,7 @@ export default function CartScreen({ navigation, route }) {
   const handleRedirect = (event) => {
     WebBrowser.dismissBrowser();
     const redirectData = Linking.parse(event.url);
-    console.log(redirectData, "the handled link from listeners");
+    // console.log(redirectData, "the handled link from listeners");
   };
   const createTwoButtonAlert = () =>
     setTimeout(() => {
@@ -131,12 +133,12 @@ export default function CartScreen({ navigation, route }) {
     .doc(uuid)
     .onSnapshot((snapShot1) => {
       const data = snapShot1.data()
-      console.log(snapShot1.data());
-      console.log('here')
+      // console.log(snapShot1.data());
+      // console.log('here')
       // console.log(snapShot1.data().status);
-      console.log(uuid)
+      // console.log(uuid)
       if (data && data.status === 'failed') {
-        console.log('failed');
+        // console.log('failed');
         firestore
           .collection("cartItem")
           .doc(uuid).update({ status: 'read', readStatus: data.status })
@@ -148,7 +150,7 @@ export default function CartScreen({ navigation, route }) {
         ]);
 
       } else if (data && data.status === 'authorized') {
-        console.log('authorized');
+        // console.log('authorized');
         firestore
           .collection("cartItem")
           .doc(uuid).update({ status: 'read', readStatus: data.status })
@@ -193,7 +195,7 @@ export default function CartScreen({ navigation, route }) {
 
       const result = await WebBrowser.openAuthSessionAsync(authurl, redirectUri)
         .then((results) => {
-          console.log(results.url, " now this is the url of current screen");
+          // console.log(results.url, " now this is the url of current screen");
           Linking.removeEventListener("url", handleRedirect);
         })
         .catch((error) => alert(error));
@@ -205,19 +207,19 @@ export default function CartScreen({ navigation, route }) {
       //   redirectUri.map((uri) => uri)
       // );
 
-      console.log(result.url, " the result of the url");
+      // console.log(result.url, " the result of the url");
       if (result.type === "cancel" || result.type === "dismiss") {
         //return { type: result.type };
-        console.log(
-          result.type,
-          " the result of cancelling or go back to th app "
-        );
+        // console.log(
+        //   result.type,
+        //   " the result of cancelling or go back to th app "
+        // );
       }
 
       if (result.url == "https://gallery-360-africa.web.app/Success") {
-        console.log(result.url, "this is hte return url yo need to expect");
+        // console.log(result.url, "this is hte return url yo need to expect");
       } else if (result.url !== "https://gallery-360-africa.web.app/Success") {
-        console.log(result.url, " this is the failed return url");
+        // console.log(result.url, " this is the failed return url");
       }
 
       // if (result.type) {
@@ -266,8 +268,8 @@ export default function CartScreen({ navigation, route }) {
       style={[globalStyles.container, styles.container]}
     >
       <SafeAreaView style={styles.topLevelView}>
-        <View style={ styles.safeAreaContainer }>
-          <View style={{ flex: 6, backgroundColor: 'yellow' }}>
+        <View style={[{ marginTop: headerHeight, height: Dimensions.get('window').height - headerHeight}, styles.safeAreaContainer ]}>
+          <View style={{ flex: 6 }}>
             {/* <View style={globalStyles.Top}> */}
             {/* <View style={globalStyles.backButtonView}>
             <TouchableOpacity 
@@ -444,23 +446,23 @@ const styles = StyleSheet.create({
   topLevelView: {
     flex: 1,
     // height: Dimensions.get('window').height - 30,
-    backgroundColor: 'red',
+    // backgroundColor: 'red',
 
-    paddingTop: 57
-  },
-  safeAreaContainer: {
-    height: Dimensions.get('window').height - 57,
-    top: 57,
-    borderColor: 'blue',
-    borderWidth: 1,
-    display: 'flex'
+    // paddingTop: 57
   },
   safeAreaContainer: {
     // height: Dimensions.get('window').height - 57,
-    flex: 1,
     // top: 57,
-    borderColor: 'blue',
-    borderWidth: 1,
+    // borderColor: 'blue',
+    // borderWidth: 1,
+    // display: 'flex'
+  },
+  safeAreaContainer: {
+    // height: Dimensions.get('window').height - 57,
+    // flex: 1,
+    // top: 57,
+    // borderColor: 'blue',
+    // borderWidth: 1,
     display: 'flex'
   }
 });

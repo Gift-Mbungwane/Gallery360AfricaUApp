@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "G360",
-    "slug": "G360",
+    "name": "Gallery360Africa",
+    "slug": "Gallery360Africa",
     "scheme": "gallery",
     "version": "1.0.3",
     "orientation": "portrait",
@@ -14,7 +14,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.gallery360africa.Gallery360Africa",
+      "bundleIdentifier": "com.gallery360africa.user",
       "buildNumber": "1.0.1"
     },
     "android": {
@@ -30,7 +30,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "e2fce5e3-e1b3-42e9-a1a9-d8ed804d7fb5"
+        "projectId": "9f4a12a7-31ed-412f-ad5f-7f5aab6d5046"
       }
     }
   }

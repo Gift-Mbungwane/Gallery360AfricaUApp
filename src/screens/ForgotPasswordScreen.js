@@ -40,7 +40,7 @@ export default function SignUpScreen({ navigation }) {
   const resetPassword = async() => {
     toggleIndicator(true)
     await auth.sendPasswordResetEmail(email).then((res) => {
-      console.log(res);
+      // console.log(res);
       toggleIndicator(false)
       navigation.navigate('SignIn')
     }).catch(err => { console.log(err); toggleIndicator(false) })

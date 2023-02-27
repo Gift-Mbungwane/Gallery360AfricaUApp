@@ -12,6 +12,7 @@ import {
   Platform,
   StatusBar,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import Carousel from "react-native-snap-carousel";
@@ -57,7 +58,24 @@ export default function MarketScreen({ navigation }) {
         setArtist(allArtists1);
       });
   };
+  const navigateToArtPreview = (item) => {
+    try {
+      navigation.navigate("ArtPreview", {
+        artistUid: item.ArtistUid,
+        artName: item.artName,
+        imageUID: item.ImageUid,
+        artUrl: item.artUrl,
+        artistName: item.artistName,
+        artType: item.artType,
+        photoUrl: item.photoUrl
+      })
+    } catch (error) {
+      Alert.alert('Error', error, [
+        { text: 'Okay', onPress: () => console.log('okay') }
+      ])
+    }
 
+  } 
   const getArtWorks = () => {
     return firestore.collection('Market').orderBy("timeStamp", "desc").limit(5).where('isEnabled', '==', true).onSnapshot((snapshot) => {
       const art = snapshot.docs.map(item => ({ ...item.data(), isArt: true }))
@@ -120,17 +138,7 @@ export default function MarketScreen({ navigation }) {
         <View style={{ flexDirection: "row", height: '100%', padding: 0}}>
 
           <TouchableOpacity
-            onPress={() => //ArtPreview
-              navigation.navigate("ArtPreview", {
-                artistUid: item.ArtistUid,
-                artName: item.artName,
-                imageUID: item.ImageUid,
-                artUrl: item.artUrl,
-                artistName: item.artistName,
-                artType: item.artType,
-                photoUrl: item.photoUrl
-              })
-            }
+            onPress={() => { navigateToArtPreview(item) } }
             style={{
               height: ITEM_HEIGHT,
               maxHeight: ITEM_HEIGHT,
@@ -182,7 +190,7 @@ export default function MarketScreen({ navigation }) {
     } else {
       return (
         <View style={{ flexDirection: "row", zIndex: 1 }}>
-          <TouchableOpacity style={styles.showMoreTextOpacity} onPress={() => navigation.navigate("PreviewMore", { datas: data })} >
+          <TouchableOpacity style={styles.showMoreTextOpacity} onPress={() => navigation.navigate("PreviewMore", { datas: data, artistUID: null })} >
             <Text style={styles.showMoreText} numberOfLines={1}>Show All</Text>
           </TouchableOpacity>
         </View>
@@ -412,8 +420,8 @@ const styles = StyleSheet.create({
     bottom: 3,
   },
   scrollView: {
-    borderColor: 'red',
-    borderWidth: 1
+    // borderColor: 'red',
+    // borderWidth: 1
   },
   showAll: {
     borderWidth: 1,

@@ -68,7 +68,7 @@ function CommentsModal({
   };
   //
   const getComents = () => {
-    console.log(ImageUid);
+    // console.log(ImageUid);
     firestore
       .collection("comments")
       .where("imageUID", "==", ImageUid)

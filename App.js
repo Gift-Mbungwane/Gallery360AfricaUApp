@@ -78,7 +78,7 @@ export default function App({ navigation }) {
   const [items, SetItems] = useState(0);
   const [image, setImage] = useState("");
   const [initialRouteName, setInitialName] = useState('Splash')
-  const [isLoggedIn, setUserState] = useState(AsyncStorage.getItem('isLoggedIn'))
+  const [isLoggedIn, setUserState] = useState(null)
   const [isLoggedInBln, setUserStateBln] = useState(false)
   const [showSplash, setShowSplash] = useState(true)
   // const [splashDidShow, deactivateSplash] = useState(false);
@@ -123,7 +123,10 @@ export default function App({ navigation }) {
         // setuser("");
       }
     });
-
+    auth.onAuthStateChanged((user) => {
+      console.log('current user', user);
+      setUserState(!!user)
+    }) 
     return () => {
       unregister();
     };
@@ -150,18 +153,7 @@ export default function App({ navigation }) {
   useEffect(() => {
     // console.log('here is the image: ', imageLink);
   }, [imageLink])
-  useEffect(() => {
-    if (typeof isLoggedIn === 'boolean') {
-      // console.log('isLogged in is a boolean: ', isLoggedIn);
-      // setUserStateBln(isLoggedIn)
-    } else if (typeof isLoggedIn === 'undefined') {
-      // console.log('isLogged in is undefined');
-      AsyncStorage.setItem('isLoggedIn', JSON.stringify(false))
-      // setUserStateBln(false)
-    } else if (typeof isLoggedIn === 'object' || typeof isLoggedIn.then === 'function') {
-      // console.log('isLoggedIn is a promise');
-    }
-  }, [isLoggedIn])
+
   const uuid = auth?.currentUser?.uid;
   // console.log(user);
   const getData = async () => {
@@ -192,6 +184,9 @@ export default function App({ navigation }) {
   }, [showSplash])
   const toggleUserState = async (bln) => {
     try {
+      auth.onAuthStateChanged( user => {
+        console.log('user here', user);
+      })
       await AsyncStorage.setItem('isLoggedIn', JSON.stringify(bln));
       setInitialName(bln ? 'Home' : 'SignIn');
       setUserState(bln);
@@ -652,7 +647,7 @@ export default function App({ navigation }) {
                       ),
                       headerStyle: {
                         height: 60,
-                        backgroundColor: 'green'
+                        // backgroundColor: 'green'
                       }
                     })}
                     name="Cart"

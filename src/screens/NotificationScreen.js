@@ -67,7 +67,7 @@ export default function NotificationScreen({ navigation, route }) {
   const [uid, setUID] = useState(uuid);
 
   const renderItem = ({ item }) => {
-    console.log(item);
+    // console.log(item);
     return (
       <View style={styles.itemContainer}>
         <View style={styles.card}>
@@ -96,7 +96,7 @@ export default function NotificationScreen({ navigation, route }) {
         const notifications = res.docs.map( doc => {
           return { ...doc.data(), id: doc.id }
         })
-        console.log(notifications);
+        // console.log(notifications);
         setData(notifications)
       }
     })

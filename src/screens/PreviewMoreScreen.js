@@ -43,12 +43,12 @@ function FurnitureCard({ item }) {
 export default function PreviewMoreScreen({ route, navigation }) {
   const isDarkMode = useColorScheme() === "dark";
 
-  const { datas } = route.params;
+  const { datas, artistUID } = route.params;
   const [artwork, setArtwork] = useState([]);
   const viewHeight = Dimensions.get('window').height - 60;
   const viewWidth = Dimensions.get('window').width;
-  console.log(viewHeight);
-  console.log(artwork);
+  // console.log(viewHeight);
+  // console.log(artwork);
   const backgroundStyle = {
     // flex: 1,
     width: "100%",
@@ -61,7 +61,16 @@ export default function PreviewMoreScreen({ route, navigation }) {
     // });
     // const art = docs.map(item => item.data())
     // return art
-    return firestore.collection('Market').orderBy('timeStamp', 'desc').onSnapshot(snapshot => {
+
+    // console.log(artistUID);
+    let query;
+    query = artistUID
+      ? firestore.collection('Market').where('ArtistUid', '==', artistUID).orderBy('timeStamp', 'desc')
+      : firestore.collection('Market').orderBy('timeStamp', 'desc')
+    //   console.log(query);
+    // let query;
+    // query = 1 + 1 === 2 ? firestore.collection('Market').orderBy('timeStamp', 'desc') : null
+    return query.onSnapshot(snapshot => {
       const art = snapshot.docs.map( item => item.data());
       setArtwork(art)
       // return art
@@ -77,7 +86,7 @@ export default function PreviewMoreScreen({ route, navigation }) {
     const height = random < 4 ? 
                     200 : random >= 4 && random < 8 ?
                       240 : 280;
-    console.log(random);
+    // console.log(random);
     return (
       <View key={item.ImageUid}>
         <TouchableOpacity
@@ -144,7 +153,7 @@ export default function PreviewMoreScreen({ route, navigation }) {
   );
 }
 const statusBarHeight = StatusBar.currentHeight;
-console.log('padding: ', Platform.OS);
+// console.log('padding: ', Platform.OS);
 const paddingOnTop = (Platform.OS === 'android' || Platform.OS === 'web') ? 60 : 0
 // console.log('bar height: ', statusBarHeight);
 const styles =StyleSheet.create({

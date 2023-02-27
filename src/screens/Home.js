@@ -5,12 +5,12 @@ import { UserContext } from '../Context/UserContext';
 export default function Home() {
   const [value, setValue] = useState(1)
   const { isLoggedIn, setUserState } = useContext(UserContext)
-  console.log({ isLoggedIn, setUserState});
+  // console.log({ isLoggedIn, setUserState});
   const dread = value === 5 ? 5 :
                   value === 4 ? 4 :
                     value === 3 ? 3 :
                       value === 2 ? 2 : 1
-  console.log(dread);
+  // console.log(dread);
   const displayValue = () => {
     return (value === 5 ? <Text>Value is 5</Text> :
              value === 4 ? <Text>Value is 4</Text> :

@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   Dimensions,
   ActivityIndicator,
-  SafeAreaView,
+  Alert
 } from "react-native";
 import React, { useCallback, useContext, useState } from "react";
 import { Formik } from "formik";
@@ -22,6 +22,9 @@ import AppLoader from "../assets/components/AppLoader";
 import { UserContext } from "../Context/UserContext";
 import { LinearGradient } from "react-native-svg";
 import { globalStyles } from "../assets/styles/GlobalStyles";
+
+import { SafeAreaView } from "react-native-safe-area-context";
+// ikmpor {{ SafeAreaView}} from "react-native-safe-area-context";
 
 // main
 export default function SignInScreen({ navigation }) {
@@ -57,28 +60,31 @@ export default function SignInScreen({ navigation }) {
   //
   const signIn = async () => {
     setLoading(true);
-    console.log(email, password);
+    // console.log(email, password);
     if (email !== "" && password !== "") {
       await auth
         .signInWithEmailAndPassword(email, password)
         .then((user) => {
           // <ActivityIndicator size="large" color="green" />;
-          console.log(user);
+          // console.log(user);
           // Toast.show(
           //   "You have successfully loged in ",
           //   Toast.LONG,
           //   Toast.CENTER
           // );
           toggleUserState(true)
-          if(typeof isLoggedIn === 'boolean' ) {
-            console.log(isLoggedIn);
+          // if(typeof isLoggedIn === 'boolean' ) {
+            // console.log(isLoggedIn);
             // if (user) navigation.navigate("Home");
-          }
+          // }
           
         })
         .catch((error) => {
-          console.log(error);
-          console.log('network error');
+          // console.log(error);
+          // console.log('network error');
+          Alert.alert('Error', error.message, [
+            { text: "Okay", onPress: () => console.log('okay pressed')}
+          ])
           if (error.code === "auth/invalid-email") {
             // Toast.show("Email is not valid", Toast.LONG, Toast.CENTER);
             setLoading(false);
@@ -98,16 +104,17 @@ export default function SignInScreen({ navigation }) {
   };
 
   //
+
   return (
     <>
       {loading ? (
         <AppLoader />
       ) : (
         <KeyboardAvoidingView behavior="position">
-          <SafeAreaView>
+          <SafeAreaView style={{ borderColor: 'red', borderWidth: 1 }}>
             <ImageBackground
               source={require("../assets/images/signIn/bg.png")}
-              style={globalStyles.imageBack}
+              style={{ height: Dimensions.get("window").height,   borderColor: 'red', borderWidth: 1  }}
             >
               <View style={{ flex: 4 }}>
                 <View style={styles.gallery360logo}>

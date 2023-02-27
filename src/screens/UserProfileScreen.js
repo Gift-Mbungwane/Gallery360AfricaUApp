@@ -87,10 +87,10 @@ export default function UserProfileScreen({ route, navigation }) {
         .getDownloadURL()
         .then((imageUrl) => {
           setimageUri(imageUrl);
-          console.log(
-            imageUrl,
-            "this is setting the image too storage before 3"
-          );
+          // console.log(
+          //   imageUrl,
+          //   "this is setting the image too storage before 3"
+          // );
 
           blob.close();
           setSubmit(false);
@@ -101,7 +101,7 @@ export default function UserProfileScreen({ route, navigation }) {
       //   setPhoto(imageUrl);
       // });
     } else {
-      console.log(result.uri);
+      // console.log(result.uri);
       if (result.uri) setimageUri(result.uri)
     }
   };
@@ -143,7 +143,7 @@ export default function UserProfileScreen({ route, navigation }) {
   }, [])
 
   return (
-    // <ImageBackground source={background} style={globalStyles.backgroundImg}>
+    <ImageBackground source={background} resizeMode="cover" style={globalStyles.backgroundImg}>
       <SafeAreaView style={styles.areaView}>
         <View style={[ { marginTop: headerHeight, height: Dimensions.get('window').height - headerHeight}]}>
           <Modal visible={modalOpen}>
@@ -276,7 +276,7 @@ export default function UserProfileScreen({ route, navigation }) {
           </View>
         </View>
       </SafeAreaView>
-    // </ImageBackground>
+    </ImageBackground>
   )
 }
 

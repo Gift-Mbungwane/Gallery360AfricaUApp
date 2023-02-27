@@ -10,7 +10,7 @@ import {
   } from "@expo/vector-icons";
 
 export default function TabHeader({ uuid, fullName, imageLink, cartItem}) {
-    console.log('dataS');
+    // console.log('dataS');
     return (
         // <View style={styles.float}>
         <View style={styles.container}>
