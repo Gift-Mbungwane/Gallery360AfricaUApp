@@ -65,7 +65,7 @@ export default function ExhibitionDetailsScreen({ route, navigation }) {
 
   const onLikePress = () => {
     const uid = auth.currentUser.uid;
-    firestore
+    return firestore
       .collection("exhibition")
       .doc(exhibitionUid)
       .collection("likes")
@@ -86,7 +86,7 @@ export default function ExhibitionDetailsScreen({ route, navigation }) {
 
   const onDislikePress = () => {
     const uid = auth.currentUser.uid;
-    firestore
+    return firestore
       .collection("exhibition")
       .doc(exhibitionUid)
       .collection("likes")
@@ -100,64 +100,57 @@ export default function ExhibitionDetailsScreen({ route, navigation }) {
       });
   };
 
-  const likesState = () => {
+  const likesState = async () => {
     const uid = auth.currentUser.uid;
-    // console.log({ exhibitionUid, uid });
-    firestore
+    console.log({ exhibitionUid, uid });
+    return await firestore
       .collection("exhibition")
       .doc(exhibitionUid)
       .collection("likes")
       .where("uid", "==", uid)
       .onSnapshot((snapShot) => {
-        if(!snapShot.empty) {
-          const exhibitionUids = snapShot.docs
+        const exhibitionUids = snapShot.docs
           .map((document) => document.data().exhibitionUid)
           .map((doc) => doc);
         setExhibitionUid(exhibitionUids);
-        }
       });
   };
 
   const getExhibitionDetails = () => {
-    firestore
+    return firestore
       .collection("exhibition")
       .where("exhibitionUid", "==", exhibitionUid)
       .onSnapshot((snapShot) => {
-        if(!snapShot.empty) {
-          const setexhibitionImage = snapShot.docs.map(
-            (document) => document.data().exhibitionImage
-          );
-          const exhibitionTitles = snapShot.docs.map(
-            (document) => document.data().exhibitionTitle
-          );
-          const dates = snapShot.docs.map((document) => document.data().date);
-          const descriptions = snapShot.docs.map(
-            (document) => document.data().description
-          );
-          const addresss = snapShot.docs.map(
-            (document) => document.data().address
-          );
-  
-          setExhibitionImage(setexhibitionImage);
-          setAddress(addresss);
-          setDate(dates);
-          setExhibitionTitle(exhibitionTitles);
-          setDescription(descriptions);
-        }
+        const setexhibitionImage = snapShot.docs.map(
+          (document) => document.data().exhibitionImage
+        );
+        const exhibitionTitles = snapShot.docs.map(
+          (document) => document.data().exhibitionTitle
+        );
+        const dates = snapShot.docs.map((document) => document.data().date);
+        const descriptions = snapShot.docs.map(
+          (document) => document.data().description
+        );
+        const addresss = snapShot.docs.map(
+          (document) => document.data().address
+        );
+
+        setExhibitionImage(setexhibitionImage);
+        setAddress(addresss);
+        setDate(dates);
+        setExhibitionTitle(exhibitionTitles);
+        setDescription(descriptions);
       });
   };
 
   useEffect(() => {
-    let isMounted = false;
-    if(isMounted) {
-      getExhibitionDetails();
-      likesState();
-      // getLocation();
-    }
+    getExhibitionDetails();
+    likesState();
+    // getLocation();
 
-    return () => {
-      isMounted = false
-    }
+    return () => likesState();
+    return () => getLocation();
+    return () => getExhibitionDetails();
   }, []);
 
   const onShare = async () => {
