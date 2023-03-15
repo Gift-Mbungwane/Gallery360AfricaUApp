@@ -75,16 +75,19 @@ export default function MarketScreen({ navigation }) {
       ])
     }
 
-  } 
+  }
   const getArtWorks = () => {
-    return firestore.collection('Market').orderBy("timeStamp", "desc").limit(5).where('isEnabled', '==', true).onSnapshot((snapshot) => {
-      const art = snapshot.docs.map(item => ({ ...item.data(), isArt: true }))
+    return firestore.collection('Market').orderBy("timeStamp", "desc").limit(5).where('isEnabled', '==', true).onSnapshot((snapShot) => {
+      if(!snapShot.empty) {
+      const art = snapShot.docs.map(item => ({ ...item.data(), isArt: true }))
 
       setArtwork([...art, { isArt: false, text: 'Show All' }])
       // console.log('artworks: ', art);
       setTimeout(() => {
         toggleShowPlaceholder(false)
       }, 2400)
+      }
+
     })
   }
 
@@ -135,10 +138,10 @@ export default function MarketScreen({ navigation }) {
 
     if (item.isArt) {
       return (
-        <View style={{ flexDirection: "row", height: '100%', padding: 0}}>
+        <View style={{ flexDirection: "row", height: '100%', padding: 0 }}>
 
           <TouchableOpacity
-            onPress={() => { navigateToArtPreview(item) } }
+            onPress={() => { navigateToArtPreview(item) }}
             style={{
               height: ITEM_HEIGHT,
               maxHeight: ITEM_HEIGHT,
@@ -158,7 +161,7 @@ export default function MarketScreen({ navigation }) {
               }}
             /> */}
             <LoaderImage
-              uri={ item.artUrl }
+              uri={item.artUrl}
               style={{
                 width: ITEM_WIDTH,
                 height: ITEM_HEIGHT,
@@ -200,22 +203,25 @@ export default function MarketScreen({ navigation }) {
   };
 
   useEffect(() => {
-    // let isMounted = true;
-    // if(isMounted) {
+    let isMounted = true;
+    if (isMounted) {
+      firestore
+        .collection("Market")
+        .where("status", "==", "approved")
+        .orderBy("timeStamp", "desc")
+        .onSnapshot((snapShot) => {
+          if(!snapShot.empty) {
+            const snap = snapShot.docs.map((document) => document.data());
+            setData(snap);
+          }
 
-    // }
-    const getArtData = firestore
-      .collection("Market")
-      .where("status", "==", "approved")
-      .orderBy("timeStamp", "desc")
-      .onSnapshot((snapshot) => {
-        const snap = snapshot.docs.map((document) => document.data());
-        setData(snap);
-      });
+        });
 
-    getArtist();
-    getArtWorks();
-    // return () => getArtist();
+      getArtist();
+      getArtWorks();
+    }
+
+    return () => isMounted = false
     // return () => getArtData();
   }, []);
 
@@ -224,7 +230,7 @@ export default function MarketScreen({ navigation }) {
     // <ImageBackground source={background} style={{height: Dimensions.get('window').height, width: Dimensions.get('window').width}}>
     <View style={styles.container}>
       {showPlaceholder ? (
-        <View style={{ position: 'absolute', left: 0, zIndex: 1000}}>
+        <View style={{ position: 'absolute', left: 0, zIndex: 1000 }}>
 
           <View style={styles.body}>
             <Carousel
@@ -252,9 +258,9 @@ export default function MarketScreen({ navigation }) {
                   return (
                     <View style={styles.artistCard}>
                       <View style={styles.artistsView}>
-                        <Skeleton height={102} width={102} variant="rectangle" radius={10} style={ styles.artistImage }></Skeleton>
+                        <Skeleton height={102} width={102} variant="rectangle" radius={10} style={styles.artistImage}></Skeleton>
                       </View>
-                        
+
                     </View>
                   );
                 }}
@@ -288,33 +294,34 @@ export default function MarketScreen({ navigation }) {
           </View>
           <View style={styles.footer}>
             <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-              { artist.map(item => {
+              {artist.map(item => {
                 return (
                   <View
-                      style={styles.artistCard}
+                    style={styles.artistCard}
+                    key={item.photoUrl}
+                  >
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate("ArtistProfile", {
+                          description: item.description,
+                          artistUid: item.artistUid,
+                          photoUrl: item.photoUrl,
+                          artistName: item.artistName,
+                          videoUrl: item.videoUrl,
+                        })
+                      }
                     >
-                      <TouchableOpacity
-                        onPress={() =>
-                          navigation.navigate("ArtistProfile", {
-                            description: item.description,
-                            artistUid: item.artistUid,
-                            photoUrl: item.photoUrl,
-                            artistName: item.artistName,
-                            videoUrl: item.videoUrl,
-                          })
-                        }
-                      >
-                        <View style={styles.artistsView}>
-                          <Image
-                            source={{ uri: item.photoUrl }}
-                            style={styles.artistImage}
-                          />
-                          <View style={styles.artistNameContainer}>
-                            <Text style={styles.ArtistName}>{item.artistName}</Text>
-                          </View>
+                      <View style={styles.artistsView}>
+                        <Image
+                          source={{ uri: item.photoUrl }}
+                          style={styles.artistImage}
+                        />
+                        <View style={styles.artistNameContainer}>
+                          <Text style={styles.ArtistName}>{item.artistName}</Text>
                         </View>
-                      </TouchableOpacity>
-                    </View>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
                 )
               })}
               <TouchableOpacity onPress={() => navigation.navigate("Artists")}>
@@ -329,7 +336,7 @@ export default function MarketScreen({ navigation }) {
             </ScrollView>
           </View>
         </>
-        )}
+      )}
 
     </View>
     // </ImageBackground>

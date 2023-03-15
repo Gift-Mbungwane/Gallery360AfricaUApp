@@ -61,31 +61,34 @@ export default function ArtistProfileScreen({ route, navigation }) {
 
   const getArt = async () => {
     // console.log(`artist ID : ${artistUid}s`);
-    return await firestore
+    firestore
       .collection("Market")
       .where("ArtistUid", "==", artistUid)
       .where("isEnabled", "==", true)
       .limit(3)
-      .onSnapshot((snapshot) => {
-        let allArt = snapshot.docs.map((docSnap) => ({ isArt: true, ...docSnap.data()}));
-        // console.log('all art: ', allArt);
-        if(allArt.length > 0) {
-          setArt([...allArt, { isArt: false, ImageUid: null }]);
+      .onSnapshot((snapShot) => {
+        if (snapShot.exists) {
+          let allArt = snapShot.docs.map((docSnap) => ({ isArt: true, ...docSnap.data() }));
+          // console.log('all art: ', allArt);
+          if (allArt.length > 0) {
+            setArt([...allArt, { isArt: false, ImageUid: null }]);
+          }
         }
-        
+
+
       });
   };
   useEffect(() => {
     // console.log(art);
-    if(art) {
+    if (art) {
       // console.log(art.length);
     }
-    
+
   }, [art])
 
   const getArtistData = () => {
     // console.log('data: ', artistUid)
-    return firestore.collection('artists').doc(artistUid).get().then(doc => {
+    firestore.collection('artists').doc(artistUid).get().then(doc => {
 
       if (doc.exists) {
         // console.log('data exists')
@@ -102,21 +105,23 @@ export default function ArtistProfileScreen({ route, navigation }) {
   useEffect(() => {
     // console.log('url: ', videoUrl)
   }, [videoUrl])
-  const getNumberOfImage = async () => {
+  const getNumberOfImage = () => {
     // console.log('artistUid: ', artistUid);
-    return await firestore
+    firestore
       .collection("Market")
       .where("ArtistUid", "==", artistUid)
       .where("isEnabled", "==", true)
-      .onSnapshot((snapshot) => {
-        const artSizes = snapshot.size - 2;
-        // console.log(artSizes, " the art size of the artist");
-        setSize(artSizes);
+      .onSnapshot((snapShot) => {
+        if (!snapShot.empty) {
+          const artSizes = snapShot.size - 2;
+          // console.log(artSizes, " the art size of the artist");
+          setSize(artSizes);
+        }
       });
   };
   // follow artist methods
-  const onFollow = async () => {
-    return await firestore
+  const onFollow = () => {
+    firestore
       .collection("following")
       .doc(artistUid)
       .set({
@@ -160,62 +165,69 @@ export default function ArtistProfileScreen({ route, navigation }) {
   };
 
   //
-  const onUnFollowing = async () => {
+  const onUnFollowing = () => {
     const uuid = auth.currentUser.uid;
 
-    try {
-      await firestore
-        .collection("following")
-        .doc(artistUid)
-        .collection("userFollowing")
-        .doc(uuid)
-        .delete();
-      // Toast.show(
-      //   `You're no longer following ${artistName}`,
-      //   Toast.LONG,
-      //   Toast.CENTER
-      // );
-    } catch (error) {
-      // Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
-    }
+    firestore
+      .collection("following")
+      .doc(artistUid)
+      .collection("userFollowing")
+      .doc(uuid)
+      .delete()
+      .catch(err => console.log(err));
+    // Toast.show(
+    //   `You're no longer following ${artistName}`,
+    //   Toast.LONG,
+    //   Toast.CENTER
+    // );
+
   };
 
   //
   const followState = () => {
     const uid = auth.currentUser.uid;
     // console.log({ uid });
-    return firestore
+    firestore
       .collection("following")
       .doc(artistUid)
       .onSnapshot((snapShot1) => {
-        snapShot1.ref
-          .collection("userFollowing")
-          .where("uuid", "==", uid)
-          .onSnapshot((snapShot) => {
-            const follows = snapShot.docs.map(
-              (document) => document.data().artistUid
-            );
-            setFollowing(follows);
-          });
+        if (snapShot1.exists) {
+          snapShot1.ref
+            .collection("userFollowing")
+            .where("uuid", "==", uid)
+            .onSnapshot((snapShot) => {
+              if (!snapShot.empty) {
+                const follows = snapShot.docs.map(
+                  (document) => document.data().artistUid
+                );
+                setFollowing(follows);
+              }
+            });
+        }
       });
   };
 
   useEffect(() => {
-    getArt();
-    getNumberOfImage();
-    followState();
-    getArtistData();
-    // const ref = videoViewRef.current
-    // console.log('ref: ', ref.contentSizeChange);
-    // return () => followState();
-    // return () => getArt();
-    // return () => getNumberOfImage();
-    setTimeout(() => {
-      // console.log(VideoPlayer);
-      // console.log(videoViewRef.current.playAsync())
-    }, 3000)
+    let isMounted = true;
+    if(isMounted) {
+      getArt();
+      getNumberOfImage();
+      followState();
+      getArtistData();
+      // const ref = videoViewRef.current
+      // console.log('ref: ', ref.contentSizeChange);
+      // return () => followState();
+      // return () => getArt();
+      // return () => getNumberOfImage();
+      setTimeout(() => {
+        // console.log(VideoPlayer);
+        // console.log(videoViewRef.current.playAsync())
+      }, 3000)
+    }
+
 
     return () => {
+      isMounted = false
       // console.log(Video);
       // videoViewRef.current.pauseAsync()
     }
@@ -243,8 +255,8 @@ export default function ArtistProfileScreen({ route, navigation }) {
       style={[globalStyles.container, styles.container]}
     >
       <SafeAreaView style={{ flex: 1 }}>
-        <View style={[ {marginTop: headerHeight, maxHeight: Dimensions.get('window').height - headerHeight, flex: 1 } ]}>
-          <View style={[ styles.TopContainer]} >
+        <View style={[{ marginTop: headerHeight, maxHeight: Dimensions.get('window').height - headerHeight, flex: 1 }]}>
+          <View style={[styles.TopContainer]} >
             <View onLayout={(e) => setVideoSize(e.nativeEvent.layout.height)} style={{ marginVertical: 0, padding: 0, width: Dimensions.get('window').width, height: '100%', flexDirection: 'column', justifyContent: 'center', alignContent: 'center', backgroundColor: '#000', marginVertical: 'auto' /* overflow: 'hidden' */ }}>
               {/* <VideoPlayer
             defaultControlsVisible={true}
@@ -360,14 +372,14 @@ export default function ArtistProfileScreen({ route, navigation }) {
 
               <View style={{ paddingTop: 15, flex: 1, justifyContent: "center" }}>
                 {
-                  description && description.trim() == '' ? 
-                  <Text style={{ color: "#000000" }}>{description}</Text> : 
+                  description && description.trim() == '' ?
+                    <Text style={{ color: "#000000" }}>{description}</Text> :
                     <Text style={{ color: "#000000", textAlign: 'center', fontWeight: 'bold', fontSize: 18 }}>No description provided</Text>
-                  
-                    
-                  
+
+
+
                 }
-                
+
               </View>
             </View>
           </View>
@@ -377,13 +389,13 @@ export default function ArtistProfileScreen({ route, navigation }) {
             {art && art.length > 0 ?
               <SafeAreaView style={{ flexDirection: "row", paddingHorizontal: 10 }}>
                 <FlatList
-                style ={{ }}
+                  style={{}}
                   scrollEnabled={true}
                   horizontal={true}
                   data={art}
                   keyExtractor={(item) => `${item.ImageUid}`}
                   renderItem={({ item }) => {
-                    if(item.isArt) {
+                    if (item.isArt) {
                       return (
                         <View style={styles.listItem2}>
                           <TouchableOpacity
@@ -409,41 +421,41 @@ export default function ArtistProfileScreen({ route, navigation }) {
                         </View>
                       );
                     } else {
-                      if(art && art.length > 4 ) {
+                      if (art && art.length > 4) {
                         // console.log('we match');
                         return (
                           <View
-                          style={{ backfaceVisibility: "hidden", marginHorizontal: 0 }}
-                        >
-                          <TouchableOpacity
-                            onPress={() =>
-                              navigation.navigate("PreviewMore", {
-                                artistUID: artistUid,
-                                description: description,
-                                artistUid: artistUid,
-                                photoUrl: photoUrl,
-                                artistName: artistName,
-                              })
-                            }
-                            style={{
-                              borderWidth: 1,
-                              borderColor: "gray",
-                              width: 120,
-                              height: 150,
-                              borderRadius: 15,
-                              // left: 10,
-                              top: 20,
-                              justifyContent: "center",
-                              alignItems: "center",
-                            }}
+                            style={{ backfaceVisibility: "hidden", marginHorizontal: 0 }}
                           >
-                            <Text style={{ fontSize: 18, color: "gray" }}> +{size}</Text>
-                            {/* <Text style={{color:'blue', fontSize:20, fontWeight:'700'}}>See All</Text> */}
-                          </TouchableOpacity>
-                        </View>
+                            <TouchableOpacity
+                              onPress={() =>
+                                navigation.navigate("PreviewMore", {
+                                  artistUID: artistUid,
+                                  description: description,
+                                  artistUid: artistUid,
+                                  photoUrl: photoUrl,
+                                  artistName: artistName,
+                                })
+                              }
+                              style={{
+                                borderWidth: 1,
+                                borderColor: "gray",
+                                width: 120,
+                                height: 150,
+                                borderRadius: 15,
+                                // left: 10,
+                                top: 20,
+                                justifyContent: "center",
+                                alignItems: "center",
+                              }}
+                            >
+                              <Text style={{ fontSize: 18, color: "gray" }}> +{size}</Text>
+                              {/* <Text style={{color:'blue', fontSize:20, fontWeight:'700'}}>See All</Text> */}
+                            </TouchableOpacity>
+                          </View>
                         )
                       } else {
-                        return( <View></View>)
+                        return (<View></View>)
                       }
 
                     }

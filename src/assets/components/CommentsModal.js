@@ -59,7 +59,7 @@ function CommentsModal({
         key.update({
           key: key.id,
         })
-        
+
       })
       .catch((error) => {
         alert(error);
@@ -82,33 +82,40 @@ function CommentsModal({
   useEffect(() => {
     //////
     // console.log(photoURL + " user photo");
-    firestore
-      .collection("users")
-      .where("uid", "==", auth.currentUser ? auth.currentUser.uid : '0CVA2hLN0SfrpGMDBMRyBqGkGO32')
-      .onSnapshot((snapShot) => {
-        const displayName = snapShot.docs.map((docs) => docs.data().fullName);
-        const userPhoto = snapShot.docs.map((docs) => docs.data().photoURL);
-        //  console.log(displayName+ "  this user image");
-        //  console.log(userPhoto + " user photo");
-        setUserName(displayName);
-        setUserImage(userPhoto);
-      });
-    ////////
-    getComents();
-    /////
-    if (isModalVisible) {
-      Animated.timing(modalAnimatedValue, {
-        toValue: 1,
-        duration: 500,
-        useNativeDriver: false,
-      }).start();
-    } else {
-      Animated.timing(modalAnimatedValue, {
-        toValue: 0,
-        duration: 500,
-        useNativeDriver: false,
-      }).start(() => onClose());
+    let isMounted = true
+    if (isMounted) {
+      firestore
+        .collection("users")
+        .where("uid", "==", auth.currentUser.uid)
+        .onSnapshot((snapShot) => {
+          if(!snapShot.empty) {
+            const displayName = snapShot.docs.map((docs) => docs.data().fullName);
+            const userPhoto = snapShot.docs.map((docs) => docs.data().photoURL);
+            //  console.log(displayName+ "  this user image");
+            //  console.log(userPhoto + " user photo");
+            setUserName(displayName);
+            setUserImage(userPhoto);
+          }
+        });
+      ////////
+      getComents();
+      /////
+      if (isModalVisible) {
+        Animated.timing(modalAnimatedValue, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: false,
+        }).start();
+      } else {
+        Animated.timing(modalAnimatedValue, {
+          toValue: 0,
+          duration: 500,
+          useNativeDriver: false,
+        }).start(() => onClose());
+      }
     }
+    return () => isMounted = false
+
   }, [isModalVisible]);
   const modalY = modalAnimatedValue.interpolate({
     inputRange: [0, 1],
@@ -141,7 +148,7 @@ function CommentsModal({
           />
         </TouchableWithoutFeedback>
         <Animated.View
-          onPress={ () => {Keyboard.dismiss}}
+          onPress={() => { Keyboard.dismiss }}
           style={{
             position: "absolute",
             left: 0,
@@ -154,11 +161,11 @@ function CommentsModal({
             borderTopLeftRadius: 24,
             backgroundColor: "#fff",
             minHeight: 320,
-            
+
             // maxHeight: 300
           }}
         >
-          <View style={{ flex: 6, paddingHorizontal: 0 }} onPress={ () => Keyboard.dismiss }>
+          <View style={{ flex: 6, paddingHorizontal: 0 }} onPress={() => Keyboard.dismiss}>
             {/* <View style={{ height: 40, justifyContent: 'center'}}>
 
             </View> */}
@@ -248,35 +255,35 @@ function CommentsModal({
             </View> */}
             <View style={styles.inputStyle}>
               {/* <View style={{ flexDirection: "row" }}> */}
-                <TextInput
-                  style={{ flex: 1 }}
-                  onChangeText={(comments) => setCom(comments)}
-                  placeholder="Comments..."
-                  placeholderTextColor="#828282"
-                  autoCapitalize="sentences"
-                  value={ com }
-                />
+              <TextInput
+                style={{ flex: 1 }}
+                onChangeText={(comments) => setCom(comments)}
+                placeholder="Comments..."
+                placeholderTextColor="#828282"
+                autoCapitalize="sentences"
+                value={com}
+              />
 
               {/* </View> */}
             </View>
             <View
-                  style={{
-                    flexDirection: "row",
-                    width: 40,
-                    paddingLeft: 10,
-                    justifyContent: "space-between",
-                  }}
-                >
-                  {/* <Entypo style={{alignSelf: 'center'}} name="emoji-happy" color="#000" size={25}/> */}
-                  <TouchableOpacity onPress={addComments} disabled={ com.trim() === '' }>
-                    <MaterialCommunityIcons
-                      style={{ alignSelf: "center", marginVertical: 7 }}
-                      name="send-outline"
-                      color={ com.trim() === '' ? 'rgb(200,200,200)' : '#000' }
-                      size={30}
-                    />
-                  </TouchableOpacity>
-                </View>
+              style={{
+                flexDirection: "row",
+                width: 40,
+                paddingLeft: 10,
+                justifyContent: "space-between",
+              }}
+            >
+              {/* <Entypo style={{alignSelf: 'center'}} name="emoji-happy" color="#000" size={25}/> */}
+              <TouchableOpacity onPress={addComments} disabled={com.trim() === ''}>
+                <MaterialCommunityIcons
+                  style={{ alignSelf: "center", marginVertical: 7 }}
+                  name="send-outline"
+                  color={com.trim() === '' ? 'rgb(200,200,200)' : '#000'}
+                  size={30}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
         </Animated.View>
       </KeyboardAvoidingView>

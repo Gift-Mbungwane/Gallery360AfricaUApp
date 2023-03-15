@@ -19,9 +19,10 @@ import { globalStyles } from "../assets/styles/GlobalStyles";
 import CommentsModal from "../assets/components/CommentsModal";
 import { AntDesign, Entypo, FontAwesome, FontAwesome5, Fontisto } from "@expo/vector-icons";
 import LoaderImage from "../assets/components/LoaderImage";
+import { Alert } from "react-native";
 
 // import Toast from "react-native-simple-toast";
-
+// line 141 (image is a string) and 146 (catch block)
 export default function ArtPreviewScreen({ route, navigation }) {
   console.log({ route, navigation });
   const [isModalVisible, setModalVisible] = useState(false);
@@ -45,32 +46,34 @@ export default function ArtPreviewScreen({ route, navigation }) {
   const [artUrl, setArtUrl] = useState("");
   const [itemOnCart, setItemOnCart] = useState(false)
   const [defaultImg] = useState('https://via.placeholder.com/150/0000FF/808080%20?Text=Digital.comC/O%20https://placeholder.com/')
-  const [artHeight, setArtHeight] = useState(2);
-  const [artWidth, setArtWidth] = useState(2);
+  const [artHeight, setArtHeight] = useState(400);
+  const [artWidth, setArtWidth] = useState(400);
   // console.log({ ...route.params });
   const { artistUid, imageUID } = route.params;
 
-  const [Data] = useState([{ photoURL, FullName, imageUID, title: 'why' }, { photoURL, FullName, imageUID, title: 'why' }, { photoURL, FullName, imageUID, title: 'why' }])
-  useEffect(async() => {
-    // try {
-    //   await Image.getSize(artUrl, (width, height) => {
-    //     // console.log({ width, height });
-    //     const screenWidth = Dimensions.get('window').width;
-    //     // const screenHeight = Dimensions.get('window').height;
-    //     const scaleFactor = width / screenWidth;
-    //     const imgHeight = height / scaleFactor;
-    //     const imgWidth = width / scaleFactor;
-    //     setArtHeight(imgHeight)
-    //     setArtWidth(imgWidth)
-    //   })
-    // } catch (error) {
+  // const [Data] = useState([{ photoURL, FullName, imageUID, title: 'why' }, { photoURL, FullName, imageUID, title: 'why' }, { photoURL, FullName, imageUID, title: 'why' }])
+  useEffect(() => {
+    try {
+      (async () => {
+        await Image.getSize(artUrl, (width, height) => {
+          // console.log({ width, height });
+          const screenWidth = Dimensions.get('window').width;
+          // const screenHeight = Dimensions.get('window').height;
+          const scaleFactor = width / screenWidth;
+          const imgHeight = height / scaleFactor;
+          const imgWidth = width / scaleFactor;
+          setArtHeight(imgHeight)
+          setArtWidth(imgWidth)
+        })
+      })
+    } catch (error) {
       setArtHeight(400);
       setArtWidth(Dimensions.get('window').width)
-    // }
+    }
 
   }, [artUrl])
-  const getArtistDetailts = async () => {
-    return firestore
+  const getArtistDetailts = () => {
+    firestore
       .collection("artists")
       .doc(artistUid)
       .onSnapshot((snapShot) => {
@@ -81,8 +84,9 @@ export default function ArtPreviewScreen({ route, navigation }) {
           setArtistDescription(descriptionOfArtist);
           setArtistName(name);
           setArtistPhoto(photo);
+          console.log({ descriptionOfArtist, name, photo });
         } else {
-          // console.log('no data found');
+          console.log('no data found for artist ID: ', artistUid);
         }
 
       });
@@ -90,7 +94,7 @@ export default function ArtPreviewScreen({ route, navigation }) {
 
   const onLikePress = () => {
     const uid = auth.currentUser.uid;
-    return firestore
+    firestore
       .collection("Market")
       .doc(imageUID)
       .collection("likes")
@@ -109,7 +113,7 @@ export default function ArtPreviewScreen({ route, navigation }) {
 
   const onDislikePress = () => {
     const uid = auth.currentUser.uid;
-    return firestore
+    firestore
       .collection("Market")
       .doc(imageUID)
       .collection("likes")
@@ -122,49 +126,76 @@ export default function ArtPreviewScreen({ route, navigation }) {
   };
 
   const likesState = () => {
-    const uid = auth.currentUser.uid;
-    return firestore
-      .collection("Market")
-      .doc(imageUID)
-      .collection("likes")
-      .where("uid", "==", uuid)
-      .onSnapshot((snapShot) => {
-        const imag = snapShot.docs
-          .map((document) => document.data().imageUid)
-          .map((doc) => doc);
-        setImage(imag);
-      });
+    try {
+      // const uid = auth.currentUser.uid;
+      firestore
+        .collection("Market")
+        .doc(imageUID)
+        .collection("likes")
+        .where("uid", "==", uuid)   //change this to fetch one document, use uid to add likes
+        .onSnapshot((snapShot) => {
+          if (snapShot.exists) {
+            const imag = snapShot.docs
+              .map((document) => document.data().imageUid)
+              .map((doc) => doc);
+
+            console.log("snapuid: ", snapShot.docs.map((doc) => doc.data().imageUid));
+            console.log("imag: ", imag);
+            setImage(imag);
+
+            //image is an array, needs to be a string
+          }
+        });
+    } catch (error) {
+      Alert.alert('error', error, [
+        { text: 'Ok', onPress: () => console.log('okay pressed') }
+      ])
+    }
+
   };
 
-  const getNumberOfLikes = async () => {
-    return await firestore
-      .collection("MarKet")
-      .doc(imageUID)
-      .collection("likes")
-      .where("artistUid", "==", artistUid)
-      .onSnapshot((snapShot) => {
-        const sizes = snapShot.size;
-        setLike(sizes);
-      });
+  const getNumberOfLikes = () => {
+    try {
+      // add catch block to handle errors
+      firestore
+        .collection("MarKet")
+        .doc(imageUID)
+        .collection("likes")
+        .where("artistUid", "==", artistUid)
+        .onSnapshot((snapShot) => {
+          if (!snapShot.empty) {
+            const sizes = snapShot.size;
+            setLike(sizes);
+          }
+
+        });
+    } catch (error) {
+      Alert.alert('error', error, [
+        { text: 'Ok', onPress: () => console.log('okay pressed') }
+      ])
+    }
+
   };
 
   const getArtDetails = () => {
-    return firestore
+    firestore
       .collection("Market")
       .doc(imageUID)
       .onSnapshot((snapShot) => {
-        const artTypes = snapShot.data().artType;
-        setArtType(artTypes);
-        const prices = snapShot.data().price;
-        setPrice(prices);
-        const artUrls = snapShot.data().artUrl;
-        setArtUrl(artUrls);
-        const artSizes = snapShot.data().artSize;
-        setArtSize(artSizes);
-        const artNames = snapShot.data().artName;
-        setArtName(artNames);
-        const descriptions = snapShot.data().description;
-        setDescription(descriptions);
+        if (snapShot.exists) {
+          const artTypes = snapShot.data().artType;
+          setArtType(artTypes);
+          const prices = snapShot.data().price;
+          setPrice(prices);
+          const artUrls = snapShot.data().artUrl;
+          setArtUrl(artUrls);
+          const artSizes = snapShot.data().artSize;
+          setArtSize(artSizes);
+          const artNames = snapShot.data().artName;
+          setArtName(artNames);
+          const descriptions = snapShot.data().description;
+          setDescription(descriptions);
+        }
       });
   };
 
@@ -172,7 +203,7 @@ export default function ArtPreviewScreen({ route, navigation }) {
     // console.log('adding to cart');
     // return
     const uid = auth.currentUser.uid;
-    return await firestore
+    await firestore
       .collection("cartItem")
       .doc(uid)
       .collection("items")
@@ -199,10 +230,15 @@ export default function ArtPreviewScreen({ route, navigation }) {
   };
   const removeFromCart = async () => {
     const uid = auth.currentUser.uid;
-    await firestore.collection('cartItem').doc(uid).collection('items').doc(imageUID).delete().then((res) => {
-      // console.log(res);
-      setItemOnCart(false)
-    })
+    try {
+      await firestore.collection('cartItem').doc(uid).collection('items').doc(imageUID).delete().then((res) => {
+        // console.log(res);
+        setItemOnCart(false)
+      })
+    } catch (error) {
+      console.log();
+    }
+
   }
 
   const onFollow = async () => {
@@ -231,13 +267,13 @@ export default function ArtPreviewScreen({ route, navigation }) {
       artistName: artistName,
     }
     try {
-      await firestore.collection('following').doc(artistUid).collection('userFollowing').doc(uuid).set(update).then(res => {
+      const res = await firestore.collection('following').doc(artistUid).collection('userFollowing').doc(uuid).set(update)
         // console.log('res: ');
-        setFollowing(true)
-      })
+      if(res) setFollowing(true)
+      
       // console.log(status);
     } catch (error) {
-      // console.log(error);
+      console.log(error);
     }
   };
 
@@ -270,31 +306,41 @@ export default function ArtPreviewScreen({ route, navigation }) {
       });
   };
   const unFollowArtist = async () => {
-    const res = await firestore.collection('following').doc(artistUid).collection('userFollowing').delete()
+    try {
+      const res = await firestore.collection('following').doc(artistUid).collection('userFollowing').delete()
+    } catch (error) {
+      console.log(error);
+    }
+    
   }
   const followState = () => {
-    const uid = auth.currentUser.uid;
-
-    firestore
-      .collection("following")
-      .doc(artistUid)
-      .get(snapShot1 => {
-        if (snapShot1.exists) {
-          snapShot1.ref
-            .collection("userFollowing")
-            .where("uuid", "==", uid)
-            .get(snapShot => {
-              snapShot.docs.map((document) => {
-                if (document.exists) {
-                  // console.log('user has a following');
-                  setFollowing(true)
-                } else {
-                  // console.log('user has no following');
-                }
+    try {
+      firestore
+        .collection("following")
+        .doc(artistUid)
+        .get().then(snapShot1 => {
+          if (snapShot1.exists) {
+            snapShot1.ref
+              .collection("userFollowing")
+              .where("uuid", "==", uid)
+              .get().then(snapShot => {
+                snapShot.docs.map((document) => {
+                  if (document.exists) {
+                    // console.log('user has a following');
+                    setFollowing(true)
+                  } else {
+                    // console.log('user has no following');
+                  }
+                })
               })
-            })
-        }
-      })
+          }
+        })
+    } catch (error) {
+      Alert.alert('error', error, [
+        { text: 'Ok', onPress: () => console.log('okay pressed') }
+      ])
+    }
+    const uid = auth.currentUser.uid;
   };
 
   const disableObjects = async () => {
@@ -305,69 +351,333 @@ export default function ArtPreviewScreen({ route, navigation }) {
 
   useEffect(() => {
     const uid = auth.currentUser.uid;
-    const unregister = firestore
-      .collection("users")
-      .doc(uid)
-      .onSnapshot((snapShot) => {
-        const users = snapShot.data().photoURL;
-        const uName = snapShot.data().fullName;
-        setPhotoURL(users);
-        setFullName(uName);
-      });
+    let isMounted = true;
+    try {
+      if (isMounted) {
+        firestore
+          .collection("users")
+          .doc(uid)
+          .onSnapshot((snapShot) => {
+            if (snapShot.exists) {
+              const users = snapShot.data().photoURL;
+              const uName = snapShot.data().fullName;
+              console.log({ users, uName });
+              setPhotoURL(users);
+              setFullName(uName);
+            }
+          });
 
-    getNumberOfLikes();
+        getNumberOfLikes();
 
-    likesState();
-    followState();
+        likesState();
+        followState();
+      }
+    } catch (error) {
+      Alert.alert('error', error, [
+        { text: 'Ok', onPress: () => console.log('okay pressed') }
+      ])
+    }
 
-    return () => {
-      unregister();
-    };
-    return () => getNumberOfLikes();
-    return () => likesState();
-    // return () => getArtDetails();
-    return () => getComentsNumber();
-    // return () => getArtistDetailts();
-    return () => followState();
+    return () => isMounted = false;
   }, [imageUID, artistUid]);
   useEffect(() => {
-    const uid = auth.currentUser.uid
-    firestore.collection('cartItem').doc(uid).collection('items').doc(imageUID).get().then((res) => {
-      // console.log(res.data());
-      if (res.exists) {
-        // console.log(res.data());
-        setItemOnCart(true)
-      }
-    })
+    let isMounted = true;
+    if (isMounted) {
+      const uid = auth.currentUser.uid
+      firestore.collection('cartItem').doc(uid).collection('items').doc(imageUID).get().then((res) => {
+        // console.log(res.data());4
+        console.log(imageUID);
+        if (res.exists) {
+          // console.log(res.data());
+          setItemOnCart(true)
+        }
+      }).catch(err => console.log(err))
 
-    getArtistDetailts();
-    getArtDetails();
+      getArtistDetailts();
+      getArtDetails();
+    }
+    return () => isMounted = false;
   }, [])
 
+  const RenderScrollView = ({ photoURL, FullName, imageUID, style }) => {
+    // console.log(imageUID);
+    return (
+      <TouchableOpacity
+        activeOpacity={1.5}
+        onPress={
+          disableObjects
+          // navigation.navigate("Preview", {
+          //   artUrl: artUrl,
+          //   artistUid: artistUid,
+          //   photoUrl: artistPhoto,
+          //   artistName: artistName,
+          // })
+        }
+        style={styles.container}
+      >
+        <View style={[globalStyles.tikTokContainer]}>
+          {
+            artUrl !== '' && (
+              <>
+                <Image
+                  source={{ uri: `${artUrl}` }}
+                  resizeMode="cover"
+                  style={{ position: 'absolute', top: 0, height: 1000, width: 1000, zIndex: -1 }}
+                  blurRadius={150}
+                />
+                <Image
+                  source={{ uri: `${artUrl}` }}
+                  resizeMode="cover"
+                  style={{ position: 'absolute', top: (Dimensions.get('window').height - artHeight) / 2, height: artHeight, width: artWidth, zIndex: 0 }}
+                />
+              </>
+
+            )
+          }
+          {displayContent ? (
+            <View style={globalStyles.uiContainer}>
+              {isModalVisible && (
+                <CommentsModal
+                  photoURL={photoURL}
+                  fullName={FullName}
+                  ImageUid={imageUID}
+                  isVisible={isModalVisible}
+                  onClose={() => setModalVisible(false)}
+                />
+              )}
+              <View style={globalStyles.rightContainer}>
+                <TouchableOpacity
+                  style={{ marginVertical: 0 }}
+                  onPress={() => setModalVisible(true)}
+                  activeOpacity={0.5}
+                >
+                  <FontAwesome name="commenting" size={30} color={"#FFFFFF"} />
+                </TouchableOpacity>
+
+                <View style={{ marginVertical: 0 }}>
+                  <View style={{ marginVertical: 0 }}>
+                    {image == imageUID ? (
+                      <TouchableOpacity onPress={() => onDislikePress()}>
+                        <FontAwesome name="heart" size={30} color="red" />
+                      </TouchableOpacity>
+                    ) : (
+                      <TouchableOpacity onPress={() => onLikePress()}>
+                        <FontAwesome name="heart" size={30} color="white" />
+                      </TouchableOpacity>
+                    )}
+                    {like > 0 ? (
+                      <View>
+                        <Text style={{ color: "#FFFFFF" }}>{like}</Text>
+                      </View>
+                    ) : (
+                      <View></View>
+                    )}
+                  </View>
+                </View>
+                <View>
+                  {itemOnCart ? (
+                    <TouchableOpacity
+                      style={{ marginVertical: 0 }}
+                      onPress={() => removeFromCart()}
+                    >
+                      <FontAwesome
+                        name="cart-plus"
+                        size={30}
+                        color={"red"}
+                      />
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      style={{ marginVertical: 0 }}
+                      onPress={() => addToCart()}
+                    >
+                      <FontAwesome
+                        name="cart-plus"
+                        size={30}
+                        color={"#FFFFFF"}
+                      />
+                    </TouchableOpacity>
+                  )}
+
+                </View>
+              </View>
+
+              <View style={[globalStyles.bottomContainer]}>
+                <View
+                  blur="51"
+                  transparant={true}
+                  style={globalStyles.secondBottomContainer}
+                >
+                  <View style={globalStyles.viewArtist}>
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate("ArtistProfile", {
+                          description: artistDescription,
+                          artistUid: artistUid,
+                          photoUrl: artistPhoto,
+                          artistName: artistName,
+                          artType: artType,
+                        })
+                      }
+                    >
+                      <Image
+                        source={{ uri: artistPhoto !== '' ? `${artistPhoto}` : defaultImg }}
+                        style={globalStyles.artistImg}
+                      />
+                    </TouchableOpacity>
+
+                    <View
+                      style={{
+                        marginHorizontal: 10,
+                        marginVertical: 0,
+                        width: "80%",
+                        // borderColor: 'red',
+                        // borderWidth: 1,
+                        // height: 500,
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        alignContent: 'center'
+                      }}
+                    >
+
+
+                      <View
+                        style={{
+                          flexDirection: "column",
+                          justifyContent: "space-between",
+                          // borderColor: 'yellow',
+                          flex: 8,
+                          // borderWidth: 1
+                        }}
+                      >
+                        <Text style={globalStyles.artistName}>{artistName}</Text>
+                        <Text
+                          style={{
+                            color: "#F5F5F5",
+                          }}
+                        >
+                          {artType}
+                        </Text>
+
+
+                      </View>
+                      <Text
+                        style={{
+                          color: "#F5F5F5",
+                          paddingTop: 0,
+                          fontWeight: "bold",
+                          minWidth: 50,
+                          // alignSelf: 'flex-end',
+                          textAlign: 'right',
+                          // borderColor: 'red',
+                          // borderWidth: 1,
+                          flex: 2
+                        }}
+                      >
+                        {`R${price}.00`}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 11,
+                          paddingTop: 3,
+                          color: "#F5F5F5",
+                          display: 'none'
+                        }}
+                      >
+                        {artSize ? (
+                          <Text>{`(${artSize})cm`}</Text>
+                        ) : (
+                          <View></View>
+                        )}
+                      </Text>
+                    </View>
+                  </View>
+
+                  <View style={globalStyles.viewDescription}>
+                    <Text style={{ color: "#F5F5F5" }}>{description}</Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+          ) : (
+            <View>
+              <View style={{ flex: 4 }}></View>
+              <View style={globalStyles.bottomContainer1}>
+                <View
+                  blur="51"
+                  transparant={true}
+                  style={globalStyles.previewSecondBottomContainer}
+                >
+                  <View style={globalStyles.viewArtist}>
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate("ArtistProfile", {
+                          description: artistDescription,
+                          artistUid: artistUid,
+                          photoUrl: artistPhoto,
+                          artistName: artistName,
+                          artType: artType,
+                        })
+                      }
+                    >
+                      {artistPhoto !== '' && <Image
+                        source={{ uri: `${artistPhoto}` }}
+                        style={globalStyles.artistImg}
+                      />}
+                    </TouchableOpacity>
+                    <View
+                      style={{
+                        marginHorizontal: 10,
+                        marginVertical: 20,
+                        width: "80%",
+                      }}
+                    >
+                      <Text style={globalStyles.artistName}>{artistName !== '' ? artistName : 'Artist'}</Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </View>
+          )}
+        </View>
+      </TouchableOpacity>
+    )
+
+  }
   return (
-    <View>
-      <Text>artistName: {artistName}</Text>
-      <Text>artistPhoto: {artistPhoto}</Text>\
-      <Text>artistDescription: {artistDescription}</Text>
-      <Text>artistUid: {artistUid}</Text>
-      <Text>artType: {artType}</Text>
-    </View>
+    <RenderScrollView
+      photoURL={photoURL}
+      FullName={FullName}
+      imageUID={imageUID}
+      style={{
+        borderColor: 'red',
+        borderWidth: 1,
+        alignSelf: 'center',
+        flex: 1,
+        backgroundColor: 'red',
+        height: Dimensions.get('window').height,
+        width: Dimensions.get('window').width
+      }}
+    />
   )
 
 }
+
+
 const statusBarHeight = StatusBar.currentHeight;
 const paddingOnTop = Platform.OS === 'android' || Platform.OS === 'web' ? 60 : 0
 // const navBarHeight
-// const styles = StyleSheet.create({
-//   container: {
-//     width: "100%", height: Dimensions.get('window').height, overflow: 'hidden',
-//     // paddingTop: statusBarHeight,
-//     // top: statusBarHeight
-//     flex: 1,
-//     alignSelf: 'center',
-//     // backgroundColor: 'red'
-//   },
-//   tikTokView: {
-//     height: Dimensions.get('window').height
-//   }
-// });
+const styles = StyleSheet.create({
+  container: {
+    width: "100%", height: Dimensions.get('window').height, overflow: 'hidden',
+    // paddingTop: statusBarHeight,
+    // top: statusBarHeight
+    flex: 1,
+    alignSelf: 'center',
+    // backgroundColor: 'red'
+  },
+  tikTokView: {
+    height: Dimensions.get('window').height
+  }
+});

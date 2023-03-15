@@ -31,8 +31,12 @@ export default function ArtistsScreen({ navigation }) {
     });
   };
   useEffect(() => {
-    getArtist();
-    // return () => getArtist();
+    let isMounted = true;
+    if(isMounted) {
+      getArtist();
+    }
+    
+    return () => isMounted = false;
   }, []);
 
   const [state, setState] = useState();

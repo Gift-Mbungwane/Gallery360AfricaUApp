@@ -47,9 +47,14 @@ LogBox.ignoreLogs(['warning: Setting a timer for a long period of time', 'Warnin
 // LogBox.ignoreAllLogs(); // ignore all logs
 const _console = _.clone(console);
 console.warn = message => {
-  if (message.indexOf('Setting a timer') <= -1) {
-    _console.warn(message);
+  try {
+    if (message.indexOf('Setting a timer') <= -1) {
+      _console.warn(message);
+    }
+  } catch (error) {
+    console.log(error);
   }
+
 };
 
 
@@ -87,48 +92,50 @@ export default function App({ navigation }) {
     // StatusBar.setBackgroundColor('transparent')
     // StatusBar.setTranslucent(true);
     // NavigationBar.setVisibilityAsync(false)
+    
     StatusBar.setBackgroundColor('#ceb89e')
     NavigationBar.setBackgroundColorAsync('#ceb89e')
-    const unregister = auth.onAuthStateChanged((userExist) => {
-      if (userExist) {
-        // setuser(userExist);
-
-        firestore.collection('users').doc(userExist.uid).onSnapshot(res => {
-          if (res.data()) {
-            const { fullName, photoURL } = res.data()
-            setImageLink(photoURL);
-            setFullName(fullName);
-          }
-
-        }, (err) => {
-          if (err.message === 'Failed to get document because the client is offline.') {
-            // console.log(err.message);
-          }
-        })
-
-        return firestore
-          .collection("cartItem")
-          .doc(userExist.uid)
-          .collection("items")
-          .where("uuid", "==", userExist.uid)
-          .onSnapshot((snapShot) => {
-            const cartItems = snapShot.size;
-            setCartItem(cartItems);
+    let isMounted = true;
+    if(isMounted) {
+      auth.onAuthStateChanged((userExist) => {
+        setUserState(!!userExist)
+        if (userExist) {
+          // setuser(userExist);
+  
+          firestore.collection('users').doc(userExist.uid).onSnapshot(res => {
+            if (res.data()) {
+              const { fullName, photoURL } = res.data()
+              setImageLink(photoURL);
+              setFullName(fullName);
+            }
+  
           }, (err) => {
             if (err.message === 'Failed to get document because the client is offline.') {
               // console.log(err.message);
             }
-          });
-      } else {
-        // setuser("");
-      }
-    });
-    auth.onAuthStateChanged((user) => {
-      console.log('current user', user);
-      setUserState(!!user)
-    }) 
+          })
+  
+          firestore
+            .collection("cartItem")
+            .doc(userExist.uid)
+            .collection("items")
+            .where("uuid", "==", userExist.uid)
+            .onSnapshot((snapShot) => {
+              const cartItems = snapShot.size;
+              setCartItem(cartItems);
+            }, (err) => {
+              if (err.message === 'Failed to get document because the client is offline.') {
+                // console.log(err.message);
+              }
+            });
+        } else {
+          // setuser("");
+        }
+      });
+    }
+
     return () => {
-      unregister();
+      isMounted = false
     };
   }, []);
   const signoutUser = async () => {

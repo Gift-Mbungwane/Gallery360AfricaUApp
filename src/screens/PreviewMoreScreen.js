@@ -43,7 +43,7 @@ function FurnitureCard({ item }) {
 export default function PreviewMoreScreen({ route, navigation }) {
   const isDarkMode = useColorScheme() === "dark";
 
-  const { datas, artistUID } = route.params;
+  const { artistUID } = route.params;
   const [artwork, setArtwork] = useState([]);
   const viewHeight = Dimensions.get('window').height - 60;
   const viewWidth = Dimensions.get('window').width;
@@ -70,15 +70,20 @@ export default function PreviewMoreScreen({ route, navigation }) {
     //   console.log(query);
     // let query;
     // query = 1 + 1 === 2 ? firestore.collection('Market').orderBy('timeStamp', 'desc') : null
-    return query.onSnapshot(snapshot => {
-      const art = snapshot.docs.map( item => item.data());
-      setArtwork(art)
-      // return art
+    query.onSnapshot(snapshot => {
+      if(!snapshot.empty) {
+        const art = snapshot.docs.map( item => item.data());
+        setArtwork(art)
+      }
     })
   }
   // const artwork = useMemo(async () => await getArtWork())
   useEffect( () => {
-    getArtWork()
+    let isMounted = true
+    if(isMounted) {
+      getArtWork()
+    }
+   return () => isMounted = false
   }, [])
   const renderItem = ({ item, index }) => {
     // const randomBool = useMemo(() => Math.random() < 0.5, []);

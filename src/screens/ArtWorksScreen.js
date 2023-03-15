@@ -39,13 +39,20 @@ export default function ArtWorksScreen({ route, navigation }) {
       });
   };
   useEffect(() => {
-    getArt();
+    // getArt();
     // return () => getArt();
     const backHandler = BackHandler.addEventListener("hardwareBackPress", () =>{
       const popAction = StackActions.pop(1);
       navigation.dispatch(popAction);
     })
-    return () => backHandler.remove()
+    let isMounted = true
+    if(isMounted) {
+      getArt()
+    }
+    return () => { 
+      backHandler.remove()
+      isMounted = false
+    }
   }, []);
 
   const _renderItem = ({ item, index }) => {

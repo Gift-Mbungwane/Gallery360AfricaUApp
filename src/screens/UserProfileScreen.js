@@ -133,19 +133,23 @@ export default function UserProfileScreen({ route, navigation }) {
   };
   useEffect(() => {
     // StatusBar.setHidden(true)
-    firestore.collection('users').doc(uuid).get().then(res => {
-      // console.log(res.data())
-      if (res.data()) {
-        setUserName(res.data().fullName);
-        setPhotoUri(res.data().photoURL);
-      }
-    })
+    let isMounted = true;
+    if (isMounted) {
+      firestore.collection('users').doc(uuid).get().then(res => {
+        // console.log(res.data())
+        if (res.data()) {
+          setUserName(res.data().fullName);
+          setPhotoUri(res.data().photoURL);
+        }
+      })
+    }
+    return () => isMounted = false
   }, [])
 
   return (
     <ImageBackground source={background} resizeMode="cover" style={globalStyles.backgroundImg}>
       <SafeAreaView style={styles.areaView}>
-        <View style={[ { marginTop: headerHeight, height: Dimensions.get('window').height - headerHeight}]}>
+        <View style={[{ marginTop: headerHeight, height: Dimensions.get('window').height - headerHeight }]}>
           <Modal visible={modalOpen}>
             <View style={globalStyles.modalFullView}>
               <View style={globalStyles.modalContainer}>

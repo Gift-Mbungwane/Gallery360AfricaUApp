@@ -45,62 +45,68 @@ export default function CartScreen({ navigation, route }) {
   //   Linking.createURL("/?")
   // );
   const getCart = () => {
-    return firestore
+    firestore
       .collection("cartItem")
       .doc(uuid)
       .onSnapshot((snapShot1) => {
         // console.log(snapShot1.data());
-        const getData = snapShot1.ref
-          .collection("items")
-          .where("uuid", "==", uuid)
-          .onSnapshot((snapShot) => {
-            const sizes = snapShot.size;
-            setCartItem(sizes);
+        if (snapShot1.exists) {
+          snapShot1.ref
+            .collection("items")
+            .where("uuid", "==", uuid)
+            .onSnapshot((snapShot) => {
+              if (!snapShot.empty) {
+                const sizes = snapShot.size;
+                setCartItem(sizes);
 
-            const carts = snapShot.docs.map((document) => document.data());
-            const prices = snapShot.docs.map((document) =>
-              parseFloat(document.data().price)
-            );
-            const artURLs = snapShot.docs.map(
-              (document) => document.data().artUrl
-            );
-            const artnames = snapShot.docs.map(
-              (document) => document.data().artType
-            );
-            const artkeyy = snapShot.docs.map(
-              (document) => document.data().keyy
-            );
-            //  console.log(artURLs, "this is the one image")
-            const initialValue = 0;
-            const totalAmounts = prices.reduce(
-              (previousValue, currentValue) => Number(previousValue) + Number(currentValue),
-              Number(initialValue)
-            );
+                const carts = snapShot.docs.map((document) => document.data());
+                const prices = snapShot.docs.map((document) =>
+                  parseFloat(document.data().price)
+                );
+                const artURLs = snapShot.docs.map(
+                  (document) => document.data().artUrl
+                );
+                const artnames = snapShot.docs.map(
+                  (document) => document.data().artType
+                );
+                const artkeyy = snapShot.docs.map(
+                  (document) => document.data().keyy
+                );
+                //  console.log(artURLs, "this is the one image")
+                const initialValue = 0;
+                const totalAmounts = prices.reduce(
+                  (previousValue, currentValue) => Number(previousValue) + Number(currentValue),
+                  Number(initialValue)
+                );
 
-            setTotalAmount(totalAmounts);
-            setCart(carts);
-            setArtName(artnames);
-            setArtURL(artURLs);
-            setKey(artkeyy);
-          });
+                setTotalAmount(totalAmounts);
+                setCart(carts);
+                setArtName(artnames);
+                setArtURL(artURLs);
+                setKey(artkeyy);
+              }
+
+            });
+        }
+
       });
   };
 
   const deleteCart = async (keyy) => {
     const deleteItem = () => {
       // console.log('key: ', keyy);
-      return firestore
+      firestore
         .collection("cartItem")
         .doc(uuid)
         .collection("items")
         .doc(keyy)
         .delete()
         .then(() => {
-          // console.log('item deleted');
+          console.log('item deleted');
           // Toast.show("Your item has been deleted! ", Toast.LONG, Toast.CENTER);
         })
         .catch((error) => {
-          // console.log('failed to delete');
+          console.log('failed to delete');
           // Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
         });
     }
@@ -132,37 +138,37 @@ export default function CartScreen({ navigation, route }) {
     .collection("cartItem")
     .doc(uuid)
     .onSnapshot((snapShot1) => {
-      const data = snapShot1.data()
-      // console.log(snapShot1.data());
-      // console.log('here')
-      // console.log(snapShot1.data().status);
-      // console.log(uuid)
-      if (data && data.status === 'failed') {
-        // console.log('failed');
-        firestore
-          .collection("cartItem")
-          .doc(uuid).update({ status: 'read', readStatus: data.status })
+      if (snapShot1.exists) {
+        const data = snapShot1.data()
+        // console.log(snapShot1.data());
+        // console.log('here')
+        // console.log(snapShot1.data().status);
+        // console.log(uuid)
+        if (data && data.status === 'failed') {
+          // console.log('failed');
+          firestore
+            .collection("cartItem")
+            .doc(uuid).update({ status: 'read', readStatus: data.status })
 
 
-        Alert.alert('Alert Title', data.status, [
+          Alert.alert('Alert Title', data.status, [
 
-          { text: 'OK', onPress: () => console.log('OK Pressed') },
-        ]);
+            { text: 'OK', onPress: () => console.log('OK Pressed') },
+          ]);
 
-      } else if (data && data.status === 'authorized') {
-        // console.log('authorized');
-        firestore
-          .collection("cartItem")
-          .doc(uuid).update({ status: 'read', readStatus: data.status })
-        firestore
-          .collection("cartItem").doc(uuid).delete()
-        Alert.alert('Alert Title', data.status, [
+        } else if (data && data.status === 'authorized') {
+          // console.log('authorized');
+          firestore
+            .collection("cartItem")
+            .doc(uuid).update({ status: 'read', readStatus: data.status })
+          firestore
+            .collection("cartItem").doc(uuid).delete()
+          Alert.alert('Alert Title', data.status, [
 
-          { text: 'OK', onPress: () => navigation.navigate('Home') },
-        ]);
-
+            { text: 'OK', onPress: () => navigation.navigate('Home') },
+          ]);
+        }
       }
-
     });
 
   const openBrowser = async () => {
@@ -233,9 +239,13 @@ export default function CartScreen({ navigation, route }) {
 
   useEffect(() => {
     // window.location.href = baseUri;
-    createTwoButtonAlert()
-    getCart();
-    // return () => getCart();
+    let isMounted = true;
+    if (isMounted) {
+      createTwoButtonAlert()
+      getCart();
+    }
+
+    return () => isMounted = false;
   }, []);
 
   //
@@ -268,7 +278,7 @@ export default function CartScreen({ navigation, route }) {
       style={[globalStyles.container, styles.container]}
     >
       <SafeAreaView style={styles.topLevelView}>
-        <View style={[{ marginTop: headerHeight, height: Dimensions.get('window').height - headerHeight}, styles.safeAreaContainer ]}>
+        <View style={[{ marginTop: headerHeight, height: Dimensions.get('window').height - headerHeight }, styles.safeAreaContainer]}>
           <View style={{ flex: 6 }}>
             {/* <View style={globalStyles.Top}> */}
             {/* <View style={globalStyles.backButtonView}>
