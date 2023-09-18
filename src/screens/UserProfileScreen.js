@@ -145,51 +145,59 @@ export default function UserProfileScreen({ route, navigation }) {
     }
     return () => isMounted = false
   }, [])
-
+  useEffect(() => {
+    console.log(imageUri);
+  }, [imageUri])
   return (
     <ImageBackground source={background} resizeMode="cover" style={globalStyles.backgroundImg}>
       <SafeAreaView style={styles.areaView}>
         <View style={[{ marginTop: headerHeight, height: Dimensions.get('window').height - headerHeight }]}>
-          <Modal visible={modalOpen}>
+          <Modal visible={modalOpen} transparent>
             <View style={globalStyles.modalFullView}>
               <View style={globalStyles.modalContainer}>
                 <View style={globalStyles.closeBtnContaainer}>
                   <EvilIcons
                     onPress={() => setModalOpen(false)}
                     name="close"
-                    size={35}
+                    size={21}
                     color="white"
                   />
                 </View>
                 <View style={globalStyles.editprofileImgContainer}>
 
-                  <LoaderImage
-                    uri={imageUri}
-                    style={globalStyles.uploadedImage}
-                  />
-                  {!submit ? (
-                    <AntDesign
-                      onPress={() => openImageLibrary()}
-                      style={globalStyles.imgAddIcon}
-                      name="pluscircle"
-                      size={35}
-                      color="#E3E3E3"
+                  {submit ? (
+                    <LoaderImage
+                      uri={imageUri ? imageUri : photoUri}
+                      style={globalStyles.uploadedImage}
                     />
                   ) : (
-                    <View style={{ position: 'absolute', height: 200, width: 200, backgroundColor: 'rgba(200, 200, 200, .5)', justifyContent: 'center', alignContent: 'center' }}>
-                      <ActivityIndicator
-                        style={{}}
-                        color="black"
-                        size="large"
-                      />
-                    </View>
-
+                    <Image
+                      source={{ uri: photoUri }}
+                      placeholderStyle={{ backgroundColor: 'rgb(200, 200, 200)' }}
+                      PlaceholderContent={<ActivityIndicator size="large" color={"#000"} />}
+                      containerStyle={globalStyles.uploadedImage}
+                      style={globalStyles.uploadedImage}
+                    />
+                    // <LoaderImage
+                    //   uri={photoUri}
+                    //   style={globalStyles.uploadedImage}
+                    // />
                   )}
+
+                  <AntDesign
+                    onPress={() => openImageLibrary()}
+                    style={globalStyles.imgAddIcon}
+                    name="pluscircle"
+                    size={35}
+                    color="#E3E3E3"
+                  />
+
                 </View>
                 <TextInput
                   placeholder="Edit Username"
                   onChangeText={(fullName) => setUserName(fullName)}
                   style={globalStyles.editUserInput}
+                  value={userName}
                 />
                 <TouchableOpacity
                   style={globalStyles.updateBtn}

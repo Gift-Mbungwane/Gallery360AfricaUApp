@@ -4,7 +4,6 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
-  SafeAreaView,
   Dimensions,
   ScrollView,
   StyleSheet,
@@ -21,22 +20,26 @@ import { firestore } from "../../Firebase";
 import { globalStyles } from "../assets/styles/GlobalStyles";
 import Skeleton from "../assets/components/Skeleton";
 import LoaderImage from "../assets/components/LoaderImage";
+import ArtistScrollView from "../assets/components/ArtistScrollView";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 const background = require("../assets/images/home.png");
 //
 const SLIDER_WIDTH = Dimensions.get("window").width;
-const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.8);
+const ITEM_WIDTH = Math.round(SLIDER_WIDTH - 40);
 // const ITEM_HEIGHT = Math.round((ITEM_WIDTH * 6.2) / 5.2);
 
 const statusBarHeight = StatusBar.currentHeight ? StatusBar.currentHeight : 0
-const paddingOnTop = Platform.OS === 'android' || Platform.OS === 'web' ? 60 + statusBarHeight : 0
+const paddingOnTop = Platform.OS === 'android' || Platform.OS === 'web' ? 80 + statusBarHeight : 0
 const navBarHeight = Dimensions.get('screen').height - Dimensions.get('window').height - statusBarHeight;
 const tabBarHeight = 50
 const paddingOnBottom = 90
-const screenHeight = Dimensions.get('screen').height - statusBarHeight - paddingOnTop - navBarHeight - tabBarHeight - paddingOnBottom;
-const carouselHeight = (screenHeight / 7) * 6
+// const screenHeight = Dimensions.get('screen').height - statusBarHeight - paddingOnTop - navBarHeight - tabBarHeight - paddingOnBottom;
+const screenHeight = Dimensions.get('window').height
+const carouselHeight = (screenHeight - 300)
 const ITEM_HEIGHT = carouselHeight;
 // console.log({ statusBarHeight, paddingOnTop,navBarHeight,  screenHeight, carouselHeight });
 //
+console.log('market height: ' + screenHeight);
 
 export default function MarketScreen({ navigation }) {
 
@@ -47,6 +50,9 @@ export default function MarketScreen({ navigation }) {
   const [artwork, setArtwork] = useState([])
   const [showPlaceholder, toggleShowPlaceholder] = useState(true)
   //
+  const [viewHeight, setViewHeight] = useState(screenHeight)
+  const insets = useSafeAreaInsets()
+  ///
 
   const getArtist = () => {
     return firestore
@@ -78,14 +84,14 @@ export default function MarketScreen({ navigation }) {
   }
   const getArtWorks = () => {
     return firestore.collection('Market').orderBy("timeStamp", "desc").limit(5).where('isEnabled', '==', true).onSnapshot((snapShot) => {
-      if(!snapShot.empty) {
-      const art = snapShot.docs.map(item => ({ ...item.data(), isArt: true }))
+      if (!snapShot.empty) {
+        const art = snapShot.docs.map(item => ({ ...item.data(), isArt: true }))
 
-      setArtwork([...art, { isArt: false, text: 'Show All' }])
-      // console.log('artworks: ', art);
-      setTimeout(() => {
-        toggleShowPlaceholder(false)
-      }, 2400)
+        setArtwork([...art, { isArt: false, text: 'Show All' }])
+        // console.log('artworks: ', art);
+        setTimeout(() => {
+          toggleShowPlaceholder(false)
+        }, 2400)
       }
 
     })
@@ -93,18 +99,19 @@ export default function MarketScreen({ navigation }) {
 
   const _renderSkeletonItem = ({ item, index }) => {
     return (
-      <View style={{ flexDirection: "row", height: '100%' }}>
+      <View style={{ flexDirection: "row", height: '100%', borderColor: 'orange' }}>
 
         <View
           style={{
-            height: ITEM_HEIGHT + 1,
-            minHeight: ITEM_HEIGHT
+            height: viewHeight,
+            minHeight: viewHeight,
+            // backgroundColor: 'blue'
           }}
         >
           <Skeleton
             variant={'rectangle'}
             radius={16}
-            height={ITEM_HEIGHT}
+            height={viewHeight}
             width={ITEM_WIDTH}
           />
           <Skeleton
@@ -143,8 +150,8 @@ export default function MarketScreen({ navigation }) {
           <TouchableOpacity
             onPress={() => { navigateToArtPreview(item) }}
             style={{
-              height: ITEM_HEIGHT,
-              maxHeight: ITEM_HEIGHT,
+              height: viewHeight,
+              maxHeight: viewHeight,
               padding: 0,
               // backgroundColor: 'red'
             }}
@@ -164,8 +171,8 @@ export default function MarketScreen({ navigation }) {
               uri={item.artUrl}
               style={{
                 width: ITEM_WIDTH,
-                height: ITEM_HEIGHT,
-                maxHeight: ITEM_HEIGHT,
+                height: viewHeight,
+                maxHeight: viewHeight,
                 borderRadius: 16,
                 padding: 0,
               }}
@@ -210,7 +217,7 @@ export default function MarketScreen({ navigation }) {
         .where("status", "==", "approved")
         .orderBy("timeStamp", "desc")
         .onSnapshot((snapShot) => {
-          if(!snapShot.empty) {
+          if (!snapShot.empty) {
             const snap = snapShot.docs.map((document) => document.data());
             setData(snap);
           }
@@ -224,122 +231,114 @@ export default function MarketScreen({ navigation }) {
     return () => isMounted = false
     // return () => getArtData();
   }, []);
+  const getViewLayout = (layout) => {
+    console.log(layout);
+    setViewHeight(layout.height)
+  }
 
   //
+  // return (
+  //   <View style={{ flex: 1, backgroundColor: 'red', borderColor: 'yellow', borderWidth: 1 }}>
+  //     {/* <View style={{ flex: 1, backgroundColor: 'blue' }}>
+  //       <Text>Hi</Text>
+  //     </View> */}
+  //     {/* <View style={{ flex: 1, backgroundColor: 'green' }}>
+  //       <Text>There</Text>
+  //     </View> */}
+
+  //   </View>
+
+
+
+  // );
   return (
-    // <ImageBackground source={background} style={{height: Dimensions.get('window').height, width: Dimensions.get('window').width}}>
-    <View style={styles.container}>
-      {showPlaceholder ? (
-        <View style={{ position: 'absolute', left: 0, zIndex: 1000 }}>
+    // <View style={{ height: Dimensions.get('window').height + insets.top, paddingTop: insets.top + 60, backgroundColor: 'red', borderColor: 'yellow', borderWidth: 1,  }}></View>
+    <View style={{ height: Dimensions.get('window').height - 110, width: '100%',paddingBottom: 0, top: 0  }}>
 
-          <View style={styles.body}>
-            <Carousel
-              data={[{}, {}]}
-              sliderWidth={SLIDER_WIDTH}
-              itemWidth={ITEM_WIDTH}
-              renderItem={_renderSkeletonItem}
-              onSnapToItem={(index) => setState({ index })}
-              useScrollView={false}
-              scrollEnabled={false}
-            />
+      <View style={styles.container}>
+        {showPlaceholder ? (
+          <View style={{ left: 0, zIndex: 1000, flex: 1 }}>
 
-          </View>
-
-          <View style={styles.footer}>
-            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} scrollEnabled={false}>
-              <FlatList
-                style={{ paddingLeft: 15, width: Dimensions.get('window').width, overflow: 'hidden' }}
-                horizontal
-                bounces={false}
-                showsHorizontalScrollIndicator={false}
-                data={[{}, {}, {}, {}]}
-                keyExtractor={(item, index) => index}
-                renderItem={({ item }) => {
-                  return (
-                    <View style={styles.artistCard}>
-                      <View style={styles.artistsView}>
-                        <Skeleton height={102} width={102} variant="rectangle" radius={10} style={styles.artistImage}></Skeleton>
-                      </View>
-
-                    </View>
-                  );
-                }}
-              />
-            </ScrollView>
-          </View>
-        </View>) : (
-
-        <>
-          <View style={styles.body}>
-            <View
-              style={{
-                width: "100%",
-                alignItems: "center",
-                alignSelf: "center",
-                flexDirection: "row",
-              }}
-            >
+            <View onLayout={(e) => { getViewLayout(e.nativeEvent.layout) }} style={styles.body}>
               <Carousel
-                data={artwork}
-                initialNumToRender={1}
-                windowSize={1}
+                data={[{}, {}]}
                 sliderWidth={SLIDER_WIDTH}
                 itemWidth={ITEM_WIDTH}
-                renderItem={_renderItem}
+                renderItem={_renderSkeletonItem}
                 onSnapToItem={(index) => setState({ index })}
                 useScrollView={false}
+                scrollEnabled={false}
               />
 
             </View>
-          </View>
-          <View style={styles.footer}>
-            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-              {artist.map(item => {
-                return (
-                  <View
-                    style={styles.artistCard}
-                    key={item.photoUrl}
-                  >
-                    <TouchableOpacity
-                      onPress={() =>
-                        navigation.navigate("ArtistProfile", {
-                          description: item.description,
-                          artistUid: item.artistUid,
-                          photoUrl: item.photoUrl,
-                          artistName: item.artistName,
-                          videoUrl: item.videoUrl,
-                        })
-                      }
-                    >
-                      <View style={styles.artistsView}>
-                        <Image
-                          source={{ uri: item.photoUrl }}
-                          style={styles.artistImage}
-                        />
-                        <View style={styles.artistNameContainer}>
-                          <Text style={styles.ArtistName}>{item.artistName}</Text>
-                        </View>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                )
-              })}
-              <TouchableOpacity onPress={() => navigation.navigate("Artists")}>
-                <View style={styles.showAll}>
-                  <Text
-                    style={{ color: "gray", textAlign: "center", fontSize: 15 }}
-                  >
-                    Show {"\n"}All
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            </ScrollView>
-          </View>
-        </>
-      )}
 
+            <View style={styles.footer}>
+              <View style={{ flex: 1, width: '100%', overflow: 'hidden', paddingRight: -20 }}>
+                <View style={{ flex: 1, marginHorizontal: -10, marginRight: -20, overflow: 'hidden', width: SLIDER_WIDTH + 10 }}>
+                  <ScrollView
+                    horizontal={true}
+                    scrollEnabled={false}
+                    showsHorizontalScrollIndicator={false}
+                    style={{ width: '100%', overflow: 'hidden' }}
+                  >
+                    {
+                      [{}, {}, {}].map((item, index) => {
+                        return (
+                          <View style={styles.artistCard}>
+                            <View style={styles.artistsView}>
+                              <Skeleton height={109} width={100} variant="rectangle" radius={20} style={styles.artistImage}></Skeleton>
+                            </View>
+
+                          </View>
+                        )
+                      })
+                    }
+
+                  </ScrollView>
+
+                </View>
+              </View>
+
+
+            </View>
+          </View>) : (
+
+          
+            <View style={{ flex: 1}}>
+
+              <View onLayout={(e) => getViewLayout(e.nativeEvent.layout)} style={styles.body}>
+                <View
+                  style={{
+                    width: "100%",
+                    alignItems: "center",
+                    alignSelf: "center",
+                    flexDirection: "row",
+                  }}
+                >
+                  <Carousel
+                    data={artwork}
+                    initialNumToRender={1}
+                    windowSize={1}
+                    sliderWidth={SLIDER_WIDTH}
+                    itemWidth={ITEM_WIDTH}
+                    renderItem={_renderItem}
+                    onSnapToItem={(index) => setState({ index })}
+                    useScrollView={false}
+                  />
+
+                </View>
+              </View>
+              <ArtistScrollView artist={artist} navigation={navigation} SLIDER_WIDTH={SLIDER_WIDTH} />
+
+            </View>
+
+          
+        )}
+
+      </View>
     </View>
-    // </ImageBackground>
+
+
 
   );
 
@@ -347,69 +346,94 @@ export default function MarketScreen({ navigation }) {
 const paddingTop = Platform.OS === 'android' ? 60 : 0
 const styles = StyleSheet.create({
   container: {
-    height: "100%",
+    flex: 1,
+    // height: Dimensions.get('window').height,
+
     width: "100%",
-    // backgroundColor: 'red',
-    paddingBottom: 10
+    // backgroundColor: 'rgba(0,255,0,0.5)',
+    overflow: 'hidden',
+    // paddingBottom: 10,
+    // top: 0,
+    // bottom: 50
     // backgroundColor: "#fff",
   },
   body: {
-    flex: 6,
-
+    flex: 1,
+    width: SLIDER_WIDTH,
     alignItems: "center",
     justifyContent: "center",
-    // backgroundColor: 'yellow',
     padding: 0,
-    paddingTop: 50
+
+    marginTop: 15,
+    // backgroundColor: 'rgba(255,255,0,0.5)'
   },
   footer: {
-    flex: 2,
-    justifyContent: "center",
+    // flex: 2,
+    width: SLIDER_WIDTH - 30,
+    justifyContent: "flex-start",
     alignItems: "center",
-    marginVertical: 8,
+    // marginVertical: 8,
+    paddingLeft: 0,
+    marginLeft: 15,
+    marginRight: 20,
+    marginVertical: 20,
     flexDirection: "row",
     // paddingLeft: 25,
     // paddingRight: 25,
-    maxHeight: 110,
-    // backgroundColor: 'green'
+    height: 109,
+    // maxHeight: 110,
+    // backgroundColor: 'green',
+    overflow: 'hidden'
   },
   artistCard: {
-    // marginLeft: 5,
-    // marginRight: 5
+    marginLeft: 10,
+    marginRight: 10,
     position: 'relative',
     // backgroundColor: 'red'
   },
   artistsView: {
     // paddingHorizontal: 5,
-    borderRadius: 10,
+    borderRadius: 20,
     // borderWidth: 0.5,
     // borderColor: "gray",
-    margin: 5,
+    // margin: 5,
+    overflow: 'hidden',
     justifyContent: "center",
     alignSelf: "center",
-    width: 102,
-    height: 102,
+    width: 100,
+    height: 109,
   },
   artistNameContainer: {
-    backgroundColor: "#fff",
-    marginVertical: -10,
+    // backgroundColor: "rgba(0,0,0,0.5)",
+    // marginVertical: -10,
     borderRadius: 8,
+    position: "absolute",
+    bottom: 0,
     alignSelf: "center",
     height: 20,
     width: "100%",
     bottom: 15,
-    paddingHorizontal: 3,
+    paddingHorizontal: 10,
   },
   artistImage: {
-    width: 100,
-    height: 100,
+    width: "100%",
+    height: "100%",
     borderRadius: 10,
     borderColor: "gray",
-    alignSelf: "center",
+    // alignSelf: "center",
+    // opacity: 0.9
   },
   ArtistName: {
-    color: "gray",
-    textAlign: "center",
+    color: "#fff",
+    textAlign: "left",
+    fontWeight: '600',
+    textShadowColor: '#000',
+    textShadowOffset: {
+      width: 0.5,
+      height: 0.5
+    },
+    textShadowRadius: 2.5,
+    letterSpacing: 0.9
   },
   artName: {
     color: "gray",
@@ -433,13 +457,13 @@ const styles = StyleSheet.create({
   showAll: {
     borderWidth: 1,
     borderColor: "#f5f5f5",
-    borderRadius: 10,
+    borderRadius: 20,
     paddingHorizontal: 5,
-    margin: 5,
+    marginHorizontal: 10,
     justifyContent: "center",
     alignSelf: "center",
     width: 100,
-    height: 100,
+    height: 109,
   },
   marketShowAll: {
     width: ITEM_WIDTH,

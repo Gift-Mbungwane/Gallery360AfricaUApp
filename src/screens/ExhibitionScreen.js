@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   Image,
   Dimensions,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   StatusBar,
@@ -17,30 +16,37 @@ import Carousel from "react-native-snap-carousel";
 //
 import { firestore } from "../../Firebase";
 import LoaderImage from "../assets/components/LoaderImage";
+import ArtistScrollView from "../assets/components/ArtistScrollView";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 //
-export default function ExhibitionScreen({ navigation }) {
-  //
-  const SLIDER_WIDTH = Dimensions.get("window").width;
-  const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.8);
-  // const ITEM_HEIGHT = Math.round((ITEM_WIDTH * 6.5) / 5);
-  const statusBarHeight = StatusBar.currentHeight ? StatusBar.currentHeight : 0
-const paddingOnTop = Platform.OS === 'android' || Platform.OS === 'web' ? 60 + statusBarHeight: 0
+const SLIDER_WIDTH = Dimensions.get("window").width;
+const ITEM_WIDTH = Math.round(SLIDER_WIDTH - 40);
+// const ITEM_HEIGHT = Math.round((ITEM_WIDTH * 6.5) / 5);
+const statusBarHeight = StatusBar.currentHeight ? StatusBar.currentHeight : 0
+const paddingOnTop = Platform.OS === 'android' || Platform.OS === 'web' ? 80 + statusBarHeight : 0
 const navBarHeight = Dimensions.get('screen').height - Dimensions.get('window').height - statusBarHeight;
 const tabBarHeight = 50
 const paddingOnBottom = 90
-const screenHeight = Dimensions.get('screen').height - statusBarHeight - paddingOnTop - navBarHeight - tabBarHeight - paddingOnBottom;
-const carouselHeight = (screenHeight/7) * 6
+// const screenHeight = Dimensions.get('screen').height - statusBarHeight - paddingOnTop - navBarHeight - tabBarHeight - paddingOnBottom;
+const screenHeight = Dimensions.get('window').height
+const carouselHeight = (screenHeight - 300)
 const ITEM_HEIGHT = carouselHeight;
+export default function ExhibitionScreen({ navigation }) {
+  //
+
   const [state, setState] = useState();
   const [artist, setArtist] = useState(null);
   const [exhibition, setExhibition] = useState([]);
+  const [viewHeight, setViewHeight] = useState(screenHeight)
+  const insets = useSafeAreaInsets()
 
+  console.log('Exhibition height: ' + screenHeight);
   //
   const getArtist = () => {
     return firestore
       .collection("artists")
-      .orderBy("artistName")
+      .orderBy("timeStamp", "desc")
       .limit(3)
       .onSnapshot((snapShot) => {
         const allArtists = snapShot.docs.map((docSnap) => docSnap.data());
@@ -72,9 +78,9 @@ const ITEM_HEIGHT = carouselHeight;
 
   //
   const _renderItem = ({ item, index }) => {
-    if(item.isExhibition) {
+    if (item.isExhibition) {
       return (
-        <View>
+        <View style={{ height: viewHeight }}>
           <TouchableOpacity
             onPress={() =>
               navigation.navigate("ExhibitionDetails", {
@@ -88,8 +94,8 @@ const ITEM_HEIGHT = carouselHeight;
             }
           >
             <LoaderImage
-              uri={ item.exhibitionImage }
-              style={{ width: ITEM_WIDTH, height: ITEM_HEIGHT, borderRadius: 16 }}
+              uri={item.exhibitionImage}
+              style={{ width: ITEM_WIDTH, height: viewHeight, borderRadius: 16 }}
             />
             <View
               style={{
@@ -114,144 +120,78 @@ const ITEM_HEIGHT = carouselHeight;
     } else {
       return (
         <View style={{ flexDirection: "row" }}>
-        <TouchableOpacity style={styles.showMoreTextOpacity} onPress={() => navigation.navigate("PreviewMore", { datas: data })} >
-          <Text style={styles.showMoreText} numberOfLines={1}>Show All</Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity style={styles.showMoreTextOpacity} onPress={() => navigation.navigate("PreviewMore", { datas: data })} >
+            <Text style={styles.showMoreText} numberOfLines={1}>Show All</Text>
+          </TouchableOpacity>
+        </View>
       )
     }
 
   };
+  const getViewLayout = (layout) => setViewHeight(layout.height);
 
   //
   return (
-    <View style={styles.container}>
-      <View style={styles.body}>
-        <SafeAreaView
-          style={{
-            width: "100%",
-            alignItems: "center",
-            alignSelf: "center",
-          }}
-        >
-          <Carousel
-            data={exhibition}
-            initialNumToRender={1}
-            windowSize={1}
-            sliderWidth={SLIDER_WIDTH}
-            itemWidth={ITEM_WIDTH}
-            renderItem={_renderItem}
-            onSnapToItem={(index) => setState({ index })}
-            useScrollView={false}
-          />
-        </SafeAreaView>
-      </View>
+    <View style={{ height: Dimensions.get('window').height - 110, width: '100%',paddingBottom: 0, top: 0  }}>
+      <View style={styles.container}>
+        <View style={{ flex: 1 }}>
+          <View onLayout={(e) => getViewLayout(e.nativeEvent.layout)} style={styles.body}>
 
-      <View style={styles.footer}>
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-          { artist &&
-            artist.map(item =>{
-              return (
-                <View key={item.artistUid}>
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate("ArtistProfile", {
-                      description: item.description,
-                      artistUid: item.artistUid,
-                      photoUrl: item.photoUrl,
-                      artistName: item.artistName,
-                      videoUrl: item.videoUrl,
-                      exhibitionImagess: item.exhibitionImage,
-                    })
-                  }
-                >
-                  <View style={styles.artistsView}>
-                    <Image
-                      source={{ uri: item.photoUrl }}
-                      style={styles.artistImage}
-                    />
-                    <View style={styles.artistNameContainer}>
-                      <Text style={styles.ArtistName}>{item.artistName}</Text>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              </View>
-              )
-            })
-          }
-          {/* <FlatList
-            horizontal
-            style={{ paddingLeft: 15 }}
-            bounces={false}
-            showsHorizontalScrollIndicator={false}
-            data={artist}
-            keyExtractor={(item) => `${item.artistUid}`}
-            renderItem={({ item }) => {
-              return (
-                <View>
-                  <TouchableOpacity
-                    onPress={() =>
-                      navigation.navigate("ArtistProfile", {
-                        description: item.description,
-                        artistUid: item.artistUid,
-                        photoUrl: item.photoUrl,
-                        artistName: item.artistName,
-                        videoUrl: item.videoUrl,
-                        exhibitionImagess: item.exhibitionImage,
-                      })
-                    }
-                  >
-                    <View style={styles.artistsView}>
-                      <Image
-                        source={{ uri: item.photoUrl }}
-                        style={styles.artistImage}
-                      />
-                      <View style={styles.artistNameContainer}>
-                        <Text style={styles.ArtistName}>{item.artistName}</Text>
-                      </View>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              );
-            }}
-          /> */}
-          <TouchableOpacity onPress={() => navigation.navigate("Artists")}>
-            <View style={styles.showAll}>
-              <Text
-                style={{ color: "gray", textAlign: "center", fontSize: 15 }}
-              >
-                Show {"\n"}All
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </ScrollView>
+            <Carousel
+              data={exhibition}
+              initialNumToRender={1}
+              windowSize={1}
+              sliderWidth={SLIDER_WIDTH}
+              itemWidth={ITEM_WIDTH}
+              renderItem={_renderItem}
+              onSnapToItem={(index) => setState({ index })}
+              useScrollView={false}
+            />
+            {/* </SafeAreaView> */}
+          </View>
+
+          <ArtistScrollView navigation={navigation} artist={artist} SLIDER_WIDTH={SLIDER_WIDTH} />
+
+        </View>
+
       </View>
     </View>
+
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    height: "100%",
+    flex: 1,
+    // height: 0,
     width: "100%",
+    overflow: 'hidden',
     // backgroundColor: "red",
-    paddingBottom: 10
+    // paddingBottom: 10,
+    // top: 10
   },
   body: {
-    flex: 6,
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
     // backgroundColor: 'yellow',
-    paddingTop: 50
+    paddingTop: 0,
+    // borderColor: 'white',
+    // borderWidth: 1,
+    marginTop: 15
+    // padding: 0
   },
   footer: {
-    flex: 2,
+    // flex: 2,
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 8,
     flexDirection: "row",
     // paddingLeft: 20,
-    maxHeight: 110,
+    height: 109,
+    marginVertical: 30,
+    marginLeft: 20,
+    marginRight: 20,
     // backgroundColor: 'green'
   },
   artistsView: {

@@ -70,7 +70,7 @@ export default function PreviewMoreScreen({ route, navigation }) {
     //   console.log(query);
     // let query;
     // query = 1 + 1 === 2 ? firestore.collection('Market').orderBy('timeStamp', 'desc') : null
-    query.onSnapshot(snapshot => {
+    query.where('isEnabled', '==', true).onSnapshot(snapshot => {
       if(!snapshot.empty) {
         const art = snapshot.docs.map( item => item.data());
         setArtwork(art)

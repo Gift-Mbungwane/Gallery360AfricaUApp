@@ -111,10 +111,10 @@ export default function SignInScreen({ navigation }) {
         <AppLoader />
       ) : (
         <KeyboardAvoidingView behavior="position">
-          <SafeAreaView style={{ borderColor: 'red', borderWidth: 1 }}>
+          <SafeAreaView style={{ }}>
             <ImageBackground
               source={require("../assets/images/signIn/bg.png")}
-              style={{ height: Dimensions.get("window").height,   borderColor: 'red', borderWidth: 1  }}
+              style={{ height: Dimensions.get("window").height }}
             >
               <View style={{ flex: 4 }}>
                 <View style={styles.gallery360logo}>

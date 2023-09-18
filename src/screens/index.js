@@ -30,15 +30,59 @@ import TestScreen  from './TestScreen'
 import ArtistsScreenCopy from "./ArtistsScreen";
 
 export {
-    UserSettingsScreen,
+    ArtistsScreen,
+    ArtistsScreenCopy,
+    ArtistProfileScreen,
+    ArtPreviewScreen,
+    ArtWorksScreen,
     CartScreen,
     ExhibitionDetailsScreen,
     ExhibitionScreen,
-    ArtistProfileScreen,
+    ForgotPasswordScreen,
+    Home,
     MarketScreen,
-    ArtPreviewScreen,
-    ArtWorksScreen, ArtistsScreen, SignUpScreen,
-    SignInScreen, OnboardingScreen, SplashScreen, UserProfileScreen, SearchScreen, PreviewMoreScreen,PreviewScreen,
-    TermsAndConditionsScreen, ShippingAddressScreen, DeliveryAddressScreen,
-    PayPalPaymentScreen, PaymentFailureScreen, PaymentSuccessScreen, Home, NotificationScreen, ScrollScreen, ForgotPasswordScreen, TestScreen, ArtistsScreenCopy
+    NotificationScreen,
+    OnboardingScreen,
+    PreviewMoreScreen,
+    PreviewScreen,
+    ScrollScreen,
+    SignInScreen,
+    SignUpScreen,
+    SplashScreen,
+    UserProfileScreen,
+
+    // Not utilised, keep for future integration or delete if not in plans to integrate
+    DeliveryAddressScreen,
+    PayPalPaymentScreen,
+    PaymentFailureScreen,
+    PaymentSuccessScreen,
+    SearchScreen,
+    ShippingAddressScreen,
+    TermsAndConditionsScreen,
+    TestScreen,
+    UserSettingsScreen,
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }

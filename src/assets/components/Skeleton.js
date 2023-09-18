@@ -11,17 +11,17 @@ export default function Skeleton({ width, height, variant, radius, style, childr
     const borderRadius = variant === 'circle' ? Number(height) / 2 : radius ? radius : 0;
     // console.log(borderRadius, height);
     // console.log(children);
-
+    const skeletonStyle = {
+        flex: 1,
+        backgroundColor: `rgb(210, 210, 210)`,
+        position: 'relative',
+        borderRadius: Number(borderRadius),
+        width: width,
+        height: height,
+        ...style
+    }
     const styles = StyleSheet.create({
-        skeleton: {
-            flex: 1,
-            backgroundColor: `rgb(210, 210, 210)`,
-            position: 'relative',
-            borderRadius: Number(borderRadius),
-            width: width,
-            height: height,
-            ...style
-        }
+        skeleton: skeletonStyle
     })
     useEffect(() => {
         Animated.loop(

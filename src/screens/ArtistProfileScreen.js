@@ -67,7 +67,7 @@ export default function ArtistProfileScreen({ route, navigation }) {
       .where("isEnabled", "==", true)
       .limit(3)
       .onSnapshot((snapShot) => {
-        if (snapShot.exists) {
+        if (!snapShot.empty) {
           let allArt = snapShot.docs.map((docSnap) => ({ isArt: true, ...docSnap.data() }));
           // console.log('all art: ', allArt);
           if (allArt.length > 0) {

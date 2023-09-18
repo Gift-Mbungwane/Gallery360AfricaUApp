@@ -19,7 +19,7 @@ import { globalStyles } from "../assets/styles/GlobalStyles";
 // import Toast from "react-native-simple-toast";
 import Constants from "expo-constants";
 import * as Linking from "expo-linking";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 
 // import * as AuthSession from "expo-auth-session/src/AuthSession";
@@ -39,18 +39,20 @@ export default function CartScreen({ navigation, route }) {
   const [baseUri, setBaseUri] = useState("");
   const [webResult, setWebResult] = useState(null);
   const headerHeight = useHeaderHeight()
-
+  const insets = useSafeAreaInsets()
   // const [request, response, promptAsync] = AuthSession.getDefaultReturnUrl(
   //   "/",
   //   Linking.createURL("/?")
   // );
   const getCart = () => {
+    console.log(uuid);
     firestore
       .collection("cartItem")
       .doc(uuid)
       .onSnapshot((snapShot1) => {
         // console.log(snapShot1.data());
-        if (snapShot1.exists) {
+        
+          console.log('I exist');
           snapShot1.ref
             .collection("items")
             .where("uuid", "==", uuid)
@@ -87,7 +89,7 @@ export default function CartScreen({ navigation, route }) {
               }
 
             });
-        }
+       
 
       });
   };
@@ -275,30 +277,14 @@ export default function CartScreen({ navigation, route }) {
     <ImageBackground
       source={image}
       resizeMode="cover"
-      style={[globalStyles.container, styles.container]}
+      style={[styles.container]}
     >
-      <SafeAreaView style={styles.topLevelView}>
-        <View style={[{ marginTop: headerHeight, height: Dimensions.get('window').height - headerHeight }, styles.safeAreaContainer]}>
+      <View style={[styles.topLevelView, { paddingTop: insets.top + 60 } ]}>
+        {/* <View>
+          <Text>Hi</Text>
+        </View> */}
+        <View style={[{ paddingVertical: 10, flex: 1, }, styles.safeAreaContainer]}>
           <View style={{ flex: 6 }}>
-            {/* <View style={globalStyles.Top}> */}
-            {/* <View style={globalStyles.backButtonView}>
-            <TouchableOpacity 
-              onPress={() => navigation.goBack(null)}
-              style={globalStyles.backButton}
-            >
-              <Entypo
-                name="chevron-small-left"
-                size={40}
-                color={"#000"}
-              />
-            </TouchableOpacity>
-          </View> */}
-
-            {/* <View>
-            <Text style={globalStyles.title}>Cart</Text>
-          </View> */}
-            {/* </View> */}
-
             {cartItem > 0 ? (
               <FlatList
                 style={{ marginLeft: 10, marginRight: 10 }}
@@ -339,18 +325,19 @@ export default function CartScreen({ navigation, route }) {
             )}
           </View>
 
-          <View style={{ marginHorizontal: 20, height: 150 }}>
+          <View style={{ marginHorizontal: 20, height: 180 }}>
             {cartItem > 0 ? (
               <View
                 style={{
                   borderRadius: 30,
                   width: '100%',
-                  height: 150,
+                  height: 180,
                   backgroundColor: "#FFFFFF",
                   alignSelf: "center",
+                  justifyContent: 'space-around',
                   marginVertical: 0,
                   borderWidth: 1,
-                  borderColor: "lightgray",
+                  borderColor: "#E6E6E6",
                   // top: 55,
                 }}
               >
@@ -359,19 +346,22 @@ export default function CartScreen({ navigation, route }) {
                     flexDirection: "row",
                     marginHorizontal: 20,
                     marginVertical: 5,
+                    // backgroundColor: 'red',
+                    justifyContent: 'space-between'
                   }}
                 >
                   <View
                     style={{
                       flexDirection: "column",
                       justifyContent: "center",
-                      width: 150,
+                      // width: 150,
                       marginVertical: 10,
+                      // backgroundColor: 'blue'
                     }}
                   >
-                    <Text style={{ fontSize: 16, color: "gray" }}>Items</Text>
+                    <Text style={{ fontSize: 16, color: "gray", fontWeight: '700', letterSpacing: 0.3 }}>Items</Text>
                     {cartItem > 0 ? (
-                      <Text style={{ fontSize: 16, color: "black" }}>
+                      <Text style={{ fontSize: 16, color: "black", fontWeight: '900', letterSpacing: 0.3, marginTop: 15 }}>
                         {cartItem} Items
                       </Text>
                     ) : (
@@ -383,14 +373,15 @@ export default function CartScreen({ navigation, route }) {
                     style={{
                       flexDirection: "column",
                       justifyContent: "center",
-                      width: 140,
+                      // width: 140,
+                      alignItems: 'flex-end',
                       marginVertical: 10,
                     }}
                   >
-                    <Text style={{ fontSize: 16, color: "gray" }}>Total Amount</Text>
+                    <Text style={{ fontSize: 16, color: "gray", fontWeight: '700', letterSpacing: 0.3 }}>Total Amount</Text>
                     {totalAmount > 0 ? (
                       <Text
-                        style={{ fontSize: 24, color: "black", fontWeight: "bold" }}
+                        style={{ fontSize: 24, color: "black", fontWeight: "900", letterSpacing: 0.3, marginTop: 15 }}
                       >{`R${totalAmount}.00`}</Text>
                     ) : (
                       <Text
@@ -403,14 +394,23 @@ export default function CartScreen({ navigation, route }) {
                 </View>
 
                 <View
+                  elevation={ 5 }
                   style={{
                     width: "90%",
                     height: 50,
                     borderRadius: 20,
-                    backgroundColor: "black",
+                    bottom: 0,
+                    backgroundColor: "#19120A",
                     alignSelf: "center",
                     justifyContent: "center",
-                    marginVertical: -10,
+                    marginBottom: 10,
+                    shadowColor: 'black',
+                    shadowRadius: 3,
+                    shadowOpacity: 0.5,
+                    shadowOffset: {
+                      height: 2, width: 0
+                    },
+                    elevation: 4
                   }}
                 >
                   <TouchableOpacity
@@ -423,7 +423,7 @@ export default function CartScreen({ navigation, route }) {
                     }
                   >
                     <Text
-                      style={{ fontSize: 16, color: "#FFFFFF", textAlign: "center" }}
+                      style={{ fontSize: 16, color: "#FFFFFF", textAlign: "center", fontWeight: 'bold', letterSpacing: 0.3 }}
                     >
                       Proceed to Payment
                     </Text>
@@ -437,7 +437,7 @@ export default function CartScreen({ navigation, route }) {
           </View>
         </View>
 
-      </SafeAreaView>
+      </View>
 
     </ImageBackground>
   );
@@ -450,14 +450,18 @@ const navBarHeight = Dimensions.get('screen').height - Dimensions.get('window').
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1
+    // height: Dimensions.get('window').height,
     // paddingTop: paddingOnTop,
     // paddingBottom: Platform.OS === 'android' ? navBarHeight + 20 : 20,
   },
   topLevelView: {
     flex: 1,
-    // height: Dimensions.get('window').height - 30,
+    // height: Dimensions.get('window').height,
     // backgroundColor: 'red',
-
+    // paddingBottom: 200,
+    // borderColor: 'yellow',
+    // borderWidth: 1
     // paddingTop: 57
   },
   safeAreaContainer: {

@@ -18,7 +18,7 @@ const TabNavigator = () => {
     // )
     return (
         <ImageBackground source={background} style={styles.container}>
-            {/* <SafeAreaView> */}
+          
                 <Tab.Navigator screenOptions={{ swipeEnabled: false }} tabBar={props => <TabBarComponent {...props} />}>
                     <Tab.Screen
                         name="Market"
@@ -29,7 +29,7 @@ const TabNavigator = () => {
                         component={ExhibitionScreen}
                     />
                 </Tab.Navigator>
-            {/* </SafeAreaView> */}
+ 
 
         </ImageBackground>
     );
@@ -44,15 +44,16 @@ const navBarHeight = Dimensions.get('screen').height - Dimensions.get('window').
 const styles = StyleSheet.create({
     container: {
         top: 0,
-        height: Dimensions.get('window').height,
+        height: Dimensions.get('screen').height,
         // top: -2000,
         width: "100%",
-        paddingTop: paddingTop,
+        paddingTop: 0, //paddingTop,
         // paddingBottom: Platform.OS === 'android' ? navBarHeight : 0,
         // paddingTop: 60,
         // borderWidth: 1,
         // borderColor: 'blue',
         // backgroundColor: 'blue',
+        // marginBottom: 30,
         zIndex: 1
     },
     containers: {

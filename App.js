@@ -122,6 +122,7 @@ export default function App({ navigation }) {
             .where("uuid", "==", userExist.uid)
             .onSnapshot((snapShot) => {
               const cartItems = snapShot.size;
+              console.log(cartItems);
               setCartItem(cartItems);
             }, (err) => {
               if (err.message === 'Failed to get document because the client is offline.') {
@@ -241,6 +242,10 @@ export default function App({ navigation }) {
 
               {isLoggedIn ? (
                 <>
+                  {/* <Stack.Screen
+                    name="Market"
+                    component={ExhibitionScreen}
+                  /> */}
                   <Stack.Screen
                     name="Home"
                     component={TabNavigator}
@@ -265,7 +270,10 @@ export default function App({ navigation }) {
                         right: 0,
                         zIndex: 100,
                         backgroundColor: 'transparent',
-                        borderBottomWidth: 40,
+                        // backgroundColor: 'red',
+                        borderBottomWidth: 0,
+                        margin: 0,
+                        borderColor: 'yellow',
                         height: 60
                       },
                       headerLeft: () => (
@@ -280,7 +288,7 @@ export default function App({ navigation }) {
                         <View
                           style={{
                             flexDirection: "row",
-                            width: 85,
+                            width: 95,
                             justifyContent: 'space-between'
                           }}
                         >
@@ -303,12 +311,43 @@ export default function App({ navigation }) {
                               })
                             }
                           >
+                            <View>
+                            { cartItem > 0 && (
+                            <View
+                              style={{
+                                position: "absolute",
+                                height: 18,
+                                width: 18,
+                                borderRadius: 17,
+                                backgroundColor: "rgba(95,197,123,0.9)",
+                                right: -9,
+                                top: -18,
+                                marginVertical: 3,
+                                alignSelf: "flex-end",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                zIndex: 2000,
+                              }}
+                            >
+                              <Text
+                                style={{
+                                  color: "#F5F5F5",
+                                  fontWeight: "bold",
+                                  // marginVertical: -9,
+                                  fontSize: 12,
+                                }}
+                              >
+                                {cartItem}
+                              </Text>
+                            </View>
+                          )}
                             <FontAwesome
                               name="shopping-cart"
-                              size={17}
+                              size={21}
                               color={"#fff"}
                               style={{ alignSelf: "center" }}
                             />
+                            </View>
                           </TouchableOpacity>
 
                           <TouchableOpacity
@@ -390,15 +429,16 @@ export default function App({ navigation }) {
                                 : null,
                             ]}
                           >
-                            {cartItem > 0 ? (
+                            { cartItem > 0 ? (
                               <View
                                 style={{
                                   position: "absolute",
-                                  height: 16,
-                                  width: 16,
+                                  height: 18,
+                                  width: 18,
                                   borderRadius: 17,
                                   backgroundColor: "rgba(95,197,123,0.9)",
-                                  right: 2,
+                                  right: -6,
+                                  top: -8,
                                   marginVertical: 3,
                                   alignSelf: "flex-end",
                                   alignItems: "center",
@@ -857,8 +897,8 @@ export default function App({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    width: Dimensions.get('window').width,
+    // flex: 1,
+    // width: Dimensions.get('window').width,
     backgroundColor: "#fff",
   },
   fullWidth: {

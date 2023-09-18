@@ -13,10 +13,10 @@ export default function TabHeader({ uuid, fullName, imageLink, cartItem}) {
     // console.log('dataS');
     return (
         // <View style={styles.float}>
-        <View style={styles.container}>
+        <View style={[styles.container, {backgroundColor: 'red'}]}>
             <View style={ styles.headerLeft }>
                 <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-                    Hi {fullName}
+                    { fullName ? 'Hi ' + fullName : 'Welcome back' }
                 </Text>
             </View>
 
@@ -73,17 +73,18 @@ const styles = StyleSheet.create({
     container: {
         // borderWidth: 1,
         // borderColor: 'red',
-        height: 80,
+        // height: 80,
         left: 0,
-        top: statusBarHeight ? statusBarHeight : 0,
+        // top: statusBarHeight ? statusBarHeight : 0,
         backgroundColor: 'rgba(0,0,0, 0.5)',
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingHorizontal: 20,
-        marginBottom: statusBarHeight ? statusBarHeight - 40 : 0,
+        // paddingHorizontal: 20,
+        // marginBottom: statusBarHeight ? statusBarHeight - 40 : 0,
         width: Dimensions.get('window').width,
-        zIndex: 50000
+        zIndex: 50000,
+        backgroundColor: 'blue'
     },
     headerLeft: {
         // marginLeft: 35

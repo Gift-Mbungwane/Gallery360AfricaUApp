@@ -712,16 +712,17 @@ const globalStyles = StyleSheet.create({
   modalFullView: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    backgroundColor: "rgba(0,0,0,0.5)"
   },
   modalContainer: {
-    width: "85%",
+    width: "90%",
     height: 475,
     backgroundColor: "#E3E3E3",
     borderRadius: 15,
     alignSelf: "center",
     alignItems: "center",
-    paddingVertical: 15,
+    padding: 20,
     // borderColor: 'red',
     // borderWidth: 1
   },
@@ -742,14 +743,18 @@ const globalStyles = StyleSheet.create({
     borderColor: "black",
     borderWidth: 1,
     height: 50,
-    paddingHorizontal: 65,
+    width: "90%",
+    paddingHorizontal: 15,
     borderRadius: 15,
-    marginVertical: 45,
+    fontSize: 18,
+    fontWeight: '600' ,
+    marginTop: 65,
+    marginBottom: 25,
     backgroundColor: "white",
   },
 
   updateBtn: {
-    width: 220,
+    width: "90%",
     height: 50,
     backgroundColor: "black",
     borderRadius: 15,
@@ -770,7 +775,7 @@ const globalStyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "flex-end",
-    right: 15,
+    // right: 20,
   },
 
   uploadedImage: {
@@ -780,7 +785,9 @@ const globalStyles = StyleSheet.create({
   },
   imgAddIcon: {
     position: "absolute",
-    color: 'green',
+    top: 82.5,
+    left: 82.5,
+    color: '#E3E3E3',
     zIndex: 10
   },
 

@@ -3,6 +3,7 @@ import { ActivityIndicator } from 'react-native'
 import { Image } from 'react-native-elements'
 
 const LoaderImage = ({ uri, style, mode = null }) => {
+    // console.log(uri);
     return (
         <Image
             source={{ uri }}
