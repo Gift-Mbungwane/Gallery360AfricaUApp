@@ -7,7 +7,6 @@ import {
   Image,
   Dimensions,
   TouchableOpacity,
-  ToastAndroid,
   StatusBar,
   Platform,
   ScrollView,
