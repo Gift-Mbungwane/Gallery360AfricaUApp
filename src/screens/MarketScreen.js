@@ -14,7 +14,6 @@ import {
   Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import Carousel from "react-native-snap-carousel";
 //
 import { firestore } from "../../Firebase";
 import { globalStyles } from "../assets/styles/GlobalStyles";
@@ -260,7 +259,7 @@ export default function MarketScreen({ navigation }) {
           <View style={{ left: 0, zIndex: 1000, flex: 1 }}>
 
             <View onLayout={(e) => { getViewLayout(e.nativeEvent.layout) }} style={styles.body}>
-              <Carousel
+              {/* <Carousel
                 data={[{}, {}]}
                 sliderWidth={SLIDER_WIDTH}
                 itemWidth={ITEM_WIDTH}
@@ -268,7 +267,7 @@ export default function MarketScreen({ navigation }) {
                 onSnapToItem={(index) => setState({ index })}
                 useScrollView={false}
                 scrollEnabled={false}
-              />
+              /> */}
 
             </View>
 
@@ -315,7 +314,7 @@ export default function MarketScreen({ navigation }) {
                     flexDirection: "row",
                   }}
                 >
-                  <Carousel
+                  {/* <Carousel
                     data={artwork}
                     initialNumToRender={1}
                     windowSize={1}
@@ -324,7 +323,7 @@ export default function MarketScreen({ navigation }) {
                     renderItem={_renderItem}
                     onSnapToItem={(index) => setState({ index })}
                     useScrollView={false}
-                  />
+                  /> */}
 
                 </View>
               </View>

@@ -14,7 +14,7 @@ import {
 import { globalStyles } from "../assets/styles/GlobalStyles";
 import { Ionicons } from "@expo/vector-icons";
 import { firestore, auth } from "../../Firebase";
-import Carousel from "react-native-snap-carousel";
+// import Carousel from "react-native-snap-carousel";
 import { StackActions } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -119,14 +119,14 @@ export default function ArtWorksScreen({ route, navigation }) {
               alignSelf: "center",
             }}
           >
-            <Carousel
+            {/* <Carousel
               data={art}
               sliderWidth={SLIDER_WIDTH}
               itemWidth={ITEM_WIDTH}
               renderItem={_renderItem}
               onSnapToItem={(index) => setState({ index })}
               useScrollView={true}
-            />
+            /> */}
           </View>
         </View>
       </SafeAreaView>

@@ -4,6 +4,7 @@ import {
   TouchableOpacity,
   View,
   Image,
+  StyleSheet
 } from "react-native";
 import React from "react";
 import { globalStyles } from "../assets/styles/GlobalStyles";
@@ -18,6 +19,7 @@ import image1 from "../assets/images/onboarding/image1.jpg";
 import image2 from "../assets/images/onboarding/image2.jpg";
 import image3 from "../assets/images/onboarding/image3.jpg";
 import image4 from "../assets/images/onboarding/image4.jpg";
+import { ActionButton, ArtistLabel, ArtThumbnail, BoughtArtworksThumbnail, FollowButton, HeroImage } from "../components";
 
 
 export default function OnboardingScreen({ navigation }) {
@@ -64,12 +66,18 @@ export default function OnboardingScreen({ navigation }) {
         >
           <Text style={globalStyles.signInTxt}>Sign In</Text>
         </TouchableOpacity>
-
+        <ActionButton text={"Sign In"} onPress={() => navigation.replace("SignIn")} icon={require("../../assets/icons/person.png")}/>
+        <FollowButton text="Following" onPress={{}} icon={require("../../assets/icons/person.png")} secondary={false} />
+        <HeroImage uri={"https://firebasestorage.googleapis.com/v0/b/chatta-mobile.appspot.com/o/messages%2Fimages%2FcW7x3aV9o8rpH4478Hnf?alt=media&token=e2587fdc-ec26-4084-b57e-8f61628d5800"}/>
+        <ArtThumbnail price={"150.00"} uri={"https://firebasestorage.googleapis.com/v0/b/chatta-mobile.appspot.com/o/messages%2Fimages%2FcW7x3aV9o8rpH4478Hnf?alt=media&token=e2587fdc-ec26-4084-b57e-8f61628d5800"}/>
+        <BoughtArtworksThumbnail uri={"https://firebasestorage.googleapis.com/v0/b/chatta-mobile.appspot.com/o/messages%2Fimages%2FcW7x3aV9o8rpH4478Hnf?alt=media&token=e2587fdc-ec26-4084-b57e-8f61628d5800"}/>
+        <ArtistLabel name={'Vee'} uri={"https://firebasestorage.googleapis.com/v0/b/chatta-mobile.appspot.com/o/messages%2Fimages%2FcW7x3aV9o8rpH4478Hnf?alt=media&token=e2587fdc-ec26-4084-b57e-8f61628d5800"}/>
+        
         <TouchableOpacity
           onPress={() => navigation.navigate("SignUp")}
           style={globalStyles.signUp}
         >
-          <Text style={globalStyles.signUpTxt}>Sign Up</Text>
+          {/* <Text style={globalStyles.signUpTxt}>Sign Up</Text> */}
         </TouchableOpacity>
       </View>
     </ImageBackground>
@@ -77,3 +85,27 @@ export default function OnboardingScreen({ navigation }) {
 }
 
 // images
+const styles = StyleSheet.create({
+  container: {
+      // display: "flex",
+      // paddingHorizontal: 10,
+      borderRadius: 10,
+      backgroundColor: '#181818',
+      height: 54,
+      
+      justifyContent: 'center',
+      // alignItems: 'center',
+      // width: 320
+      // justifyContent: "center",
+      // borderWidth: 1,
+      // borderColor: "#fff",
+      // borderRadius: 20,
+      // height: 50,
+      // width: 320,
+  },
+  text: {
+      color: "FFFFFF",
+      fontSize: 21,
+      textTransform: "uppercase"
+  }
+})

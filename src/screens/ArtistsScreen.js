@@ -13,7 +13,7 @@ import {
 import { globalStyles } from "../assets/styles/GlobalStyles";
 import { Ionicons } from "@expo/vector-icons";
 import { firestore, auth } from "../../Firebase";
-import Carousel from "react-native-snap-carousel";
+// import Carousel from "react-native-snap-carousel";
 import LoaderImage from "../assets/components/LoaderImage";
 
 export default function ArtistsScreen({ navigation }) {
@@ -99,7 +99,7 @@ export default function ArtistsScreen({ navigation }) {
         }}
       >
         <View style={{ height: "90%", justifyContent: 'center', alignItems: 'center' }}>
-          <Carousel
+          {/* <Carousel
             data={artist}
             initialNumToRender={1}
             windowSize={1}
@@ -108,7 +108,7 @@ export default function ArtistsScreen({ navigation }) {
             renderItem={_renderItem}
             onSnapToItem={(index) => setState({ index })}
             useScrollView={false}
-          />
+          /> */}
         </View>
 
       </SafeAreaView>

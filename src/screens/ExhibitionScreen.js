@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 //
-import Carousel from "react-native-snap-carousel";
+// import Carousel from "react-native-snap-carousel";
 //
 import { firestore } from "../../Firebase";
 import LoaderImage from "../assets/components/LoaderImage";
@@ -137,7 +137,7 @@ export default function ExhibitionScreen({ navigation }) {
         <View style={{ flex: 1 }}>
           <View onLayout={(e) => getViewLayout(e.nativeEvent.layout)} style={styles.body}>
 
-            <Carousel
+            {/* <Carousel
               data={exhibition}
               initialNumToRender={1}
               windowSize={1}
@@ -146,7 +146,7 @@ export default function ExhibitionScreen({ navigation }) {
               renderItem={_renderItem}
               onSnapToItem={(index) => setState({ index })}
               useScrollView={false}
-            />
+            /> */}
             {/* </SafeAreaView> */}
           </View>
 
