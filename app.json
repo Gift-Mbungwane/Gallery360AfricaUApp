@@ -7,7 +7,8 @@
     "orientation": "portrait",
     "icon": "./src/assets/images/thegoodone1.png",
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/9f4a12a7-31ed-412f-ad5f-7f5aab6d5046"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -32,6 +33,9 @@
       "eas": {
         "projectId": "9f4a12a7-31ed-412f-ad5f-7f5aab6d5046"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
     }
   }
 }

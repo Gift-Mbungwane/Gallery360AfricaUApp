@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
         color: "#474747",
         fontSize: 15,
         alignItems: 'center',
-        lineHeight: 17
+        lineHeight: 20,
+        height: 20
     }
 })

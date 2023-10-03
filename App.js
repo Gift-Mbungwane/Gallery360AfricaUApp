@@ -20,7 +20,7 @@ import { globalStyles } from "./src/assets/styles/GlobalStyles";
 import {
   UserSettingsScreen, CartScreen, ExhibitionDetailsScreen, ExhibitionScreen, ArtistProfileScreen, MarketScreen, ArtPreviewScreen, ArtWorksScreen, ArtistsScreen, SignUpScreen,
   SignInScreen, OnboardingScreen, SplashScreen, UserProfileScreen, SearchScreen, PreviewMoreScreen, PreviewScreen, TermsAndConditionsScreen, ShippingAddressScreen, DeliveryAddressScreen,
-  PayPalPaymentScreen, PaymentFailureScreen, PaymentSuccessScreen, NotificationScreen, ScrollScreen, ForgotPasswordScreen, TestScreen, ArtistsScreenCopy
+  PayPalPaymentScreen, PaymentFailureScreen, PaymentSuccessScreen, NotificationScreen, ScrollScreen, ForgotPasswordScreen, TestScreen,
 }
   from './src/screens';
 import Home from './src/screens/Home';
@@ -228,7 +228,7 @@ export default function App({ navigation }) {
             }}
           >
             <Stack.Navigator
-              initialRouteName={'Home'}
+              initialRouteName={'OnBoarding'}
               screenOptions={{
                 headerTitleAlign: "center",
                 headerTitleStyle: {
