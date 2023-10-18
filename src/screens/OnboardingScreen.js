@@ -19,7 +19,7 @@ import image1 from "../assets/images/onboarding/image1.jpg";
 import image2 from "../assets/images/onboarding/image2.jpg";
 import image3 from "../assets/images/onboarding/image3.jpg";
 import image4 from "../assets/images/onboarding/image4.jpg";
-import { ActionButton, ArtInfoCard, ArtistLabel, ArtThumbnail, BoughtArtworksThumbnail, Dimensions, FollowButton, HeroImage } from "../components";
+import { ActionButton, ArtInfoCard, ArtistLabel, ArtThumbnail, BoughtArtworksThumbnail, Dimensions, FollowButton, HeroImage, LikeCounter, MessageCounter, UserActivityCard } from "../components";
 import ArtInfo from "../components/text/ArtInfo";
 
 
@@ -67,13 +67,14 @@ export default function OnboardingScreen({ navigation }) {
         >
           <Text style={globalStyles.signInTxt}>Sign In</Text>
         </TouchableOpacity>
-        <ActionButton text={"Sign In"} onPress={() => navigation.replace("SignIn")} icon={require("../../assets/icons/person.png")}/>
-        <FollowButton text="Following" onPress={{}} icon={require("../../assets/icons/person.png")} secondary={false} />
-        <HeroImage uri={"https://firebasestorage.googleapis.com/v0/b/chatta-mobile.appspot.com/o/messages%2Fimages%2FcW7x3aV9o8rpH4478Hnf?alt=media&token=e2587fdc-ec26-4084-b57e-8f61628d5800"}/>
-        <ArtThumbnail price={"150.00"} uri={"https://firebasestorage.googleapis.com/v0/b/chatta-mobile.appspot.com/o/messages%2Fimages%2FcW7x3aV9o8rpH4478Hnf?alt=media&token=e2587fdc-ec26-4084-b57e-8f61628d5800"}/>
-        <BoughtArtworksThumbnail uri={"https://firebasestorage.googleapis.com/v0/b/chatta-mobile.appspot.com/o/messages%2Fimages%2FcW7x3aV9o8rpH4478Hnf?alt=media&token=e2587fdc-ec26-4084-b57e-8f61628d5800"}/>
-        <ArtistLabel name={'Vee'} uri={"https://firebasestorage.googleapis.com/v0/b/chatta-mobile.appspot.com/o/messages%2Fimages%2FcW7x3aV9o8rpH4478Hnf?alt=media&token=e2587fdc-ec26-4084-b57e-8f61628d5800"}/>
-        <ArtInfoCard />
+        {/* <ActionButton text={"Sign In"} onPress={() => navigation.replace("SignIn")} icon={require("../../assets/icons/person.png")}/> */}
+        {/* <FollowButton text="Following" onPress={{}} icon={require("../../assets/icons/person.png")} secondary={false} /> */}
+        {/* <HeroImage uri={"https://firebasestorage.googleapis.com/v0/b/chatta-mobile.appspot.com/o/messages%2Fimages%2FcW7x3aV9o8rpH4478Hnf?alt=media&token=e2587fdc-ec26-4084-b57e-8f61628d5800"}/> */}
+        {/* <ArtThumbnail price={"150.00"} uri={"https://firebasestorage.googleapis.com/v0/b/chatta-mobile.appspot.com/o/messages%2Fimages%2FcW7x3aV9o8rpH4478Hnf?alt=media&token=e2587fdc-ec26-4084-b57e-8f61628d5800"}/> */}
+        {/* <BoughtArtworksThumbnail uri={"https://firebasestorage.googleapis.com/v0/b/chatta-mobile.appspot.com/o/messages%2Fimages%2FcW7x3aV9o8rpH4478Hnf?alt=media&token=e2587fdc-ec26-4084-b57e-8f61628d5800"}/> */}
+        {/* <ArtistLabel name={'Vee'} uri={"https://firebasestorage.googleapis.com/v0/b/chatta-mobile.appspot.com/o/messages%2Fimages%2FcW7x3aV9o8rpH4478Hnf?alt=media&token=e2587fdc-ec26-4084-b57e-8f61628d5800"}/> */}
+        {/* <ArtInfoCard /> */}
+        <UserActivityCard artist={'Vukona'}/>
         <TouchableOpacity
           onPress={() => navigation.navigate("SignUp")}
           style={globalStyles.signUp}
