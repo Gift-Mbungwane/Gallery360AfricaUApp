@@ -21,7 +21,10 @@ import Skeleton from "../assets/components/Skeleton";
 import LoaderImage from "../assets/components/LoaderImage";
 import ArtistScrollView from "../assets/components/ArtistScrollView";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
-const background = require("../assets/images/home.png");
+import { ArtworksSection, CreatorsSection } from "../components/sections";
+import { ScrollableFilterCard } from "../components";
+import { useHeaderHeight } from "@react-navigation/elements";
+// const background = require("../assets/images/home.png");
 //
 const SLIDER_WIDTH = Dimensions.get("window").width;
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH - 40);
@@ -51,15 +54,21 @@ export default function MarketScreen({ navigation }) {
   //
   const [viewHeight, setViewHeight] = useState(screenHeight)
   const insets = useSafeAreaInsets()
+  const headerHeight = useHeaderHeight()
   ///
 
   const getArtist = () => {
     return firestore
-      .collection("artists")
+      .collection("galleryUsers")
       .orderBy("timeStamp", "desc")
-      .limit(3)
+      // .limit(3)
       .onSnapshot((snapShot) => {
-        const allArtists1 = snapShot.docs.map((docSnap) => docSnap.data());
+        const allArtists1 = snapShot.docs.map((docSnap) => ({
+          ...docSnap.data(),
+          photoUrl: docSnap.data().imageUrl,
+          artistUid: docSnap.id,
+          artistName: docSnap.data().fullname
+        }));
         setArtist(allArtists1);
       });
   };
@@ -81,12 +90,28 @@ export default function MarketScreen({ navigation }) {
     }
 
   }
+  const getArtistName = async (artistId) => {
+    return firestore.collection('galleryUsers').doc(artistId).get().then(doc => {
+      const fullname = doc.data().fullname
+      console.log({ fullname });
+      return fullname 
+    })
+  }
   const getArtWorks = () => {
-    return firestore.collection('Market').orderBy("timeStamp", "desc").limit(5).where('isEnabled', '==', true).onSnapshot((snapShot) => {
+    return firestore.collection('newArtworks').orderBy("title", "desc").limit(5).where('isEnabled', '==', true).onSnapshot(async(snapShot) => {
       if (!snapShot.empty) {
-        const art = snapShot.docs.map(item => ({ ...item.data(), isArt: true }))
+        const art = await Promise.all(snapShot.docs.map(async (item) => ({
+          ...item.data(),
+          isArt: true,
+          art,
+          artUrl: item.data().imgUrls[0].imgUrl,
+          ImageUid: item.id,
+          artistUid: item.data().userid,
+          artName: item.data().title,
+          artistName: await getArtistName(item.data().userid)
+        })))
 
-        setArtwork([...art, { isArt: false, text: 'Show All' }])
+        setArtwork(art)
         // console.log('artworks: ', art);
         setTimeout(() => {
           toggleShowPlaceholder(false)
@@ -139,82 +164,14 @@ export default function MarketScreen({ navigation }) {
 
 
   };
-  const _renderItem = ({ item, index }) => {
-    // console.log(item);
-
-    if (item.isArt) {
-      return (
-        <View style={{ flexDirection: "row", height: '100%', padding: 0 }}>
-
-          <TouchableOpacity
-            onPress={() => { navigateToArtPreview(item) }}
-            style={{
-              height: viewHeight,
-              maxHeight: viewHeight,
-              padding: 0,
-              // backgroundColor: 'red'
-            }}
-          >
-            {/* <Image
-              source={{ uri: item.artUrl }}
-              placeholder
-              style={{
-                width: ITEM_WIDTH,
-                height: ITEM_HEIGHT,
-                maxHeight: ITEM_HEIGHT,
-                borderRadius: 16,
-                padding: 0
-              }}
-            /> */}
-            <LoaderImage
-              uri={item.artUrl}
-              style={{
-                width: ITEM_WIDTH,
-                height: viewHeight,
-                maxHeight: viewHeight,
-                borderRadius: 16,
-                padding: 0,
-              }}
-            />
-            <View
-              style={{
-                backgroundColor: "#fff",
-                height: 65,
-                maxHeight: 65,
-                position: "absolute",
-                borderRadius: 16,
-                bottom: 8,
-                left: 8,
-                right: 8,
-                justifyContent: "center",
-              }}
-            >
-              <Text style={styles.artNameTxt}>{item.artName}</Text>
-              <Text style={styles.artTypeTxt}>{item.artType}</Text>
-            </View>
-          </TouchableOpacity>
-
-        </View>
-      )
-    } else {
-      return (
-        <View style={{ flexDirection: "row", zIndex: 1 }}>
-          <TouchableOpacity style={styles.showMoreTextOpacity} onPress={() => navigation.navigate("PreviewMore", { datas: data, artistUID: null })} >
-            <Text style={styles.showMoreText} numberOfLines={1}>Show All</Text>
-          </TouchableOpacity>
-        </View>
-      )
-    }
-
-  };
 
   useEffect(() => {
     let isMounted = true;
     if (isMounted) {
       firestore
-        .collection("Market")
+        .collection("newArtworks")
         .where("status", "==", "approved")
-        .orderBy("timeStamp", "desc")
+        .orderBy("title", "desc")
         .onSnapshot((snapShot) => {
           if (!snapShot.empty) {
             const snap = snapShot.docs.map((document) => document.data());
@@ -234,6 +191,17 @@ export default function MarketScreen({ navigation }) {
     console.log(layout);
     setViewHeight(layout.height)
   }
+  const navigateToArtwork = async (item) => {
+    // const artistUid = item.artistUid
+    console.log({ item });
+    firestore.collection('galleryUsers').doc(item.artistUid).get().then(doc => {
+      console.log(doc.data());
+      navigation.navigate('ArtPreview', {
+        artistUid: item.artistUid, imageUID: item.imageUID, photoUrl: doc.data().imageUrl, artistName: doc.data().fullname
+      })
+    })
+
+  }
 
   //
   // return (
@@ -251,95 +219,22 @@ export default function MarketScreen({ navigation }) {
 
   // );
   return (
-    // <View style={{ height: Dimensions.get('window').height + insets.top, paddingTop: insets.top + 60, backgroundColor: 'red', borderColor: 'yellow', borderWidth: 1,  }}></View>
-    <View style={{ height: Dimensions.get('window').height - 110, width: '100%',paddingBottom: 0, top: 0  }}>
-
-      <View style={styles.container}>
-        {showPlaceholder ? (
-          <View style={{ left: 0, zIndex: 1000, flex: 1 }}>
-
-            <View onLayout={(e) => { getViewLayout(e.nativeEvent.layout) }} style={styles.body}>
-              {/* <Carousel
-                data={[{}, {}]}
-                sliderWidth={SLIDER_WIDTH}
-                itemWidth={ITEM_WIDTH}
-                renderItem={_renderSkeletonItem}
-                onSnapToItem={(index) => setState({ index })}
-                useScrollView={false}
-                scrollEnabled={false}
-              /> */}
-
-            </View>
-
-            <View style={styles.footer}>
-              <View style={{ flex: 1, width: '100%', overflow: 'hidden', paddingRight: -20 }}>
-                <View style={{ flex: 1, marginHorizontal: -10, marginRight: -20, overflow: 'hidden', width: SLIDER_WIDTH + 10 }}>
-                  <ScrollView
-                    horizontal={true}
-                    scrollEnabled={false}
-                    showsHorizontalScrollIndicator={false}
-                    style={{ width: '100%', overflow: 'hidden' }}
-                  >
-                    {
-                      [{}, {}, {}].map((item, index) => {
-                        return (
-                          <View style={styles.artistCard}>
-                            <View style={styles.artistsView}>
-                              <Skeleton height={109} width={100} variant="rectangle" radius={20} style={styles.artistImage}></Skeleton>
-                            </View>
-
-                          </View>
-                        )
-                      })
-                    }
-
-                  </ScrollView>
-
-                </View>
-              </View>
-
-
-            </View>
-          </View>) : (
-
-          
-            <View style={{ flex: 1}}>
-
-              <View onLayout={(e) => getViewLayout(e.nativeEvent.layout)} style={styles.body}>
-                <View
-                  style={{
-                    width: "100%",
-                    alignItems: "center",
-                    alignSelf: "center",
-                    flexDirection: "row",
-                  }}
-                >
-                  {/* <Carousel
-                    data={artwork}
-                    initialNumToRender={1}
-                    windowSize={1}
-                    sliderWidth={SLIDER_WIDTH}
-                    itemWidth={ITEM_WIDTH}
-                    renderItem={_renderItem}
-                    onSnapToItem={(index) => setState({ index })}
-                    useScrollView={false}
-                  /> */}
-
-                </View>
-              </View>
-              <ArtistScrollView artist={artist} navigation={navigation} SLIDER_WIDTH={SLIDER_WIDTH} />
-
-            </View>
-
-          
-        )}
-
-      </View>
+    // <ScrollView contentContainerStyle={{ backgroundColor: '#FFFFFF' }} scrollEnabled={false}>
+    //   <CreatorsSection artists={artist} navigation={ navigation } />
+    //   <ArtworksSection navigation={ navigation } />
+    // </ScrollView>
+    // <View style={{ backgroundColor: '#FFFFFF', height: Dimensions.get('window').height + 400 }} >
+    //   <CreatorsSection artists={artist} navigation={navigation} />
+    //   <ArtworksSection navigation={navigation} />
+    // </View>
+    <View style={{ flex: 1, paddingBottom: insets.top + 12, backgroundColor: 'green' }}>
+      <ScrollView contentContainerStyle={{ flex: 1, backgroundColor: '#FFFFFF', borderColor: 'red', borderWidth: 1 }}>
+        <CreatorsSection artists={artist} navigation={navigation} />
+        <ArtworksSection navigation={navigation} artworks={artwork} navigateToArtwork={(item) => navigateToArtwork(item)} />
+      </ScrollView>
     </View>
 
-
-
-  );
+  )
 
 }
 const paddingTop = Platform.OS === 'android' ? 60 : 0

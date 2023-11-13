@@ -11,7 +11,7 @@ import {
   ActivityIndicator,
   Alert
 } from "react-native";
-import React, { useCallback, useContext, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Formik } from "formik";
 // import { LinearGradient } from "expo-linear-gradient";
 // import Toast from "react-native-simple-toast";
@@ -28,13 +28,17 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 // main
 export default function SignInScreen({ navigation }) {
+
   // set state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errortext, setErrortext] = useState("");
   const [loading, setLoading] = useState(false);
   const { isLoggedIn, toggleUserState } = useContext(UserContext)
-
+  useEffect(() => {
+    console.log('on login');
+    console.log({ loading });
+  }, [loading])
   // form validation
   const validate = () => {
     const reg =
@@ -104,7 +108,6 @@ export default function SignInScreen({ navigation }) {
   };
 
   //
-
   return (
     <>
       {loading ? (

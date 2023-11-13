@@ -1,28 +1,25 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
 
-const FollowButton = ({ text, onPress, icon, secondary }) => {
+const FollowButton = ({ text, onPress, icon, secondary, following }) => {
     console.log({ secondary });
     const containerStyle = [
         styles.container,
-        secondary && { backgroundColor: "#FFFFFF", borderColor: "#EDEDED", borderWidth: 1 }
+        !following && { backgroundColor: "#FFFFFF", borderColor: "#EDEDED", borderWidth: 1 }
     ]
     const textStyle = [
         styles.text,
-        secondary && { color: "#000000" }
+        !following && { color: "#000000" }
     ]
 
-    return(
-        <View style={{ backgroundColor: 'green', flexWrap: 'wrap' }}>
-            <Text style={{ width: 20, backgroundColor: 'red'}}>'hi'</Text>
+    return (
+        <View style={{ flex: 0, alignItems: 'flex-start' }}>
+            <TouchableOpacity style={containerStyle}>
+                {!following && <Image style={styles.icon} source={icon} />}
+                    <Text style={textStyle}>{text}</Text>
+            </TouchableOpacity>
         </View>
     )
-  return (
-    <TouchableOpacity style={containerStyle} >
-        {/* { icon && <Image style={styles.icon} source={ icon } /> }
-      <Text style={textStyle}>{text}</Text> */}
-    </TouchableOpacity>
-  )
 }
 
 export default FollowButton
@@ -35,24 +32,24 @@ const styles = StyleSheet.create({
         backgroundColor: '#181818',
         height: 25,
         // width: 100,
-        
-        // justifyContent: 'space-evenly',
-        // alignItems: 'center',
+
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
         flexDirection: 'row',
         // flex: 1,
         gap: 5
     },
-    icon:{
+    icon: {
         height: 15,
         width: 15,
-        backgroundColor: 'red'
+        // backgroundColor: 'red'
     },
     text: {
         color: "#CEB89E",
         fontSize: 10,
         textTransform: "uppercase",
-        fontWeight: '100',
-        flex:1,
-        backgroundColor: 'red'
+        fontWeight: '300',
+        // flex: 1,
+        // backgroundColor: 'red'
     }
 })

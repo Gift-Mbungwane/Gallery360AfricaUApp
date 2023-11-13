@@ -8,12 +8,23 @@ import ArtInfoCard from "./text/ArtInfoCard";
 
 
 import ArtistLabel from "./labels/ArtistLabel";
-import LikeCounter from "./counters/LikeCounter";
+import LikeCounter from "./counters/LikeCounter"
 import MessageCounter from "./counters/MessageCounter";
+// import LikeCounter from "./counters/LikeCounter";
+// import MessageCounter from "./counters/MessageCounter";
 import UserActivityCard from "./cards/UserActivityCard";
+import ArtworkCard from "./cards/ArtworkCard";
+import ArtistArtworksCard from "./cards/ArtistArtworksCard";
+import ArtDetails from "./text/ArtDetails";
+import HeroCard from "./cards/HeroCard";
+import FilterText from "./text/FilterText";
+import ScrollableFilterCard from "./cards/ScrollableFilterCard";
 
+import ArtworkImageSlider from "./images/ArtworkImageSlider";
+import ViewAll from "./text/ViewAll";
 
-
+import Header from "./header/Header";
+// import DropdownInput from "./inputs/DropdownInput";
 export {
     ActionButton,
     FollowButton,
@@ -25,5 +36,15 @@ export {
     ArtInfoCard,
     LikeCounter,
     MessageCounter,
-    UserActivityCard
+    UserActivityCard,
+    ArtworkCard,
+    ArtistArtworksCard,
+    ArtDetails,
+    HeroCard,
+    FilterText,
+    ScrollableFilterCard,
+    ArtworkImageSlider,
+    ViewAll,
+    Header
+    // DropdownInput
 }

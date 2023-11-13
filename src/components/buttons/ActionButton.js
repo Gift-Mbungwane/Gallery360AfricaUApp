@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native'
 import React from 'react'
 
-const ActionButton = ({ text, onPress, icon, disabled }) => {
+const ActionButton = ({ text, onPress, icon, disabled, style }) => {
     console.log({ text, onPress, icon });
     const containerStyle = [
         styles.container,
@@ -12,8 +12,8 @@ const ActionButton = ({ text, onPress, icon, disabled }) => {
         disabled && { color: "#22180E" }
     ]
   return (
-    <TouchableOpacity style={ containerStyle } onPress={onPress}>
-        { icon && <Image source={ icon } /> }
+    <TouchableOpacity style={[ containerStyle, style]} onPress={onPress}>
+        { icon && icon }
         <Text style={ textStyle }>{ text }</Text>
     </TouchableOpacity>
   )
@@ -35,7 +35,8 @@ const styles = StyleSheet.create({
     },
     text: {
         color: "#FFFFFF",
-        fontSize: 18,
-        textTransform: "uppercase"
+        fontSize: 14,
+        textTransform: "uppercase",
+        fontWeight: '500'
     }
 })

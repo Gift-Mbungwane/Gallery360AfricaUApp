@@ -24,12 +24,17 @@ import VideoPlayer from "expo-video-player";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { globalStyles } from "../assets/styles/GlobalStyles";
+import BoughtArtworksSection from "../components/sections/BoughtArtworksSection";
+import TransparentHeaderView from "../components/TransparentHeaderView";
+import ArtistArtworks from "../components/sections/ArtistArtworks";
+import ArtistProfileHeader from "../components/sections/ArtistProfileHeader";
 //
 export default function ArtistProfileScreen({ route, navigation }) {
   //
   const { artistUid, photoUrl, artistName, description } = route.params;
-  // console.log('params: ', route.params)
+  console.log('params: ', route.params)
   //
+  const [uid, setUid] = useState(null)
   const [playing, setPlaying] = useState(false);
   const [isMute, setMute] = useState(false);
   const [followingBoolean, setFollowingBoolean] = useState(false);
@@ -45,7 +50,7 @@ export default function ArtistProfileScreen({ route, navigation }) {
   const videoViewRef = useRef(null);
   const [status, setStatus] = React.useState({});
   const headerHeight = useHeaderHeight()
-
+  console.log({ headerHeight });
   //  video
   const onStateChange = (state) => {
     if (state === "ended") {
@@ -61,18 +66,22 @@ export default function ArtistProfileScreen({ route, navigation }) {
 
   const getArt = async () => {
     // console.log(`artist ID : ${artistUid}s`);
+    console.log({ artistUid });
+    // return
+    console.log('running art getter');
     firestore
-      .collection("Market")
-      .where("ArtistUid", "==", artistUid)
+      .collection("newArtworks")
+      .where("userid", "==", artistUid)
       .where("isEnabled", "==", true)
       .limit(3)
       .onSnapshot((snapShot) => {
         if (!snapShot.empty) {
           let allArt = snapShot.docs.map((docSnap) => ({ isArt: true, ...docSnap.data() }));
           // console.log('all art: ', allArt);
-          if (allArt.length > 0) {
-            setArt([...allArt, { isArt: false, ImageUid: null }]);
-          }
+          // if (allArt.length > 0) {
+          //   setArt([...allArt, { isArt: false, ImageUid: null }]);
+          // }
+          setArt(allArt)
         }
 
 
@@ -136,8 +145,10 @@ export default function ArtistProfileScreen({ route, navigation }) {
   };
 
   const onFollowing = async () => {
-    const uuid = auth.currentUser.uid;
-
+    auth.onAuthStateChanged((user) => {
+      console.log({ user });
+    })
+    return
     try {
       await firestore
         .collection("following")
@@ -166,7 +177,8 @@ export default function ArtistProfileScreen({ route, navigation }) {
 
   //
   const onUnFollowing = () => {
-    const uuid = auth.currentUser.uid;
+    return
+    // const uuid = auth.currentUser.uid;
 
     firestore
       .collection("following")
@@ -185,8 +197,9 @@ export default function ArtistProfileScreen({ route, navigation }) {
 
   //
   const followState = () => {
-    const uid = auth.currentUser.uid;
+    // const uid = auth.currentUser.uid;
     // console.log({ uid });
+    return
     firestore
       .collection("following")
       .doc(artistUid)
@@ -208,8 +221,11 @@ export default function ArtistProfileScreen({ route, navigation }) {
   };
 
   useEffect(() => {
+    auth.onAuthStateChanged((user) => {
+      setUid(user.uid)
+    })
     let isMounted = true;
-    if(isMounted) {
+    if (isMounted) {
       getArt();
       getNumberOfImage();
       followState();
@@ -252,257 +268,17 @@ export default function ArtistProfileScreen({ route, navigation }) {
     <ImageBackground
       source={imageBg}
       resizeMode="cover"
-      style={[globalStyles.container, styles.container]}
+      style={[styles.container]}
     >
-      <SafeAreaView style={{ flex: 1 }}>
-        <View style={[{ marginTop: headerHeight, maxHeight: Dimensions.get('window').height - headerHeight, flex: 1 }]}>
-          <View style={[styles.TopContainer]} >
-            <View onLayout={(e) => setVideoSize(e.nativeEvent.layout.height)} style={{ marginVertical: 0, padding: 0, width: Dimensions.get('window').width, height: '100%', flexDirection: 'column', justifyContent: 'center', alignContent: 'center', backgroundColor: '#000', marginVertical: 'auto' /* overflow: 'hidden' */ }}>
-              {/* <VideoPlayer
-            defaultControlsVisible={true}
+      <TransparentHeaderView style={{ paddingHorizontal: 20 }}>
+        <View style={{ paddingHorizontal: 10 }}>
+          <ArtistProfileHeader artistUid={artistUid} photoUrl={photoUrl} artistName={artistName} />
+          <BoughtArtworksSection artworks={art} />
+          <ArtistArtworks artworks={art} artistName={artistName} artistPic={photoUrl} onPress={(imageUID) => navigation.navigate('ArtPreview', { artistUid, imageUID: imageUID, photoUrl, artistName })} />
 
-            style={{ height: videoViewSize, padding: 20 }}
-
-            videoProps={{
-              style: { height: '100%', padding: 20 },
-              shouldPlay: false,
-              resizeMode: ResizeMode.CONTAIN,
-              source: {
-                uri: videoUrl,
-              },
-            }}
-          /> */}
-              {!videoUrl ? (
-                <CenterMarginView>
-                  <ActivityIndicator size="large" color='white' />
-                </CenterMarginView>
-              ) : videoUrl === 'no video' ? (
-                <CenterMarginView>
-                  <Text style={{ color: 'white', fontSize: 24 }}>No video found</Text>
-                </CenterMarginView>
-              ) : (
-                <Video
-                  style={{ zIndex: 10000, flex: 1 }}
-                  ref={videoViewRef}
-                  // style={{ height: videoViewSize, maxWidth: '100%', padding: 0, alignSelf: 'center' }}
-                  // style={{ height: videoViewSize, backgroundColor: 'yellow'}}
-                  shouldPlay={false}
-                  useNativeControls
-                  resizeMode='contain'
-                  source={{
-                    uri: videoUrl,
-                    // uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4'
-                  }}
-                />
-              )}
-
-
-              {/* <Video
-        ref={video}
-        style={{ height: 100, width: 100}}
-        source={{
-          uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4',
-        }}
-        useNativeControls
-        resizeMode="contain"
-        isLooping
-        onPlaybackStatusUpdate={status => setStatus(() => status)}
-      /> */}
-              {/* <Text style={{ backgroundColor: 'yellow'}}>Hi</Text> */}
-            </View>
-          </View>
-
-          <View style={styles.MiddleContainer}>
-            <View style={styles.listItem}>
-              <View style={{ flexDirection: "row", width: "91%" }}>
-                <Image source={{ uri: `${photoUrl}` }} style={styles.img2} />
-
-                <View style={{ width: "100%" }}>
-                  <Text
-                    style={{
-                      color: "#000000",
-                      marginLeft: 10,
-                      top: 6,
-                      fontSize: 20,
-                    }}
-                  >
-                    {artistName}
-                  </Text>
-                  <Text style={{ color: "#ceb89e", marginLeft: 10, top: 3 }}>
-                    Artist
-                  </Text>
-
-                  {following == artistUid ? (
-                    <View>
-                      <TouchableOpacity
-                        style={{
-                          alignSelf: "flex-end",
-                          marginVertical: -25,
-                          marginHorizontal: 70,
-                          bottom: 10,
-                        }}
-                        title="following"
-                        onPress={() => onUnFollowing()}
-                      >
-                        <Text style={{ color: "#dc143c", fontSize: 16 }}>
-                          Unfollow
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  ) : (
-                    <View>
-                      <TouchableOpacity
-                        style={{
-                          alignSelf: "flex-end",
-                          marginVertical: -25,
-                          marginHorizontal: 70,
-                          bottom: 10,
-                        }}
-                        title="following"
-                        onPress={() => onFollow()}
-                      >
-                        <Text style={{ color: "#deb887", fontSize: 16 }}>
-                          Follow
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  )}
-                </View>
-              </View>
-
-              <View style={{ paddingTop: 15, flex: 1, justifyContent: "center" }}>
-                {
-                  description && description.trim() == '' ?
-                    <Text style={{ color: "#000000" }}>{description}</Text> :
-                    <Text style={{ color: "#000000", textAlign: 'center', fontWeight: 'bold', fontSize: 18 }}>No description provided</Text>
-
-
-
-                }
-
-              </View>
-            </View>
-          </View>
-
-          <View style={styles.BottomContainer}>
-            <Text style={styles.moreText}>More Works</Text>
-            {art && art.length > 0 ?
-              <SafeAreaView style={{ flexDirection: "row", paddingHorizontal: 10 }}>
-                <FlatList
-                  style={{}}
-                  scrollEnabled={true}
-                  horizontal={true}
-                  data={art}
-                  keyExtractor={(item) => `${item.ImageUid}`}
-                  renderItem={({ item }) => {
-                    if (item.isArt) {
-                      return (
-                        <View style={styles.listItem2}>
-                          <TouchableOpacity
-                            onPress={() =>
-                              navigation.navigate("ArtPreview", {
-                                artistUid: artistUid,
-                                price: item.price,
-                                description: item.description,
-                                artUrl: item.artUrl,
-                                artistPhoto: item.artistPhoto,
-                                artistName: item.artistName,
-                                imageUID: item.ImageUid,
-                                artType: item.artType,
-                                description: description,
-                              })
-                            }
-                          >
-                            <Image source={{ uri: item.artUrl }} style={styles.img} />
-                            <View style={styles.priceView}>
-                              <Text style={styles.price}>R {item.price}</Text>
-                            </View>
-                          </TouchableOpacity>
-                        </View>
-                      );
-                    } else {
-                      if (art && art.length > 4) {
-                        // console.log('we match');
-                        return (
-                          <View
-                            style={{ backfaceVisibility: "hidden", marginHorizontal: 0 }}
-                          >
-                            <TouchableOpacity
-                              onPress={() =>
-                                navigation.navigate("PreviewMore", {
-                                  artistUID: artistUid,
-                                  description: description,
-                                  artistUid: artistUid,
-                                  photoUrl: photoUrl,
-                                  artistName: artistName,
-                                })
-                              }
-                              style={{
-                                borderWidth: 1,
-                                borderColor: "gray",
-                                width: 120,
-                                height: 150,
-                                borderRadius: 15,
-                                // left: 10,
-                                top: 20,
-                                justifyContent: "center",
-                                alignItems: "center",
-                              }}
-                            >
-                              <Text style={{ fontSize: 18, color: "gray" }}> +{size}</Text>
-                              {/* <Text style={{color:'blue', fontSize:20, fontWeight:'700'}}>See All</Text> */}
-                            </TouchableOpacity>
-                          </View>
-                        )
-                      } else {
-                        return (<View></View>)
-                      }
-
-                    }
-
-                  }}
-                />
-                {size > 10 ? (
-                  <View
-                    style={{ backfaceVisibility: "hidden", marginHorizontal: 0, borderColor: 'red', borderWidth: 1 }}
-                  >
-                    <TouchableOpacity
-                      onPress={() =>
-                        navigation.navigate("PreviewMore", {
-                          artistUID: artistUid,
-                          description: description,
-                          artistUid: artistUid,
-                          photoUrl: photoUrl,
-                          artistName: artistName,
-                        })
-                      }
-                      style={{
-                        borderWidth: 1,
-                        borderColor: "gray",
-                        width: 120,
-                        height: 150,
-                        borderRadius: 15,
-                        // left: 10,
-                        top: 20,
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text style={{ fontSize: 18, color: "gray" }}> +{size}</Text>
-                      {/* <Text style={{color:'blue', fontSize:20, fontWeight:'700'}}>See All</Text> */}
-                    </TouchableOpacity>
-                  </View>
-                ) : (
-                  <View></View>
-                )}
-              </SafeAreaView> : <View style={styles.noArtView}>
-                <Text style={styles.noArtText}>No artworks are currently available from {artistName}</Text>
-              </View>
-            }
-
-          </View>
         </View>
-      </SafeAreaView>
+      </TransparentHeaderView>
+
     </ImageBackground>
   );
 }
@@ -516,7 +292,7 @@ const paddingOnTop = Platform.OS === 'android' ? 60 : 60
 const styles = StyleSheet.create({
   container: {
     // height: "100%",
-    height: Dimensions.get('screen').height,
+    flex: 1,
     width: "100%",
     // paddingTop: paddingOnTop,
     // backgroundColor: "red",

@@ -2,11 +2,11 @@ import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import CounterComponent from './CounterComponent'
 
-const MessageCounter = ({ number }) => {
+const MessageCounter = ({ counter }) => {
   return (
     <CounterComponent
         image={require('../../../assets/icons/message-text.png')}
-        counter={12}
+        counter={counter}
     />
   )
 }

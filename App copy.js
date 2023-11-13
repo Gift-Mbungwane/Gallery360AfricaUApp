@@ -41,7 +41,7 @@ import BackIcon from "./src/assets/components/BackIcon";
 const background = require("./src/assets/images/home.png");
 import LogoutIcon from './src/assets/images/logout.svg'
 import HomeHeaderRight from "./src/assets/components/HomeHeaderRight";
-import { Header, HeroImage } from "./src/components";
+import { HeroImage } from "./src/components";
 import UserHeaderCard from "./src/components/cards/UserHeaderCard";
 import HeaderRightOptions from "./src/components/cards/HeaderRightOptions";
 
@@ -195,7 +195,16 @@ export default function App({ navigation }) {
       }
     }
   }
-
+  useEffect(() => {
+    // if(showSplash) {
+    //   StatusBar.setBackgroundColor('transparent')
+    //   StatusBar.setTranslucent(true);
+    //   NavigationBar.getVisibilityAsync(false)
+    // } else {
+    //   StatusBar.setBackgroundColor('#ceb89e')
+    //   NavigationBar.setBackgroundColorAsync('#ceb89e')
+    // }
+  }, [showSplash])
   const toggleUserState = async (bln) => {
     try {
       auth.onAuthStateChanged(user => {
@@ -271,7 +280,7 @@ export default function App({ navigation }) {
                       headerTransparent: true,
                       headerStyle: {
                         position: 'absolute',
-                        top: 10,
+                        top: 0,
                         left: 0,
                         right: 0,
                         zIndex: 100,
@@ -280,17 +289,15 @@ export default function App({ navigation }) {
                         borderBottomWidth: 0,
                         margin: 0,
                         borderColor: 'yellow',
-                        height: 60,
-                        paddingTop: 10
+                        height: 60
                       },
-                      header: () => (
-                        <Header>
-                          <UserHeaderCard userDetails={userDetails} />
-                          <HeaderRightOptions userDetails={userDetails} cartItem={cartItem} navigation={navigation} />
-                        </Header>
-
+                      headerLeft: () => (
+                        <UserHeaderCard userDetails={userDetails} />
+                      ),
+                      //
+                      headerRight: () => (
+                        <HeaderRightOptions userDetails={userDetails} cartItem={cartItem} navigation={navigation} />
                       )
-
                     })}
                   />
 

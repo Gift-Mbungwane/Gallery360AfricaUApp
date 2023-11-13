@@ -4,12 +4,16 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import TabBarComponent from "./TabBarComponent";
 import MarketScreen from "../../screens/MarketScreen";
 import ExhibitionScreen from "../../screens/ExhibitionScreen";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { useHeaderHeight } from '@react-navigation/elements';
 
 const Tab = createMaterialTopTabNavigator();
 const Stack = createNativeStackNavigator();
 const background = require("../../assets/images/home.png");
 const TabNavigator = () => {
+    const insets = useSafeAreaInsets()
+    const headerHeight = useHeaderHeight()
+    console.log({ insets, headerHeight });
 
     // return(
     //     <View style={styles.container}>
@@ -17,8 +21,7 @@ const TabNavigator = () => {
     //     </View>
     // )
     return (
-        <ImageBackground source={background} style={styles.container}>
-          
+        <ImageBackground source={background} style={[styles.container, { paddingTop: insets.top + headerHeight }]}>
                 <Tab.Navigator screenOptions={{ swipeEnabled: false }} tabBar={props => <TabBarComponent {...props} />}>
                     <Tab.Screen
                         name="Market"
@@ -29,8 +32,6 @@ const TabNavigator = () => {
                         component={ExhibitionScreen}
                     />
                 </Tab.Navigator>
- 
-
         </ImageBackground>
     );
 };
@@ -47,7 +48,7 @@ const styles = StyleSheet.create({
         height: Dimensions.get('screen').height,
         // top: -2000,
         width: "100%",
-        paddingTop: 0, //paddingTop,
+        // paddingTop: paddingTop, //paddingTop,
         // paddingBottom: Platform.OS === 'android' ? navBarHeight : 0,
         // paddingTop: 60,
         // borderWidth: 1,

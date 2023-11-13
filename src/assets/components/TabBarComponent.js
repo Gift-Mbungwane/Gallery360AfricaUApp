@@ -1,3 +1,4 @@
+import { useHeaderHeight } from '@react-navigation/elements';
 import React, { useState } from 'react'
 import { View, TouchableOpacity, StyleSheet, Text } from 'react-native'
 // import { View } from 'react-native-web'
@@ -6,7 +7,8 @@ import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 export default function TabBarComponent({ descriptors, state, navigation }) {
   const [activeIndex, setActiveIndex] = useState(0)
   const insets = useSafeAreaInsets()
-  console.log({ insets });
+  const headerHeight = useHeaderHeight()
+  // console.log({ insets });
   // const activeIndex = 0
   // console.log('props: ', { descriptors, state, navigation });
   const onPress = (path, index) => {
@@ -30,39 +32,15 @@ export default function TabBarComponent({ descriptors, state, navigation }) {
   }
   // console.log(activeIndex);
   return (
-    //  {/* <ImageBackground source={background} style={{ height: Dimensions.get('window').height, width: Dimensions.get('window').width }}> */}
-    <View style={[styles.container, { paddingTop: insets.top + 60}]}>
+    <View style={[styles.container]}>
       <View style={styles.tabs}>
-        <View style={styles.view}>
-          {
-            activeIndex === 0 ? (
-              <TouchableOpacity elevation={ 5 } style={styles.activeTab} onPress={() => onPress('Market', 0)}>
-                <Text style={styles.activeText}>Market</Text>
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity elevation={ 5 } style={styles.inactiveTab} onPress={() => onPress('Market', 0)}>
-                <Text style={styles.inactiveText}>Market</Text>
-              </TouchableOpacity>
-            )
-          }
-        </View>
-        <View style={styles.view}>
-          {
-            activeIndex === 1 ? (
-              <TouchableOpacity elevation={ 5 } style={styles.activeTab} onPress={() => onPress('Exhibition', 1)}>
-                <Text style={styles.activeText}>Exhibition</Text>
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity elevation={ 5 } style={styles.inactiveTab} onPress={() => onPress('Exhibition', 1)}>
-                <Text style={styles.inactiveText}>Exhibition</Text>
-              </TouchableOpacity>
-            )
-          }
-        </View>
+        <TouchableOpacity elevation={5} style={[activeIndex === 0 ? styles.activeTab : styles.inactiveTab, styles.marketTab]} onPress={() => onPress('Market', 0)}>
+          <Text style={activeIndex === 0 ? styles.activeText : styles.inactiveText}>Market</Text>
+        </TouchableOpacity>
+        <TouchableOpacity elevation={5} style={[activeIndex === 1 ? styles.activeTab : styles.inactiveTab, styles.exhibitionTab]} onPress={() => onPress('Exhibition', 1)}>
+          <Text style={activeIndex === 1 ? styles.activeText : styles.inactiveText}>Exhibition</Text>
+        </TouchableOpacity>
       </View>
-
-
-
     </View>
   )
 }
@@ -72,9 +50,10 @@ const styles = StyleSheet.create({
     // borderColor:'green',
     // borderWidth: 1,
     marginTop: 0,
+    paddingVertical: 10,
     // height: 0,
     // paddingTop: 40,
-    // backgroundColor: 'red',
+    backgroundColor: 'red',
     // backgroundColor: 'transparent',
     // flexBasis: 0,
     // overflow: 'hidden'
@@ -87,7 +66,7 @@ const styles = StyleSheet.create({
     // flex: 1,
     // borderColor:'green',
     // borderWidth: 1,
-    height: 50,
+    height: 42,
     width: '100%',
     // top: 40,
     // paddingTop: 40,
@@ -96,9 +75,18 @@ const styles = StyleSheet.create({
     // flexBasis: 0,
     // overflow: 'hidden'
   },
+  marketTab: {
+    borderTopLeftRadius: 20,
+    borderBottomLeftRadius: 20
+  },
+  exhibitionTab: {
+    borderTopRightRadius: 20,
+    borderBottomRightRadius: 20
+  },
   view: {
-    marginLeft: 10,
-    marginRight: 10,
+    // marginLeft: 10,
+    // marginRight: 10,
+    backgroundColor: 'red',
     // overflow: 'hidden',
     // width: ,
     // borderColor: 'red',
@@ -116,20 +104,21 @@ const styles = StyleSheet.create({
     // marginLeft: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 20,
+    // borderRadius: 20,
     backgroundColor: '#181818',
     shadowColor: 'black',
     shadowRadius: 3,
     shadowOpacity: 0.15,
-    shadowOffset: { height: 2, width: 0},
+    shadowOffset: { height: 2, width: 0 },
     elevation: 4
 
 
   },
   activeText: {
     color: '#FFFFFF',
-    fontSize: 21,
-    lineHeight: 21
+    fontSize: 15,
+    fontWeight: '500'
+    // lineHeight: 21
   },
   inactiveTab: {
     color: 'white',
@@ -141,18 +130,20 @@ const styles = StyleSheet.create({
     // marginLeft: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 20,
+    // borderRadius: 20,
     backgroundColor: '#FFFFFF',
     shadowColor: 'black',
     shadowRadius: 4,
     shadowOpacity: 0.2,
-    shadowOffset: { height: 2, width: 0},
+    shadowOffset: { height: 2, width: 0 },
     elevation: 4
 
   },
   inactiveText: {
     color: '#22180E',
-    fontSize: 21,
-    lineHeight: 21
+    fontSize: 15,
+    fontWeight: '500'
+
+    // lineHeight: 21
   }
 })

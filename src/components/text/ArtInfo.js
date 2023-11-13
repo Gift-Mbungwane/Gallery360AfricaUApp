@@ -3,9 +3,9 @@ import React from 'react'
 
 const ArtInfo = ({ title, text }) => {
   return (
-    <View style={styles.container}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.content}>{text}</Text>
+    <View style={ styles.container }>
+        <Text style={styles.title}>{ title }</Text>
+        <Text style={styles.content}>{ text ?? 'N/A' }</Text>
     </View>
   )
 }

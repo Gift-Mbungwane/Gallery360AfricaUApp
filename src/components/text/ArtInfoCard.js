@@ -1,15 +1,20 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import ArtInfo from './ArtInfo'
+import { useState } from 'react'
 
-const ArtInfoCard = () => {
+const ArtInfoCard = ({ dimensions, condition, available }) => {
+  const [processedDimensions, setProcessedDimensions] = useState(null)
+  const processDimensions = () => {
+    
+  }
   return (
     <View style={styles.container}>
       <ArtInfo title={ 'Dimensions' } text={ '30cm x 30cm x 30cm' }/>
       <View style={ styles.line }/>
-      <ArtInfo title={ 'Condition' } text={ 'Excellent' } />
+      <ArtInfo title={ 'Condition' } text={ condition } />
       <View style={ styles.line }/>
-      <ArtInfo title={ 'Available' } text={ 'Yes' } />
+      <ArtInfo title={ 'Available' } text={ available } />
     </View>
   )
 }
@@ -22,6 +27,7 @@ const styles = StyleSheet.create({
         padding: 5,
         flexDirection: 'row',
         gap: 10,
+        // paddingHorizontal: 15
         // backgroundColor: 'red'
     },
     line: {

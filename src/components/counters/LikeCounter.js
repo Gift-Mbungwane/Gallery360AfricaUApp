@@ -2,11 +2,11 @@ import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import CounterComponent from './CounterComponent'
 
-const LikeCounter = () => {
+const LikeCounter = ({ counter }) => {
     return (
         <CounterComponent
             image={require('../../../assets/icons/heart.png')}
-            counter={12}
+            counter={counter}
         />
       )
 }

@@ -1,12 +1,17 @@
 import { StyleSheet, Text, View, ImageBackground } from 'react-native'
 import React from 'react'
 
-const ArtThumbnail = ({ uri, price }) => {
+const ArtThumbnail = ({ uri, price, showPrice }) => {
+    // console.log({showPrice});
     return (
-        <ImageBackground style={styles.image}  imageStyle={{ borderRadius: 20 }} source={{ uri }} >
-            <View style={ styles.priceCont }>
-                <Text style={ styles.text }>R { price }</Text>
-            </View>
+        <ImageBackground style={styles.image} imageStyle={{ borderRadius: 20 }} source={{ uri }} >
+            {
+                showPrice && (
+                    <View style={styles.priceCont}>
+                        <Text style={styles.text}>R {price}</Text>
+                    </View>
+                )
+            }
         </ImageBackground>
     )
 }
@@ -23,15 +28,16 @@ const styles = StyleSheet.create({
         padding: 10
     },
     priceCont: {
-        width: 69,
         height: 25,
         backgroundColor: "#FFFFFF",
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 30
+        borderRadius: 30,
+        paddingHorizontal: 7
     },
     text: {
         color: "#151515",
-        fontSize: 12
+        fontSize: 14,
+        // backgroundColor: 'red'
     }
 })

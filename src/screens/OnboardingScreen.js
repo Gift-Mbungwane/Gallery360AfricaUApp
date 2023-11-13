@@ -19,8 +19,10 @@ import image1 from "../assets/images/onboarding/image1.jpg";
 import image2 from "../assets/images/onboarding/image2.jpg";
 import image3 from "../assets/images/onboarding/image3.jpg";
 import image4 from "../assets/images/onboarding/image4.jpg";
-import { ActionButton, ArtInfoCard, ArtistLabel, ArtThumbnail, BoughtArtworksThumbnail, Dimensions, FollowButton, HeroImage, LikeCounter, MessageCounter, UserActivityCard } from "../components";
+import { ActionButton, ArtDetails, ArtInfoCard, ArtistArtworksCard, ArtistLabel, ArtThumbnail, ArtworkCard, BoughtArtworksThumbnail, Dimensions, FilterText, FollowButton, HeroCard, HeroImage, LikeCounter, MessageCounter, ScrollableFilterCard, UserActivityCard } from "../components";
 import ArtInfo from "../components/text/ArtInfo";
+import { DropdownInput } from "../components/inputs";
+import { ArtworksSection, CreatorsSection } from "../components/sections";
 
 
 export default function OnboardingScreen({ navigation }) {
@@ -62,7 +64,7 @@ export default function OnboardingScreen({ navigation }) {
 
         {/* buttons */}
         <TouchableOpacity
-          onPress={() => navigation.replace("SignIn")}
+          onPress={() => navigation.navigate("SignIn")}
           style={globalStyles.signIn}
         >
           <Text style={globalStyles.signInTxt}>Sign In</Text>
@@ -74,12 +76,21 @@ export default function OnboardingScreen({ navigation }) {
         {/* <BoughtArtworksThumbnail uri={"https://firebasestorage.googleapis.com/v0/b/chatta-mobile.appspot.com/o/messages%2Fimages%2FcW7x3aV9o8rpH4478Hnf?alt=media&token=e2587fdc-ec26-4084-b57e-8f61628d5800"}/> */}
         {/* <ArtistLabel name={'Vee'} uri={"https://firebasestorage.googleapis.com/v0/b/chatta-mobile.appspot.com/o/messages%2Fimages%2FcW7x3aV9o8rpH4478Hnf?alt=media&token=e2587fdc-ec26-4084-b57e-8f61628d5800"}/> */}
         {/* <ArtInfoCard /> */}
-        <UserActivityCard artist={'Vukona'}/>
+        {/* <UserActivityCard artist={'Vukona'}/> */}
+        {/* <ArtworkCard /> */}
+        {/* <ArtistArtworksCard showPrice={false} /> */}
+        {/* <ArtDetails /> */}
+        {/* <HeroCard /> */}
+        {/* <FilterText active={true} text={'All'}/> */}
+        {/* <ScrollableFilterCard /> */}
+        {/* <DropdownInput /> */}
+        {/* <CreatorsSection /> */} 
+        {/* <ArtworksSection /> */}
         <TouchableOpacity
           onPress={() => navigation.navigate("SignUp")}
           style={globalStyles.signUp}
         >
-          {/* <Text style={globalStyles.signUpTxt}>Sign Up</Text> */}
+          <Text style={globalStyles.signUpTxt}>Sign Up</Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>
