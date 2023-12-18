@@ -16,6 +16,9 @@ import { firestore } from "../../Firebase";
 
 import image from "../assets/images/home.png";
 import LoaderImage from "../assets/components/LoaderImage";
+import TransparentHeaderView from "../components/TransparentHeaderView";
+import { FlatList } from "react-native";
+import { ArtworkCard } from "../components";
 
 function FurnitureCard({ item }) {
   const randomBool = useMemo(() => Math.random() < 0.5, []);
@@ -53,44 +56,66 @@ export default function PreviewMoreScreen({ route, navigation }) {
     // flex: 1,
     width: "100%",
   };
-  const getArtWork = async() => {
-
-    // const docs = await firestore.collection('Market').orderBy('artName').get();
-    // docs.forEach(item => {
-    //   console.log(item.data())
-    // });
-    // const art = docs.map(item => item.data())
-    // return art
-
-    // console.log(artistUID);
+  const getArtWork = async () => {
+    console.log({ artistUid: route.params.artistUid });
     let query;
-    query = artistUID
-      ? firestore.collection('Market').where('ArtistUid', '==', artistUID).orderBy('timeStamp', 'desc')
-      : firestore.collection('Market').orderBy('timeStamp', 'desc')
-    //   console.log(query);
-    // let query;
-    // query = 1 + 1 === 2 ? firestore.collection('Market').orderBy('timeStamp', 'desc') : null
-    query.where('isEnabled', '==', true).onSnapshot(snapshot => {
-      if(!snapshot.empty) {
-        const art = snapshot.docs.map( item => item.data());
+    const artistUid = route.params?.artistUid ?? null
+    query = artistUid
+      ? firestore.collection('Market').where('artistUid', '==', artistUid.trim())
+      : firestore.collection('Market')
+    query.where('isEnabled', '==', true).onSnapshot(async snapshot => {
+      if (!snapshot.empty) {
+        const art = await Promise.all(snapshot.docs.map(async (item) => {
+          return {
+            ...item.data(),
+            artUrl: item.data().imgUrls[0].imgUrl,
+            ImageUid: item.id,
+            artistUid: item.data().userid ?? item.data().artistUid,
+            artName: item.data().title,
+            ...(await getArtistDetails(item.data().userid ?? item.data().artistUid))
+          }
+        }))
+        console.log({ art });
         setArtwork(art)
+      } else {
+        console.log('no art is enabled');
       }
     })
   }
+  const getArtistDetails = async (artistId) => {
+    console.log({ artistId });
+    return firestore.collection('Artists').doc(artistId.trim()).get().then(doc => {
+      const { artistName, photoUrl } = doc.data()
+      console.log('some artist details', { artistName, photoUrl });
+      return { artistName, photoUrl }
+    })
+  }
+  const navigateToArtwork = async (item) => {
+    // const artistUid = item.artistUid
+    // console.log({ item });
+    const { artistUid, artistName, photoUrl, imageUID } = item
+    console.log({ artistUid, artistName, photoUrl, imageUID });
+    navigation.navigate('ArtPreview', {
+      artistUid, imageUID, photoUrl, artistName
+    })
+  }
   // const artwork = useMemo(async () => await getArtWork())
-  useEffect( () => {
+  useEffect(() => {
     let isMounted = true
-    if(isMounted) {
+    if (isMounted) {
       getArtWork()
     }
-   return () => isMounted = false
+    return () => isMounted = false
   }, [])
+  useEffect(() => {
+    console.log({ artwork });
+  }, [artwork])
   const renderItem = ({ item, index }) => {
     // const randomBool = useMemo(() => Math.random() < 0.5, []);
     const random = Math.random() * 10
-    const height = random < 4 ? 
-                    200 : random >= 4 && random < 8 ?
-                      240 : 280;
+    const height = random < 4 ?
+      200 : random >= 4 && random < 8 ?
+        240 : 280;
     // console.log(random);
     return (
       <View key={item.ImageUid}>
@@ -103,7 +128,7 @@ export default function PreviewMoreScreen({ route, navigation }) {
           }
         >
           <LoaderImage
-            uri={ item.artUrl }
+            uri={item.artUrl}
             style={{
               height: height,
               alignSelf: "stretch",
@@ -130,30 +155,22 @@ export default function PreviewMoreScreen({ route, navigation }) {
   };
 
   return (
-
-      <ImageBackground
-        source={image}
-        resizeMode="stretch"
-        style={styles.container}
-      >
-
-        <SafeAreaView style={{ height: viewHeight, width: viewWidth }}>
-        <MasonryList
-          style={{ marginTop: 0 }}
-          showsVerticalScrollIndicator={false}
-          keyExtractor={(item) => item.ImageUid}
-          ListHeaderComponent={<View />}
-          contentContainerStyle={{
-            paddingHorizontal: 24,
-            alignSelf: "stretch",
-          }}
-          numColumns={2}
-          data={artwork}
-          renderItem={renderItem}
-        />
-        </SafeAreaView>
-
-      </ImageBackground>
+    <TransparentHeaderView style={{ paddingHorizontal: 10 }}>
+      {
+        artwork && artwork.length > 0 ? (
+          <FlatList
+            scrollEnabled
+            data={artwork}
+            renderItem={({ item }) => <ArtworkCard artDetails={item} navigateToArtwork={navigateToArtwork} />}
+            keyExtractor={item => item.ImageUid}
+          />
+        ) : (
+          <View style={styles.noArtworksTextCont}>
+            <Text style={styles.noArtworksText}>No artworks</Text>
+          </View>
+        )
+      }
+    </TransparentHeaderView>
 
   );
 }
@@ -161,18 +178,32 @@ const statusBarHeight = StatusBar.currentHeight;
 // console.log('padding: ', Platform.OS);
 const paddingOnTop = (Platform.OS === 'android' || Platform.OS === 'web') ? 60 : 0
 // console.log('bar height: ', statusBarHeight);
-const styles =StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
-    height: Dimensions.get('screen').height,
-    width: "100%",
-    paddingTop: 60,
-    paddingTop: paddingOnTop
-    // backgroundColor: "red",
-    // paddingBottom: 10
-  },
-  areaView: {
-    height: Dimensions.get('window').height,
+    // backgroundColor: 'blue',
+    width: '100%',
     flex: 1,
-    
+    padding: 10,
+    // overflow: 'visible',
+    // borderColor: 'black',
+    // borderWidth: 1
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  headerText: {
+    fontSize: 34,
+    lineHeight: 34,
+    // backgroundColor: 'red'
+  },
+  noArtworksTextCont: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  noArtworksText: {
+    fontSize: 24,
+    fontWeight: '600'
   }
 })

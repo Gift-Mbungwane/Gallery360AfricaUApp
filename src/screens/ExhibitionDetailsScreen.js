@@ -17,6 +17,10 @@ import { Entypo } from "@expo/vector-icons";
 import { firestore, auth } from "../../Firebase";
 import * as Location from "expo-location";
 import Constants from "expo-constants";
+import { HeroCard, HeroImage } from "../components";
+import { BlurView } from "expo-blur";
+import { Dimensions } from "react-native";
+import { ScrollView } from "react-native";
 // import Toast from "react-native-simple-toast";
 
 const STATUSBAR_HEIGHT = StatusBar.currentHeight;
@@ -24,20 +28,20 @@ const LocationIcon = require('../assets/images/location.png')
 export default function ExhibitionDetailsScreen({ route, navigation }) {
   const [ExhibitionDetails, setExhibitionDetails] = useState(null);
   const [exhibitionUidState, setExhibitionUid] = useState("");
-  const [exhibitionImage, setExhibitionImage] = useState(
-    `${exhibitionImagess}`
-  );
+  // const [exhibitionImage, setExhibitionImage] = useState(
+  //   `${exhibitionImagess}`
+  // );
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
-  const [address, setAddress] = useState("");
-  const [description, setDescription] = useState("");
+  // const [address, setAddress] = useState("");
+  // const [description, setDescription] = useState("");
   const [exhibitionTitle, setExhibitionTitle] = useState("");
-  const [date, setDate] = useState("");
+  // const [date, setDate] = useState("");
   const [isActive, setActive] = useState(false);
 
-  const { exhibitionUid, artistUid, exhibitionImagess, addresses } =
-    route.params;
-
+  const { exhibitionUid, artistUid, exhibitionImage, addresses, date, address, description } = route.params;
+  console.log({ params: route.params });
+  console.log({ img: exhibitionImage });
   const getLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
@@ -62,7 +66,12 @@ export default function ExhibitionDetailsScreen({ route, navigation }) {
       Linking.openURL(url);
     }
   };
-
+  useEffect(() => {
+    getCollections()
+  }, [route.params])
+  const getCollections = () => {
+    console.log({ collections: route.params.collections});
+  }
   const onLikePress = () => {
     const uid = auth.currentUser.uid;
     return firestore
@@ -121,9 +130,9 @@ export default function ExhibitionDetailsScreen({ route, navigation }) {
       .collection("exhibition")
       .where("exhibitionUid", "==", exhibitionUid)
       .onSnapshot((snapShot) => {
-        const setexhibitionImage = snapShot.docs.map(
-          (document) => document.data().exhibitionImage
-        );
+        // const setexhibitionImage = snapShot.docs.map(
+        //   (document) => document.data().exhibitionImage
+        // );
         const exhibitionTitles = snapShot.docs.map(
           (document) => document.data().exhibitionTitle
         );
@@ -135,11 +144,11 @@ export default function ExhibitionDetailsScreen({ route, navigation }) {
           (document) => document.data().address
         );
 
-        setExhibitionImage(setexhibitionImage);
-        setAddress(addresss);
-        setDate(dates);
+        // setExhibitionImage(setexhibitionImage);
+        // setAddress(addresss);
+        // setDate(dates);
         setExhibitionTitle(exhibitionTitles);
-        setDescription(descriptions);
+        // setDescription(descriptions);
       });
   };
 
@@ -182,103 +191,112 @@ export default function ExhibitionDetailsScreen({ route, navigation }) {
         ></ImageBackground>
       </View>
 
-      <View style={styles.DetailsContainer}>
-        <View style={{ flex: 5, margin: 10 }}>
-          <Text
-            style={{
-              color: "#000000",
-              paddingBottom: 10,
-              fontSize: 25,
-              fontWeight: "bold",
-              alignSelf: "center",
-            }}
-          >
-            {exhibitionTitle}
-          </Text>
-          <Text
-            style={{
-              color: "#000000",
-              paddingBottom: 15,
-              fontSize: 14,
-              alignSelf: "flex-start",
-            }}
-          >
-            {date}
-          </Text>
-          <View style={{ maxHeight: 60, flexDirection: 'row', gap: 10, marginBottom: 10 }}>
-            <Image source={LocationIcon} style={{ width: 40, height: 40, alignSelf: 'center' }}/>
+      <BlurView intensity={50} style={styles.DetailsContainer}>
+        <ScrollView contentContainerStyle={{ flex: 1 }}>
+          {/* <View> */}
+          <View style={{ flex: 5, margin: 10 }}>
             <Text
               style={{
                 color: "#000000",
-                // paddingBottom: 15,
-                marginLeft: 20,
-                fontSize: 14,
+                paddingBottom: 10,
+                fontSize: 25,
+                fontWeight: "bold",
                 alignSelf: "center",
               }}
             >
-              {address}
+              {route.params.name}
+            </Text>
+            <Text
+              style={{
+                color: "#000000",
+                paddingBottom: 15,
+                fontSize: 14,
+                alignSelf: "flex-start",
+              }}
+            >
+              {`${date.fromDate.date} ${date.fromDate.month} - ${date.toDate.date} ${date.toDate.month} ${date.toDate.year}`}
+            </Text>
+            <View style={{ maxHeight: 60, flexDirection: 'row', gap: 10, marginBottom: 10 }}>
+              <Image source={LocationIcon} style={{ width: 40, height: 40, alignSelf: 'center' }} />
+              <Text
+                style={{
+                  color: "#000000",
+                  // paddingBottom: 15,
+                  marginLeft: 20,
+                  fontSize: 14,
+                  alignSelf: "center",
+                }}
+              >
+                {route.params.address}
+              </Text>
+            </View>
+
+            <Text
+              style={{
+                color: "#000000",
+                paddingBottom: 40,
+                fontSize: 14,
+                width: "100%",
+                // borderColor: 'red',
+                // borderWidth: 1,
+                alignSelf: "center",
+              }}
+            >
+              {description}
             </Text>
           </View>
+          <View style={{ position: 'absolute', bottom: 10, width: '100%', paddingHorizontal: 0 }}>
+            <BlurView intensity={60} style={{ flex: 1, flexDirection: "row", justifyContent: 'space-between', bottom: 0, borderRadius: 20, overflow: 'hidden' }}>
+              <TouchableOpacity
+                style={styles.VisitLocation}
+                onPress={() => getLocation()}
+              >
+                {isActive ? (
+                  <ActivityIndicator />
+                ) : (
+                  <Text style={styles.VisitLocationtxt}>Visit Location</Text>
+                )}
+              </TouchableOpacity>
 
-          <Text
-            style={{
-              color: "#000000",
-              paddingBottom: 40,
-              fontSize: 14,
-              width: "100%",
-              // borderColor: 'red',
-              // borderWidth: 1,
-              alignSelf: "center",
-            }}
-          >
-            {description}
-          </Text>
-        </View>
-        <View style={{ flexDirection: "row", justifyContent: 'center', marginBottom: 10 }}>
-          <TouchableOpacity
-            style={styles.VisitLocation}
-            onPress={() => getLocation()}
-          >
-            {isActive ? (
-              <ActivityIndicator />
-            ) : (
-              <Text style={styles.VisitLocationtxt}>Visit Location</Text>
-            )}
-          </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.Heart}
+                onPress={() =>
+                  onShare({
+                    date: date,
+                    address: address,
+                    description: description,
+                  })
+                }
+              >
+                <Entypo name="share" size={30} color={"#000000"} />
+              </TouchableOpacity>
+              {exhibitionUidState == exhibitionUid ? (
+                <View style={styles.Heart}>
+                  <Entypo
+                    name="heart"
+                    size={30}
+                    color="red"
+                    onPress={() => onDislikePress()}
+                  />
+                </View>
+              ) : (
+                <View style={styles.Heart}>
+                  <Entypo
+                    name="heart"
+                    size={30}
+                    color="#000000"
+                    onPress={() => onLikePress()}
+                  />
+                </View>
+              )}
+            </BlurView>
+          </View>
+          {/* </View> */}
 
-          <TouchableOpacity
-            style={styles.Heart}
-            onPress={() =>
-              onShare({
-                date: date,
-                address: address,
-                description: description,
-              })
-            }
-          >
-            <Entypo name="share" size={30} color={"#000000"} />
-          </TouchableOpacity>
-          {exhibitionUidState == exhibitionUid ? (
-            <View style={styles.Heart}>
-              <Entypo
-                name="heart"
-                size={30}
-                color="red"
-                onPress={() => onDislikePress()}
-              />
-            </View>
-          ) : (
-            <View style={styles.Heart}>
-              <Entypo
-                name="heart"
-                size={30}
-                color="#000000"
-                onPress={() => onLikePress()}
-              />
-            </View>
-          )}
-        </View>
-      </View>
+        </ScrollView>
+
+
+      </BlurView>
     </View>
   );
 }
@@ -287,15 +305,15 @@ const styles = StyleSheet.create({
   container: {
     //flex: 1,
     height: "100%",
-    width: "100%",
+    width: "100%"
   },
   Top: {
     marginTop: STATUSBAR_HEIGHT,
-    height: "70%",
+    height: "60%",
     borderBottomRightRadius: 20,
     borderBottomLeftRadius: 20,
     marginTop: -10,
-    marginVertical: -170,
+    // marginVertical: -170,
     alignItems: "center",
   },
   image: {
@@ -327,15 +345,21 @@ const styles = StyleSheet.create({
     top: 5,
   },
   DetailsContainer: {
-    width: "85%",
+    width: "90%",
+    position: 'absolute',
     borderWidth: 1,
-    borderRadius: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     alignSelf: "center",
-    height: "48%",
-    marginTop: 25,
+    height: (Dimensions.get('window').height) / 2 + 50,
+    // marginTop: 25,
+    // top: -150,
     backgroundColor: "rgba(230, 230, 230,0.5)",
     borderColor: "#ffffff",
-    marginVertical: "-23%",
+    // marginVertical: "-23%",
+    overflow: 'hidden',
+    bottom: 0,
+    paddingHorizontal: 10
   },
   VisitLocation: {
     backgroundColor: "#000000",

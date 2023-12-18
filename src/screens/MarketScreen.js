@@ -22,7 +22,7 @@ import LoaderImage from "../assets/components/LoaderImage";
 import ArtistScrollView from "../assets/components/ArtistScrollView";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { ArtworksSection, CreatorsSection } from "../components/sections";
-import { ScrollableFilterCard } from "../components";
+import { ScrollableFilterCard, TabContent } from "../components";
 import { useHeaderHeight } from "@react-navigation/elements";
 // const background = require("../assets/images/home.png");
 //
@@ -30,18 +30,12 @@ const SLIDER_WIDTH = Dimensions.get("window").width;
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH - 40);
 // const ITEM_HEIGHT = Math.round((ITEM_WIDTH * 6.2) / 5.2);
 
-const statusBarHeight = StatusBar.currentHeight ? StatusBar.currentHeight : 0
-const paddingOnTop = Platform.OS === 'android' || Platform.OS === 'web' ? 80 + statusBarHeight : 0
-const navBarHeight = Dimensions.get('screen').height - Dimensions.get('window').height - statusBarHeight;
-const tabBarHeight = 50
-const paddingOnBottom = 90
-// const screenHeight = Dimensions.get('screen').height - statusBarHeight - paddingOnTop - navBarHeight - tabBarHeight - paddingOnBottom;
 const screenHeight = Dimensions.get('window').height
 const carouselHeight = (screenHeight - 300)
 const ITEM_HEIGHT = carouselHeight;
 // console.log({ statusBarHeight, paddingOnTop,navBarHeight,  screenHeight, carouselHeight });
 //
-console.log('market height: ' + screenHeight);
+// console.log('market height: ' + screenHeight);
 
 export default function MarketScreen({ navigation }) {
 
@@ -50,28 +44,121 @@ export default function MarketScreen({ navigation }) {
   const [state, setState] = useState();
   const [data, setData] = useState(null);
   const [artwork, setArtwork] = useState([])
+  const [filteredArtworks, setFilteredArtworks] = useState(null)
   const [showPlaceholder, toggleShowPlaceholder] = useState(true)
-  //
-  const [viewHeight, setViewHeight] = useState(screenHeight)
-  const insets = useSafeAreaInsets()
-  const headerHeight = useHeaderHeight()
-  ///
+  const ARTWORK_COLLECTION = "Market"
+  const ARTIST_COLLECTION = "Artists"
 
   const getArtist = () => {
     return firestore
-      .collection("galleryUsers")
+      .collection(ARTIST_COLLECTION)
       .orderBy("timeStamp", "desc")
       // .limit(3)
       .onSnapshot((snapShot) => {
         const allArtists1 = snapShot.docs.map((docSnap) => ({
-          ...docSnap.data(),
-          photoUrl: docSnap.data().imageUrl,
-          artistUid: docSnap.id,
-          artistName: docSnap.data().fullname
+          ...docSnap.data()
         }));
         setArtist(allArtists1);
       });
   };
+
+  const sortArtist = (sortMethod) => {
+    console.log({ sortMethod });
+    // console.log({ artist });c
+    if (sortMethod === 'new') sortAscTimestamp(artist)
+    if (sortMethod === 'old') sortDescTimeStamp(artist)
+    if (sortMethod === 'z-a') sortDescName(artist)
+    if (sortMethod === 'a-z') sortAscName(artist)
+  }
+  const sortArtworks = (sortMethod) => {
+    console.log({ sortMethod });
+    // console.log({ artist });c
+    if (sortMethod === 'new') sortAscArtTimestamp(artist)
+    if (sortMethod === 'old') sortDescArtTimeStamp(artist)
+    if (sortMethod === 'z-a') sortDescArtname(artist)
+    if (sortMethod === 'a-z') sortAscArtname(artist)
+  }
+  const sortAscName = (array) => {
+    try {
+      setArtist([...artist].sort((a, b) => a.artistName.localeCompare(b.artistName)))
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  const sortDescName = (array) => {
+    try {
+      setArtist([...artist].sort((a, b) => b.artistName.localeCompare(a.artistName)))
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  const sortDescTimeStamp = () => {
+    try {
+      setArtist([...artist].sort((a, b) => b.timeStamp.localeCompare(a.timeStamp)))
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  const sortAscTimestamp = () => {
+    try {
+      setArtist([...artist].sort((a, b) => a.timeStamp.localeCompare(b.timeStamp)))
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  const sortAscArtname = (array) => {
+    try {
+      if (filteredArtworks) {
+        setFilteredArtworks([...filterArtworks].sort((a, b) => a.artName.localeCompare(b.artName)))
+      }
+      setArtwork([...artwork].sort((a, b) => a.artName.localeCompare(b.artName)))
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  const sortDescArtname = (array) => {
+    try {
+      if (filteredArtworks) {
+        setFilteredArtworks([...filteredArtworks].sort((a, b) => b.artName.localeCompare(a.artName)))
+      }
+      setArtwork([...artwork].sort((a, b) => b.artName.localeCompare(a.artName)))
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  const sortDescArtTimeStamp = () => {
+    try {
+      if (filteredArtworks) {
+        setFilteredArtworks([...filteredArtworks].sort((a, b) => b.timeStamp.localeCompare(a.timeStamp)))
+      }
+      setArtwork([...artwork].sort((a, b) => b.timeStamp.localeCompare(a.timeStamp)))
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  const sortAscArtTimestamp = () => {
+    try {
+      if (filteredArtworks) {
+        setFilteredArtworks([...filteredArtworks].sort((a, b) => a.timeStamp.localeCompare(b.timeStamp)))
+      }
+      setArtwork([...artwork].sort((a, b) => a.timeStamp.localeCompare(b.timeStamp)))
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const filterArtworks = (filter) => {
+    console.log({ filter });
+    if (filter === 'All') {
+      setFilteredArtworks(null)
+    } else {
+      setFilteredArtworks([...artwork].filter(item => item.artworkType.includes(filter)))
+    }
+  }
+  useEffect(() => {
+    console.log({ filteredArtworks });
+  }, [filteredArtworks])
+
   const navigateToArtPreview = (item) => {
     try {
       navigation.navigate("ArtPreview", {
@@ -90,86 +177,48 @@ export default function MarketScreen({ navigation }) {
     }
 
   }
-  const getArtistName = async (artistId) => {
-    return firestore.collection('galleryUsers').doc(artistId).get().then(doc => {
-      const fullname = doc.data().fullname
-      console.log({ fullname });
-      return fullname 
+  const getArtistDetails = async (artistId) => {
+    console.log({ artistId });
+    return firestore.collection(ARTIST_COLLECTION).doc(artistId.trim()).get().then(doc => {
+      const { artistName, photoUrl } = doc.data()
+      console.log('some artist details', { artistName, photoUrl });
+      return { artistName, photoUrl }
     })
   }
   const getArtWorks = () => {
-    return firestore.collection('newArtworks').orderBy("title", "desc").limit(5).where('isEnabled', '==', true).onSnapshot(async(snapShot) => {
+    return firestore.collection(ARTWORK_COLLECTION).orderBy("title", "desc").limit(5).onSnapshot(async (snapShot) => {
+      // console.log({ artworks: 'searching'});
       if (!snapShot.empty) {
+        console.log('snapshot not empty');
         const art = await Promise.all(snapShot.docs.map(async (item) => ({
           ...item.data(),
           isArt: true,
           art,
           artUrl: item.data().imgUrls[0].imgUrl,
           ImageUid: item.id,
-          artistUid: item.data().userid,
+          artistUid: item.data().userid ?? item.data().artistUid,
           artName: item.data().title,
-          artistName: await getArtistName(item.data().userid)
+          ...(await getArtistDetails(item.data().userid ?? item.data().artistUid))
         })))
-
+        console.log({ art });
         setArtwork(art)
         // console.log('artworks: ', art);
         setTimeout(() => {
           toggleShowPlaceholder(false)
         }, 2400)
+      } else {
+        console.log('snapshot empty');
       }
 
     })
   }
 
-  const _renderSkeletonItem = ({ item, index }) => {
-    return (
-      <View style={{ flexDirection: "row", height: '100%', borderColor: 'orange' }}>
-
-        <View
-          style={{
-            height: viewHeight,
-            minHeight: viewHeight,
-            // backgroundColor: 'blue'
-          }}
-        >
-          <Skeleton
-            variant={'rectangle'}
-            radius={16}
-            height={viewHeight}
-            width={ITEM_WIDTH}
-          />
-          <Skeleton
-            variant={'rectangle'}
-            radius={16}
-            height='65'
-            // width='100%'
-            style={{
-              backgroundColor: "rgb(200, 200, 200)",
-              height: 65,
-              position: "absolute",
-              borderRadius: 16,
-              bottom: 8,
-              left: 8,
-              right: 8,
-              justifyContent: "center",
-            }}
-          >
-            {/* <Skeleton variant={'rectangle'} height={20} width='100%' style={{ backgroundColor: 'rgb(0,0,0)', margin: 20, flex: 1 }}></Skeleton>
-            <Skeleton variant={'rectangle'} style={{ backgroundColor: 'rgb(0,0,0)', margin: 20, flex: 1 }}></Skeleton> */}
-          </Skeleton>
-        </View>
-
-      </View>
-    )
-
-
-  };
-
   useEffect(() => {
     let isMounted = true;
+    console.log('on market');
     if (isMounted) {
       firestore
-        .collection("newArtworks")
+        .collection(ARTWORK_COLLECTION)
         .where("status", "==", "approved")
         .orderBy("title", "desc")
         .onSnapshot((snapShot) => {
@@ -179,60 +228,46 @@ export default function MarketScreen({ navigation }) {
           }
 
         });
-
       getArtist();
       getArtWorks();
     }
-
     return () => isMounted = false
     // return () => getArtData();
   }, []);
+  useEffect(() => {
+    console.log({ artwork: artwork[1] });
+  }, [artwork])
   const getViewLayout = (layout) => {
     console.log(layout);
     setViewHeight(layout.height)
   }
   const navigateToArtwork = async (item) => {
     // const artistUid = item.artistUid
-    console.log({ item });
-    firestore.collection('galleryUsers').doc(item.artistUid).get().then(doc => {
-      console.log(doc.data());
-      navigation.navigate('ArtPreview', {
-        artistUid: item.artistUid, imageUID: item.imageUID, photoUrl: doc.data().imageUrl, artistName: doc.data().fullname
-      })
+    // console.log({ item });
+    const { artistUid, artistName, photoUrl, imageUID } = item
+    console.log({ artistUid, artistName, photoUrl, imageUID });
+    navigation.navigate('ArtPreview', {
+      artistUid, imageUID, photoUrl, artistName
     })
-
   }
 
-  //
-  // return (
-  //   <View style={{ flex: 1, backgroundColor: 'red', borderColor: 'yellow', borderWidth: 1 }}>
-  //     {/* <View style={{ flex: 1, backgroundColor: 'blue' }}>
-  //       <Text>Hi</Text>
-  //     </View> */}
-  //     {/* <View style={{ flex: 1, backgroundColor: 'green' }}>
-  //       <Text>There</Text>
-  //     </View> */}
-
-  //   </View>
-
-
-
-  // );
   return (
-    // <ScrollView contentContainerStyle={{ backgroundColor: '#FFFFFF' }} scrollEnabled={false}>
-    //   <CreatorsSection artists={artist} navigation={ navigation } />
-    //   <ArtworksSection navigation={ navigation } />
-    // </ScrollView>
-    // <View style={{ backgroundColor: '#FFFFFF', height: Dimensions.get('window').height + 400 }} >
-    //   <CreatorsSection artists={artist} navigation={navigation} />
-    //   <ArtworksSection navigation={navigation} />
-    // </View>
-    <View style={{ flex: 1, paddingBottom: insets.top + 12, backgroundColor: 'green' }}>
-      <ScrollView contentContainerStyle={{ flex: 1, backgroundColor: '#FFFFFF', borderColor: 'red', borderWidth: 1 }}>
-        <CreatorsSection artists={artist} navigation={navigation} />
-        <ArtworksSection navigation={navigation} artworks={artwork} navigateToArtwork={(item) => navigateToArtwork(item)} />
-      </ScrollView>
-    </View>
+    <TabContent>
+      <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+        <CreatorsSection
+          artists={artist}
+          navigation={navigation}
+          onSortChange={(val) => { sortArtist(val) }}
+        />
+        <ArtworksSection
+          navigation={navigation}
+          artworks={filteredArtworks || artwork}
+          navigateToArtwork={(item) => navigateToArtwork(item)}
+          onSortChange={(val) => sortArtworks(val)}
+          onFilterChange={(val) => filterArtworks(val)}
+        />
+      </View>
+    </TabContent>
 
   )
 

@@ -36,8 +36,8 @@ export default function SignInScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
   const { isLoggedIn, toggleUserState } = useContext(UserContext)
   useEffect(() => {
-    console.log('on login');
-    console.log({ loading });
+    // console.log('on login');
+    // console.log({ loading });
   }, [loading])
   // form validation
   const validate = () => {
@@ -76,7 +76,7 @@ export default function SignInScreen({ navigation }) {
           //   Toast.LONG,
           //   Toast.CENTER
           // );
-          toggleUserState(true)
+          // toggleUserState(true, { email: user.email, uid: user.uid } )
           // if(typeof isLoggedIn === 'boolean' ) {
             // console.log(isLoggedIn);
             // if (user) navigation.navigate("Home");

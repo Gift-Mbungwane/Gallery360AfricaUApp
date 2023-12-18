@@ -6,9 +6,9 @@ import MessageCounter from '../counters/MessageCounter'
 import LikeCounter from '../counters/LikeCounter'
 import HeroImage from '../images/HeroImage'
 
-const ArtistProfileHeader = ({ artistUid, photoUrl, artistName }) => {
+const ArtistProfileHeader = ({ artistUid, photoUrl, artistName, numberOfComments, numberOfLikes, isFollowing, updateFollowing, updateLikes, userLikes }) => {
   console.log({ artistUid, photoUrl, artistName });
-    const following = true;
+    // const following = true;
 const img = "https://firebasestorage.googleapis.com/v0/b/chatta-mobile.appspot.com/o/messages%2Fimages%2FcW7x3aV9o8rpH4478Hnf?alt=media&token=e2587fdc-ec26-4084-b57e-8f61628d5800"
 
   return (
@@ -17,9 +17,9 @@ const img = "https://firebasestorage.googleapis.com/v0/b/chatta-mobile.appspot.c
       <View style={styles.rightDetails}>
         <Text style={styles.artistName}>{artistName}</Text>
         <View style={styles.artistEngagement}>
-            <FollowButton text="Following" />
-            <MessageCounter />
-            <LikeCounter />
+            <FollowButton text={ isFollowing ? "Following" : 'Follow' } isFollowing={isFollowing} updateFollowing={updateFollowing}/>
+            <MessageCounter counter={numberOfComments} />
+            <LikeCounter counter={numberOfLikes} updateLikes={updateLikes} userLikes={userLikes} />
         </View>
       </View>
     </View>
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'green',
+        // backgroundColor: 'green',
         alignSelf: 'center',
         gap: 10
     },
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     },
     artistEngagement: {
         // flex: 0,
-        backgroundColor: 'red',
+        // backgroundColor: 'red',
         flexDirection: 'row',
         gap: 10,
         alignItems: 'center'

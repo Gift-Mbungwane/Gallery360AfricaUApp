@@ -3,6 +3,7 @@ import React from 'react'
 
 const ArtThumbnail = ({ uri, price, showPrice }) => {
     // console.log({showPrice});
+    console.log({ uri });
     return (
         <ImageBackground style={styles.image} imageStyle={{ borderRadius: 20 }} source={{ uri }} >
             {

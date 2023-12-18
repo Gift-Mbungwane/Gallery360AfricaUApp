@@ -6,6 +6,8 @@ import MarketScreen from "../../screens/MarketScreen";
 import ExhibitionScreen from "../../screens/ExhibitionScreen";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from '@react-navigation/elements';
+import { useEffect } from "react";
+import { Text } from "react-native";
 
 const Tab = createMaterialTopTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -13,25 +15,29 @@ const background = require("../../assets/images/home.png");
 const TabNavigator = () => {
     const insets = useSafeAreaInsets()
     const headerHeight = useHeaderHeight()
-    console.log({ insets, headerHeight });
+    // console.log({ insets, headerHeight });
 
     // return(
     //     <View style={styles.container}>
 
     //     </View>
     // )
+    useEffect(() => {
+        console.log('on tab navigator');
+    }, [])
+
     return (
         <ImageBackground source={background} style={[styles.container, { paddingTop: insets.top + headerHeight }]}>
-                <Tab.Navigator screenOptions={{ swipeEnabled: false }} tabBar={props => <TabBarComponent {...props} />}>
-                    <Tab.Screen
-                        name="Market"
-                        component={MarketScreen}
-                    />
-                    <Tab.Screen
-                        name="Exhibition"
-                        component={ExhibitionScreen}
-                    />
-                </Tab.Navigator>
+            <Tab.Navigator screenOptions={{ swipeEnabled: false }} tabBar={props => <TabBarComponent {...props} />}>
+                <Tab.Screen
+                    name="Market"
+                    component={MarketScreen}
+                />
+                <Tab.Screen
+                    name="Exhibition"
+                    component={ExhibitionScreen}
+                />
+            </Tab.Navigator>
         </ImageBackground>
     );
 };

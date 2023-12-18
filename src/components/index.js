@@ -25,6 +25,8 @@ import ViewAll from "./text/ViewAll";
 
 import Header from "./header/Header";
 // import DropdownInput from "./inputs/DropdownInput";
+
+import TabContent from "./containers/TabContent";
 export {
     ActionButton,
     FollowButton,
@@ -45,6 +47,7 @@ export {
     ScrollableFilterCard,
     ArtworkImageSlider,
     ViewAll,
-    Header
-    // DropdownInput
+    Header,
+    // DropdownInput,
+    TabContent
 }

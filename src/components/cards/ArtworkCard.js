@@ -8,12 +8,21 @@ const imgSrc = "https://firebasestorage.googleapis.com/v0/b/chatta-mobile.appspo
 
 const ArtworkCard = ({ artDetails, navigateToArtwork }) => {
     console.log({ artDetails });
+    console.log({
+        artistUid: artDetails.artistUid,
+        imageUID: artDetails.ImageUid,
+        images: artDetails.imgUrls,
+        img: artDetails.artUrl
+    });
     return (
         <TouchableOpacity style={styles.container} onPress={() => {
+            // const {} = artDetails
             navigateToArtwork({
                 artistUid: artDetails.artistUid,
                 imageUID: artDetails.ImageUid,
-                images: artDetails.imgUrls
+                images: artDetails.imgUrls,
+                artistName: artDetails.artistName,
+                photoUrl: artDetails.photoUrl
             })
         }}>
             <View style={styles.backgroundContainer}>
@@ -32,7 +41,7 @@ const ArtworkCard = ({ artDetails, navigateToArtwork }) => {
                             <Text style={styles.counterText}>11K VIEWS</Text>
                             <Text style={styles.artPrice}>R{artDetails.price}.00</Text>
                         </View>
-                        <Text numberOfLines={2} style={{ fontSize: 14 }}>{artDetails.statement || 'N/A'}</Text>
+                        <Text numberOfLines={2} style={{ fontSize: 14 }}>{String(artDetails.statement) || 'N/A'}</Text>
                         <ArtistLabel name={artDetails.artistName} uri={"https://firebasestorage.googleapis.com/v0/b/chatta-mobile.appspot.com/o/messages%2Fimages%2FcW7x3aV9o8rpH4478Hnf?alt=media&token=e2587fdc-ec26-4084-b57e-8f61628d5800"} />
 
                     </BlurView>

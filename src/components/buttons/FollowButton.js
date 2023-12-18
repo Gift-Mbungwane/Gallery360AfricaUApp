@@ -1,21 +1,23 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
+import { Person } from '../icons';
 
-const FollowButton = ({ text, onPress, icon, secondary, following }) => {
+const FollowButton = ({ text, onPress, icon, secondary, isFollowing, updateFollowing }) => {
     console.log({ secondary });
+    console.log({ follows: isFollowing });
     const containerStyle = [
         styles.container,
-        !following && { backgroundColor: "#FFFFFF", borderColor: "#EDEDED", borderWidth: 1 }
+        !isFollowing && { backgroundColor: "#FFFFFF", borderColor: "#EDEDED", borderWidth: 1 }
     ]
     const textStyle = [
         styles.text,
-        !following && { color: "#000000" }
+        !isFollowing && { color: "#000000" }
     ]
 
     return (
         <View style={{ flex: 0, alignItems: 'flex-start' }}>
-            <TouchableOpacity style={containerStyle}>
-                {!following && <Image style={styles.icon} source={icon} />}
+            <TouchableOpacity style={containerStyle} onPress={updateFollowing}>
+                {!isFollowing && <Person size={18} /> }
                     <Text style={textStyle}>{text}</Text>
             </TouchableOpacity>
         </View>

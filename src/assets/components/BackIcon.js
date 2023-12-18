@@ -2,6 +2,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { StackActions } from '@react-navigation/native';
 import React from 'react'
 import { TouchableOpacity, View } from 'react-native'
+import { Back } from '../../components/icons';
 
 export default function BackIcon({ navigation }) {
     return (
@@ -14,18 +15,20 @@ export default function BackIcon({ navigation }) {
                 }
                 }
                 style={{
-                    height: 40,
-                    width: 40,
-                    borderRadius: 12,
+                    height: 50,
+                    width: 50,
+                    borderRadius: 20,
                     borderWidth: 1,
-                    borderColor: '#fff',
+                    borderColor: '#000',
                     justifyContent: 'center',
                     alignItems: 'center',
+                    
                     // marginLeft: 10
                     // alignSelf: "center"
                 }}
             >
-                <FontAwesome name="chevron-left" size={ 25 } color="white" />
+                {/* <FontAwesome name="chevron-left" size={ 25 } color="white" /> */}
+                <Back size={25}/>
             </TouchableOpacity>
         </View>
     )

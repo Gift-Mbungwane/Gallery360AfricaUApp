@@ -3,7 +3,7 @@ import React from 'react'
 
 const ViewAll = ({ onPress }) => {
     return (
-        <TouchableOpacity onPress={() => onPress}>
+        <TouchableOpacity onPress={onPress}>
             <Text style={styles.viewMoreText}>View All</Text>
         </TouchableOpacity>
     )

@@ -5,26 +5,28 @@ const ArtistScrollView = ({ artist, navigation, SLIDER_WIDTH }) => {
     // console.log(artist);
     const styles = StyleSheet.create({
         footer: {
-            width: SLIDER_WIDTH - 30,
+            width: SLIDER_WIDTH,
             justifyContent: "center",
             alignItems: "center",
+            // left: -20,
             // marginVertical: 8,
-            paddingLeft: 0,
-            marginLeft: 15,
-            marginRight: 20,
-            marginVertical: 20,
+            // paddingLeft: 15,
+            // marginLeft: -15,
+            // marginRight: 20,
+            marginVertical: 15,
             bottom: 0,
             flexDirection: "row",
             // paddingLeft: 25,
             // paddingRight: 25,
             height: 109,
+            // backgroundColor: 'red',
             // backgroundColor: 'rgba(0, 0, 100, 0.3)',
-            overflow: 'hidden',
+            // overflow: 'hidden',
             
         },
         artistCard: {
-            marginLeft: 10,
-            marginRight: 10,
+            // marginLeft: 10,
+            // marginRight: 10,
             position: 'relative',
             // backgroundColor: 'red'
         },
@@ -77,7 +79,7 @@ const ArtistScrollView = ({ artist, navigation, SLIDER_WIDTH }) => {
             borderColor: "#f5f5f5",
             borderRadius: 20,
             paddingHorizontal: 5,
-            marginHorizontal: 10,
+            // marginHorizontal: 10,
             justifyContent: "center",
             alignSelf: "center",
             width: 100,
@@ -86,8 +88,10 @@ const ArtistScrollView = ({ artist, navigation, SLIDER_WIDTH }) => {
     })
     return (
         <View style={styles.footer}>
-            <View style={{ flex: 1, marginHorizontal: -10, overflow: 'hidden' }}>
-                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+            {/* <View style={{ flex: 1, paddingHorizontal: 10, backgroundColor: 'blue' }}> */}
+                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={[{ paddingHorizontal: 20, marginRight: 20, gap: 20 } ]}
+                >
                     { artist?.map(item => {
                         return (
                             <View
@@ -129,7 +133,7 @@ const ArtistScrollView = ({ artist, navigation, SLIDER_WIDTH }) => {
                         </View>
                     </TouchableOpacity>
                 </ScrollView>
-            </View>
+            {/* </View> */}
 
         </View>
     )

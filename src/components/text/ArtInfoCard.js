@@ -4,17 +4,19 @@ import ArtInfo from './ArtInfo'
 import { useState } from 'react'
 
 const ArtInfoCard = ({ dimensions, condition, available }) => {
+  console.log({ dimensions });
   const [processedDimensions, setProcessedDimensions] = useState(null)
   const processDimensions = () => {
     
   }
+  if(!dimensions || !dimensions.height) return null
   return (
     <View style={styles.container}>
-      <ArtInfo title={ 'Dimensions' } text={ '30cm x 30cm x 30cm' }/>
+      <ArtInfo title={ 'Dimensions' } text={ `${dimensions.height}cm x ${dimensions.width}cm ${dimensions.depth ? 'x ' + dimensions.depth + 'cm' : ''}` }/>
       <View style={ styles.line }/>
       <ArtInfo title={ 'Condition' } text={ condition } />
       <View style={ styles.line }/>
-      <ArtInfo title={ 'Available' } text={ available } />
+      <ArtInfo title={ 'Available' } text={ available ? 'Yes' : 'No' } />
     </View>
   )
 }

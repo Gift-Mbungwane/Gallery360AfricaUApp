@@ -4,7 +4,9 @@ export const UserContext = createContext({
     isLoggedIn: false,
     user: {
         email: null,
-        uid: null
+        uid: null,
+        username: null,
+        photoUrl: null
     },
     toggleUserState: () => {}
 })

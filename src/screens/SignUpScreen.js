@@ -60,6 +60,7 @@ export default function SignUpScreen({ navigation }) {
             .then(() => {
               // navigation.navigate("Home");
               // toggleUserState(true)
+              toggleUserState(true, { email: user.email, uid: user.uid } )
               toggleIndicator(false)
               // Toast.show(
               //   "You have successfully registered ",

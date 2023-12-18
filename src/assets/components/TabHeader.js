@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
         // marginBottom: statusBarHeight ? statusBarHeight - 40 : 0,
         width: Dimensions.get('window').width,
         zIndex: 50000,
-        backgroundColor: 'blue'
+        // backgroundColor: 'blue'
     },
     headerLeft: {
         // marginLeft: 35

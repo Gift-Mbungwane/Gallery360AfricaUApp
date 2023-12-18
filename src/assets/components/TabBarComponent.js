@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     // height: 0,
     // paddingTop: 40,
-    backgroundColor: 'red',
+    // backgroundColor: 'red',
     // backgroundColor: 'transparent',
     // flexBasis: 0,
     // overflow: 'hidden'

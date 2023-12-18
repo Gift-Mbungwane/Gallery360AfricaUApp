@@ -22,7 +22,7 @@ import * as Linking from "expo-linking";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { BackHandler } from "react-native";
-import { StackActions, useNavigationState } from "@react-navigation/native";
+import { StackActions } from "@react-navigation/native";
 
 // import * as AuthSession from "expo-auth-session/src/AuthSession";
 
@@ -43,7 +43,6 @@ export default function CartScreen({ navigation, route }) {
   const [webResult, setWebResult] = useState(null);
   const headerHeight = useHeaderHeight()
   const insets = useSafeAreaInsets()
-  const routes = useNavigationState(state => state.routes)
   // const [request, response, promptAsync] = AuthSession.getDefaultReturnUrl(
   //   "/",
   //   Linking.createURL("/?")
@@ -59,6 +58,7 @@ export default function CartScreen({ navigation, route }) {
           console.log('I exist');
           snapShot1.ref
             .collection("items")
+            .where("uuid", "==", uuid)
             .onSnapshot((snapShot) => {
               if (!snapShot.empty) {
                 const sizes = snapShot.size;
@@ -250,14 +250,11 @@ export default function CartScreen({ navigation, route }) {
       getCart();
     }
     const pop = StackActions.pop(1)
-    BackHandler.addEventListener('hardwareBackPress', () => {
-      const canNavigate = navigation.canGoBack()
-      if(canNavigate) {
-        console.log({ canNavigate });
-        navigation.goBack()
-      }
-      console.log('Number of pages in the stack:', routes);
-      return true
+    BackHandler.addEventListener('hardwareBackPress', () => { 
+      // navigation.dispatch(pop)
+      // navigation.dispatch(StackActions.popToTop())
+      navigation.goBack()
+      // return true
     })
     return () => {
       BackHandler.removeEventListener('hardwareBackPress');

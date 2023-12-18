@@ -3,16 +3,16 @@ import React, { useState } from 'react'
 // import {  } from 'react-native-web'
 import { ArrowDown } from '../icons'
 
-const DropdownInput = () => {
+const DropdownInput = ({ onChange }) => {
     const [sortBy, setSortBy] = useState({
         name: 'new',
         text: 'New To Old'
     })
     const options = [
-        { name: 'new', text: 'New To Old' },
-        { name: 'old', text: 'Old To New' },
-        { name: 'a-z', text: 'A- Z' },
-        { name: 'z-a', text: 'Z - A' }
+        { name: 'new', text: 'New To Old' }, // By timeStamp, recent
+        { name: 'old', text: 'Old To New' }, // By timeStamp, first added
+        { name: 'a-z', text: 'A - Z' },      // By name (title), ascending
+        { name: 'z-a', text: 'Z - A' }       // By name, descending
     ]
     const [showOptions, toggleShowOptions] = useState(false)
     const updateState = (item) => {
@@ -33,7 +33,7 @@ const DropdownInput = () => {
                                 options.map((item, index) => {
                                     const disabled = item.name === sortBy.name
                                     return <>
-                                        <TouchableOpacity key={item.name} style={styles.optionOpacity} disabled={disabled} onPress={() => updateState(item)}>
+                                        <TouchableOpacity key={item.name} style={styles.optionOpacity} disabled={disabled} onPress={() => { updateState(item); onChange(item.name) }}>
                                             <Text style={[styles.optionText,disabled && {color: 'rgb(80, 80, 80)'}]}>{item.text}</Text>
                                         </TouchableOpacity>
                                         {

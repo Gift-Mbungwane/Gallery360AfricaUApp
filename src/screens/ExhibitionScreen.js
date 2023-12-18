@@ -9,6 +9,7 @@ import {
   StyleSheet,
   StatusBar,
   Platform,
+  ImageBackground,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 //
@@ -18,6 +19,10 @@ import { firestore } from "../../Firebase";
 import LoaderImage from "../assets/components/LoaderImage";
 import ArtistScrollView from "../assets/components/ArtistScrollView";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { TabContent } from "../components";
+import Swiper from "react-native-swiper";
+import { getDate } from "../utils/helper-functions";
+import { BlurView } from "expo-blur";
 
 //
 const SLIDER_WIDTH = Dimensions.get("window").width;
@@ -30,7 +35,7 @@ const tabBarHeight = 50
 const paddingOnBottom = 90
 // const screenHeight = Dimensions.get('screen').height - statusBarHeight - paddingOnTop - navBarHeight - tabBarHeight - paddingOnBottom;
 const screenHeight = Dimensions.get('window').height
-const carouselHeight = (screenHeight - 300)
+const carouselHeight = (screenHeight - 600)
 const ITEM_HEIGHT = carouselHeight;
 export default function ExhibitionScreen({ navigation }) {
   //
@@ -41,11 +46,11 @@ export default function ExhibitionScreen({ navigation }) {
   const [viewHeight, setViewHeight] = useState(screenHeight)
   const insets = useSafeAreaInsets()
 
-  console.log('Exhibition height: ' + screenHeight);
+  // console.log('Exhibition height: ' + screenHeight);
   //
   const getArtist = () => {
     return firestore
-      .collection("artists")
+      .collection("Artists")
       .orderBy("timeStamp", "desc")
       .limit(3)
       .onSnapshot((snapShot) => {
@@ -59,15 +64,40 @@ export default function ExhibitionScreen({ navigation }) {
     return firestore.collection("exhibition").onSnapshot((snapShot) => {
       // const allExhibitions = snapShot.docs.map((docSnap) => docSnap.data());
       // const unfiltered = snapShot.docs.map((docSnap) => docSnap.data())
-      const allExhibitions = snapShot.docs.map(docSnap => ({ ...docSnap.data(), isExhibition: true })).filter((data) => {
-        // console.log(typeof data.date);
-        return typeof data.date === 'string'
-      });
+      const allExhibitions = snapShot.docs.map(docSnap => ({
+        ...docSnap.data(),
+        isExhibition: true,
+        exhibitionUid: docSnap.id,
+        imgUrl: docSnap.data().imgUrls[0].imgUrl,
+        date: {
+          fromDate: getDate(docSnap.data().date.fromDate),
+          toDate: getDate(docSnap.data().date.toDate)
+        },
+
+      }));
       // console.log(allExhibitions);
+      // console.log({ allExhibitions });
       setExhibition(allExhibitions);
       // setExhibition([...allExhibitions, { isExhibition: false, text: 'Show All' }]);
     });
   };
+  // const getDate = (timeStamp) => {
+  //   try {
+  //     // console.log({ timeStamp });
+  //     const stamp = typeof timeStamp === 'string' ? JSON.parse(timeStamp) : timeStamp
+  //     // return 27
+  //     const fullDate = new Date(stamp.seconds * 1000)
+  //     const date = fullDate.getDate()
+  //     const monthArr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  //     const month = monthArr[fullDate.getMonth()]
+  //     const year = fullDate.getFullYear()
+  //     // console.log({ date: { date, month, year } })
+  //     return { date, month, year }
+  //   } catch (error) {
+  //     return 'undefined'
+  //   }
+
+  // }
   useEffect(() => {
     getExhibition();
     getArtist();
@@ -75,12 +105,17 @@ export default function ExhibitionScreen({ navigation }) {
     // return () => getArtist();
     // return () => getExhibition();
   }, []);
-
+  useEffect(() => {
+    // console.log({ viewHeight });
+  }, [viewHeight])
   //
   const _renderItem = ({ item, index }) => {
+
     if (item.isExhibition) {
       return (
-        <View style={{ height: viewHeight }}>
+        <View
+          style={{ flex: 1, backgroundColor: 'yellow', justifyContent: 'center' }}
+        >
           <TouchableOpacity
             onPress={() =>
               navigation.navigate("ExhibitionDetails", {
@@ -94,8 +129,8 @@ export default function ExhibitionScreen({ navigation }) {
             }
           >
             <LoaderImage
-              uri={item.exhibitionImage}
-              style={{ width: ITEM_WIDTH, height: viewHeight, borderRadius: 16 }}
+              uri={item.imgUrls[0].imgUrl}
+              style={{ width: ITEM_WIDTH, height: 400, borderRadius: 16 }}
             />
             <View
               style={{
@@ -111,7 +146,7 @@ export default function ExhibitionScreen({ navigation }) {
             >
               <Text style={styles.artNameTxt} numberOfLines={1}>{item.exhibitionTitle}</Text>
               <View style={{ flexDirection: "row" }}>
-                <Text style={styles.artTypeTxt}>{item.date}</Text>
+                <Text style={styles.artTypeTxt}>{item.date.fromDate.date} {item.date.fromDate.month}</Text>
               </View>
             </View>
           </TouchableOpacity>
@@ -128,34 +163,113 @@ export default function ExhibitionScreen({ navigation }) {
     }
 
   };
-  const getViewLayout = (layout) => setViewHeight(layout.height);
+  const getViewLayout = (event) => {
+    // console.log({ event: event.nativeEvent });
+    setViewHeight(event.nativeEvent.height)
+  };
 
   //
   return (
-    <View style={{ height: Dimensions.get('window').height - 110, width: '100%',paddingBottom: 0, top: 0  }}>
-      <View style={styles.container}>
-        <View style={{ flex: 1 }}>
-          <View onLayout={(e) => getViewLayout(e.nativeEvent.layout)} style={styles.body}>
+    <TabContent>
+      <View style={{ flex: 1, paddingVertical: 15 }}>
+        <View style={{ flex: 1, paddingHorizontal: 20, }}
+          onLayout={(event) => getViewLayout(event)}>
+          <Swiper style={{ borderRadius: 20, overflow: 'hidden' }} showsPagination={false} showsButtons >
+            {
+              exhibition.length > 0 && exhibition.map(item => {
+                console.log({ item });
+                return (
+                  <TouchableOpacity style={{ borderRadius: 20, overflow: 'hidden' }} onPress={() => (
+                    navigation.navigate("ExhibitionDetails", {
+                      ...item,
+                      exhibitionUid: item.exhibitionUid,
+                      artistUid: item.artistUid || item.userid,
+                      exhibitionTitle: item.exhibitionTitle || item.name,
+                      date: item.date,
+                      exhibitionImage: item.imgUrl,
+                      addresses: item.address,
+                      description: item.description || item.desc,
+                    })
+                  )}>
+                    <View style={{}}>
+                      <ImageBackground
+                        source={{ uri: item.imgUrl }}
+                        style={{ width: '100%', height: '100%', borderRadius: 20, overflow: 'hidden' }}
+                        resizeMode="cover"
+                      >
 
-            {/* <Carousel
-              data={exhibition}
-              initialNumToRender={1}
-              windowSize={1}
-              sliderWidth={SLIDER_WIDTH}
-              itemWidth={ITEM_WIDTH}
-              renderItem={_renderItem}
-              onSnapToItem={(index) => setState({ index })}
-              useScrollView={false}
-            /> */}
-            {/* </SafeAreaView> */}
-          </View>
+                        <View
+                          style={{
+                            height: 80,
+                            position: "absolute",
+                            borderRadius: 16,
+                            bottom: 8,
+                            left: 8,
+                            right: 8,
+                            justifyContent: "center",
+                            overflow: 'hidden',
+                          }}
+                        >
+                            <BlurView intensity={80}
+                              style={{
+                                height: 80,
+                                justifyContent: "center",
+                                backgroundColor:'rgba(206, 184, 158, 0.5)',
+                                // borderColor: 'red',
+                                // borderWidth: 1,
+                                paddingVertical: 10,
+                                // gap: 200
+                                justifyContent: 'space-between'
+                              }}
+                            >
+                              <Text style={styles.artNameTxt} numberOfLines={1}>{item.exhibitionTitle ? (item.exhibitionTitle).trim() : (item.name).trim()}</Text>
+                              <View style={{ flexDirection: "row", justifyContent: 'space-between' }}>
+                                <Text style={styles.artTypeTxt}>{item.date.fromDate.date} {item.date.fromDate.month}</Text>
+                                <Text style={[styles.artTypeTxt, { width: 200 }]} numberOfLines={1}>{item.address}</Text>
+                              </View>
+                            </BlurView>
 
-          <ArtistScrollView navigation={navigation} artist={artist} SLIDER_WIDTH={SLIDER_WIDTH} />
+                        </View>
+                      </ImageBackground>
+                    </View>
+                  </TouchableOpacity>
 
+                )
+              })
+            }
+          </Swiper>
         </View>
 
+
       </View>
-    </View>
+
+      <ArtistScrollView navigation={navigation} artist={artist} SLIDER_WIDTH={SLIDER_WIDTH} />
+    </TabContent>
+
+    // <View style={{ height: Dimensions.get('window').height - 110, width: '100%',paddingBottom: 0, top: 0  }}>
+    //   <View style={styles.container}>
+    //     <View style={{ flex: 1 }}>
+    //       <View onLayout={(e) => getViewLayout(e.nativeEvent.layout)} style={styles.body}>
+
+    //         {/* <Carousel
+    //           data={exhibition}
+    //           initialNumToRender={1}
+    //           windowSize={1}
+    //           sliderWidth={SLIDER_WIDTH}
+    //           itemWidth={ITEM_WIDTH}
+    //           renderItem={_renderItem}
+    //           onSnapToItem={(index) => setState({ index })}
+    //           useScrollView={false}
+    //         /> */}
+    //         {/* </SafeAreaView> */}
+    //       </View>
+
+    //       <ArtistScrollView navigation={navigation} artist={artist} SLIDER_WIDTH={SLIDER_WIDTH} />
+
+    //     </View>
+
+    //   </View>
+    // </View>
 
   );
 }
@@ -231,15 +345,16 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   artNameTxt: {
-    fontSize: 23,
-    color: "#000",
-    paddingHorizontal: 20,
+    fontSize: 28,
+    color: "#FFF",
+    paddingHorizontal: 15,
+    fontWeight: '500'
     // paddingRight: 60
   },
   artTypeTxt: {
-    color: "gray",
-    fontSize: 12,
-    paddingHorizontal: 20,
+    color: "#FFF",
+    fontSize: 14,
+    paddingHorizontal: 15,
     bottom: 3,
   },
   showAll: {

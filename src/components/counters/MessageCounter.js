@@ -1,12 +1,14 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import CounterComponent from './CounterComponent'
+import { MessageText } from '../icons'
 
-const MessageCounter = ({ counter }) => {
+const MessageCounter = ({ counter, onPress }) => {
   return (
     <CounterComponent
-        image={require('../../../assets/icons/message-text.png')}
+        image={<MessageText size={ 24 } /> }
         counter={counter}
+        onPress={onPress}
     />
   )
 }

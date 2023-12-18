@@ -3,7 +3,8 @@ import { SliderBox } from "react-native-image-slider-box";
 import React, { useEffect, useState } from 'react'
 
 const ArtworkImageSlider = ({ imagesArr }) => {
-    console.log({ images: imagesArr[0] });
+    // console.log({ images: imagesArr[0] });
+    console.log({ imagesArr });
     useEffect(() => {
         // setImages(imagesArr.map(item => item.imgUrl))
         console.log({ imagesArr });
@@ -17,7 +18,7 @@ const ArtworkImageSlider = ({ imagesArr }) => {
     return (
         <View style={{ left: 0, top: 0 }}>
             <SliderBox
-                images={imagesArr}
+                images={imagesArr || []}
                 // sliderBoxHeight={200}
                 sliderBox
                 onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
@@ -46,6 +47,7 @@ const ArtworkImageSlider = ({ imagesArr }) => {
                     color: "#FFF"
                 }}
             />
+            {/* <Text>Hi there</Text> */}
         </View>
     )
 }

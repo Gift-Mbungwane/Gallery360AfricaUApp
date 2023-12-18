@@ -3,14 +3,14 @@ import React from 'react'
 import { DropdownInput } from '../inputs'
 import HeroCard from '../cards/HeroCard'
 
-const CreatorsSection = ({ artists, navigation }) => {
+const CreatorsSection = ({ artists, navigation, onSortChange }) => {
   // console.log({ artists });
   const artist = [1, 2, 3, 4, 5, 6, 7]
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Text style={styles.header}>Creators</Text>
-        <DropdownInput />
+        <DropdownInput onChange={onSortChange} />
       </View>
       <ScrollView
         contentContainerStyle={styles.artists}
@@ -20,7 +20,7 @@ const CreatorsSection = ({ artists, navigation }) => {
       >
         {
           artists.map(item => (
-            <HeroCard name={item.artistName} pic={item.photoUrl} uid={ item.artistUid } onPress={(artistUid) => navigation.navigate('ArtistProfile', { ...item })} />
+            <HeroCard key={item.artistUid} name={item.artistName} pic={item.photoUrl} uid={ item.artistUid } onPress={(artistUid) => navigation.navigate('ArtistProfile', { ...item })} />
           ))
         }
       </ScrollView>
@@ -32,14 +32,14 @@ export default CreatorsSection
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'blue',
+    // backgroundColor: 'blue',
     width: '100%',
     padding: 10
   },
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: 'red',
+    // backgroundColor: 'red',
     zIndex: 100
   },
   header: {
