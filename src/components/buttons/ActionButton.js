@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, Image, ActivityIndicator } from 'react-native'
 import React from 'react'
 
-const ActionButton = ({ text, onPress, icon, disabled, style }) => {
+const ActionButton = ({ text, onPress, icon, disabled, style, isLoading }) => {
     console.log({ text, onPress, icon });
     const containerStyle = [
         styles.container,
@@ -11,12 +11,20 @@ const ActionButton = ({ text, onPress, icon, disabled, style }) => {
         styles.text,
         disabled && { color: "#22180E" }
     ]
-  return (
-    <TouchableOpacity style={[ containerStyle, style]} onPress={onPress}>
-        { icon && icon }
-        <Text style={ textStyle }>{ text }</Text>
-    </TouchableOpacity>
-  )
+    return (
+        <TouchableOpacity style={[containerStyle, style]} onPress={onPress} disabled={isLoading}>
+            {isLoading ? (
+                <ActivityIndicator size={'large'} color={'#FFFFFF'}/>
+            ) : (
+                <>
+                    {icon && icon}
+                    <Text style={textStyle}>{text}</Text>
+                </>
+
+            )}
+
+        </TouchableOpacity>
+    )
 }
 
 export default ActionButton
@@ -27,7 +35,7 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         backgroundColor: '#181818',
         height: 54,
-        width: "100%", 
+        width: "100%",
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row',

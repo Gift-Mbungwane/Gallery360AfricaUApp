@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import React, { useState, useEffect, useContext } from "react";
 import { firestore, auth } from "../../Firebase";
+import { doc, serverTimestamp } from 'firebase/firestore'
 import { globalStyles } from "../assets/styles/GlobalStyles";
 // import { AntDesign, Entypo, Fontisto, MaterialIcons } from "@expo/vector-icons";
 import CommentsModal from "../assets/components/CommentsModal";
@@ -25,6 +26,7 @@ import { Cart, Checkmark } from "../components/icons";
 import { UserContext } from "../Context/UserContext";
 import { ReviewSection } from "../components/sections";
 import { UserDetails } from "../Context/UserDetailsContext";
+import { formatDate, getDate } from "../utils/helper-functions";
 
 // import Toast from "react-native-simple-toast";
 // line 141 (image is a string) and 146 (catch block)
@@ -37,6 +39,7 @@ export default function ArtPreviewScreen({ route, navigation }) {
   const [showReviews, setShowReviews] = useState(false)
   const [showCommentInput, setShowCommentInput] = useState(false)
   const [reviews, setReviews] = useState([])
+  const [reviewSubmitLoading, setReviewSubmitLoading] = useState(false)
   const [isModalVisible, setModalVisible] = useState(false);
   const [like, setLike] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
@@ -66,7 +69,7 @@ export default function ArtPreviewScreen({ route, navigation }) {
   // console.log({ ...route.params });
   const { artistUid, imageUID, photoUrl, artistName } = route.params;
 
-  const { user: {uid}} = useContext(UserContext)
+  const { user: { uid } } = useContext(UserContext)
   const { fullName } = useContext(UserDetails)
   // const [Data] = useState([{ photoURL, FullName, imageUID, title: 'why' }, { photoURL, FullName, imageUID, title: 'why' }, { photoURL, FullName, imageUID, title: 'why' }])
   useEffect(() => {
@@ -74,6 +77,7 @@ export default function ArtPreviewScreen({ route, navigation }) {
     getArtDetails();
     getArt()
     getArtistData()
+    getReviews()
     console.log({ fullName });
   }, [route])
 
@@ -156,10 +160,15 @@ export default function ArtPreviewScreen({ route, navigation }) {
       .onSnapshot((snapShot) => {
         if (snapShot.exists) {
           console.log({ data: snapShot.data() });
+          const data = snapShot.data()
+          console.log({ data : data.ratings });
+          // const hasReviewed = data.ratings.reviewers.includes(uid) 
+          // console.log({ hasReviewedInGetter: hasReviewed });
           setArtDetails({
             ...snapShot.data(),
             imageUid: snapShot.id,
-            images: snapShot.data().imgUrls.map(item => item.imgUrl)})
+            images: snapShot.data().imgUrls.map(item => item.imgUrl)
+          })
           return
           const artTypes = snapShot.data().artType;
           setArtType(artTypes);
@@ -176,7 +185,7 @@ export default function ArtPreviewScreen({ route, navigation }) {
         }
       });
   };
-  useEffect(() => { 
+  useEffect(() => {
     console.log({ artDetailsInPreview: artDetails });
     console.log({ artDetailsImages: artDetails.images });
   }, [artDetails])
@@ -241,7 +250,7 @@ export default function ArtPreviewScreen({ route, navigation }) {
         const artistLikes = doc.data().likes
         // setNumberOfLikes(artistLikes.length || 0)
         setLikes(artistLikes || [])
-        if(artistLikes && artistLikes.length > 0) {
+        if (artistLikes && artistLikes.length > 0) {
           const liked = artistLikes.includes(uid)
           setUserLikes(liked)
         } else {
@@ -251,15 +260,15 @@ export default function ArtPreviewScreen({ route, navigation }) {
         console.log({ followers, uid });
         const likeArr = doc.data().user
 
-        if(followers && followers.length > 0) {
+        if (followers && followers.length > 0) {
           let isFollowing = followers.includes(uid)
           console.log({ isFollowing });
           setFollowers(followers)
           setIsFollowing(isFollowing)
-        } else { 
+        } else {
           console.log('artist has no followers');
           setIsFollowing(false)
-          console.log({ follows: isFollowing});
+          console.log({ follows: isFollowing });
         }
       } else {
         // console.log('data does not exist')
@@ -273,15 +282,15 @@ export default function ArtPreviewScreen({ route, navigation }) {
     } catch (error) {
       console.log({ error });
     }
-    
+
   }
   const updateLikes = () => {
     let likeArr = []
-    if(userLikes) {
+    if (userLikes) {
       console.log({ current: likes });
       likeArr = likes.filter(item => !item === uid)
     } else {
-      if(likes.includes(uid)) {
+      if (likes.includes(uid)) {
         likeArr = likes
       } else {
         likeArr = [...likes, uid]
@@ -290,14 +299,14 @@ export default function ArtPreviewScreen({ route, navigation }) {
     console.log({ likeArr });
     setUserLikes(likeArr.includes(uid))
     updateArtist({ likes: likeArr })
-  } 
+  }
   const updateFollowing = () => {
     let followersArr = []
     console.log({ uidInUpdate: uid });
-    if(isFollowing) {
-      followersArr = followers.filter(item => !item === uid) 
+    if (isFollowing) {
+      followersArr = followers.filter(item => !item === uid)
     } else {
-      if(followers.includes(uid)) { // just in place to force consistency between the different states, it hasn't been consistent
+      if (followers.includes(uid)) { // just in place to force consistency between the different states, it hasn't been consistent
         followersArr = followers
       } else {
         followersArr = [...followers, uid]
@@ -306,7 +315,7 @@ export default function ArtPreviewScreen({ route, navigation }) {
     console.log({ followersArr });
     console.log({ isFollowing: 'true' });
     setIsFollowing(followersArr.includes(uid))
-    updateArtist({followers: followersArr})
+    updateArtist({ followers: followersArr })
   }
 
   useEffect(() => {
@@ -321,12 +330,106 @@ export default function ArtPreviewScreen({ route, navigation }) {
     console.log({ item, imageUID });
     navigation.navigate('ArtPreview', { artistUid, imageUID: item.imageUid, photoUrl, artistName })
   }
+  const getReviews = () => {
+    if (!imageUID) return
+    firestore
+      .collection("Market")
+      .doc(imageUID)
+      .collection('reviews')
+      .onSnapshot(async(snapShot) => {
+        if(snapShot.size > 0) {
+          let reviews = await Promise.all(
+            snapShot.docs.map(async doc => {
+              return {
+                ...doc.data(),
+                id: doc.id,
+                date: formatDate(getDate(doc.data().timeStamp)), 
+                ...await getUserData(doc.id)
+              }
+            })
+          )
+          console.log({ reviewsInMarket: reviews });
+          setReviews(reviews)
+        } else {
+          console.log({ snapShot: snapShot.size, reviews: reviews});
+          if(reviews.length > 0) {
+            setReviews([])
+          }
+        }
+      });
+  }
 
+  const getUserData = async(userUid) => {
+    return firestore.collection('users').doc(userUid).get().then(doc => {
+      console.log({ doc: doc.data() });
+      return {
+        ...doc.data(),
+        username: doc.data().fullName
+      }
+    })
+  }
   useEffect(() => {
-    if(artworks.length > 0) {
+    if (artworks.length > 0) {
       console.log({ art: artworks[0].imageUid });
     }
   }, [artworks])
+  const handleReviewSubmit = (rating, review) => {
+    setReviewSubmitLoading(true)
+    console.log({ rating, review });
+    console.log('in art preview');
+    if (!imageUID) return
+    firestore
+      .collection("Market")
+      .doc(imageUID)
+      .collection('reviews')
+      .doc(uid)
+      .set({
+        rating: Number(rating),
+        review: review.trim(),
+        timeStamp: serverTimestamp()
+      }).then(res => {
+        const sumOfRatings = artDetails.ratings?.sumOfRatings ?? 0
+        const numOfReviews = artDetails.ratings?.total ?? 0
+        const newSum = sumOfRatings + rating
+        const newNumOfRatings = numOfReviews + 1
+        const avg = Number(newSum) / Number(newNumOfRatings)
+        let currentRatings = artDetails.ratings ? artDetails.ratings : ({
+          stars: {
+            1: 0,
+            2: 0,
+            3: 0,
+            4: 0,
+            5: 0
+          }
+        })
+        // let reviewers = artDetails.reviews ? artDetails
+        const newRatings = {
+          averateRating: avg,
+          ratings: {
+            sumOfRatings: newSum,
+            total: newNumOfRatings,
+            reviewers: artDetails.ratings?.reviewers ? [...artDetails.ratings.reviewers, uid] : [uid], 
+            stars: {
+              ...currentRatings.stars,
+              [rating] : currentRatings.stars[rating] + 1
+            } 
+          }
+        }
+        console.log({ newRatings });
+        console.log({ stars: newRatings.ratings.stars });
+        console.log({ reviewers: newRatings.ratings.reviewers });
+        // return
+        firestore
+          .collection('Market')
+          .doc(imageUID)
+          .update({
+            ...newRatings
+          }).then(res => {
+            setReviewSubmitLoading(false)
+            setShowCommentInput(false)
+          })
+      })
+  }
   // return null
   return (
     <TransparentHeaderView padding={0}>
@@ -337,9 +440,9 @@ export default function ArtPreviewScreen({ route, navigation }) {
           <ArtInfoCard condition={artDetails.condition} available={artDetails.isAvailable} dimensions={artDetails.dimensions} />
           <ActionButton
             icon={itemOnCart ? <Checkmark size={24} /> : <Cart size={24} />}
-            text={itemOnCart ? 'Added to cart' : 'Add to Cart' }
+            text={itemOnCart ? 'Added to cart' : 'Add to Cart'}
             disabled={!!itemOnCart}
-            onPress={() => { itemOnCart ? removeFromCart() : addToCart()}}
+            onPress={() => { itemOnCart ? removeFromCart() : addToCart() }}
             style={{ marginBottom: 20 }}
           />
           <UserActivityCard
@@ -352,22 +455,28 @@ export default function ArtPreviewScreen({ route, navigation }) {
             messages={30}
             artistPhoto={photoUrl}
             toggleShowReviews={() => setShowReviews(showReviews => !showReviews)}
-            viewArtist={() => navigation.navigate('ArtistProfile', {artistUid, photoUrl, artistName})}
+            viewArtist={() => navigation.navigate('ArtistProfile', { artistUid, photoUrl, artistName })}
           />
           <ReviewSection
             enabled={showReviews}
-            reviews={reviews}
+            ratings={artDetails.ratings ?? null}
+            reviews={ reviews }
             fullName={fullName}
+            uid={uid}
             showCommentInput={showCommentInput}
-            averateRating={artDetails.averateRating ?? 0.0 }
-            numOfReviews={artDetails.numOfReviews ?? 0}
+            setShowCommentInput={(bln) => setShowCommentInput(bln)}
+            averateRating={artDetails.averateRating ?? 0.0}
+            // reviews={art}
+            onReviewSubmit={handleReviewSubmit}
+            submitLoading={reviewSubmitLoading}
+            hasReviewed={artDetails.ratings?.reviewers?.includes(uid) ? true : false }
           />
           <View style={{ padding: 0 }}>
             <View style={styles.moreArtHeader}>
               <Text style={styles.text}>
                 More from {artistName}
               </Text>
-              <ViewAll onPress={() => navigation.navigate('PreviewMore', {artistUid})} />
+              <ViewAll onPress={() => navigation.navigate('PreviewMore', { artistUid })} />
             </View>
             {
               artworks && artworks.length > 0 ? (
@@ -394,7 +503,7 @@ export default function ArtPreviewScreen({ route, navigation }) {
                         price={item.price}
                       />
                     )}
-                    keyExtractor={item => item.ImageUid}
+                    keyExtractor={item => item.imageUid}
                   />
                 </View>
 

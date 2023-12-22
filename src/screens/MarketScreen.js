@@ -259,13 +259,13 @@ export default function MarketScreen({ navigation }) {
           navigation={navigation}
           onSortChange={(val) => { sortArtist(val) }}
         />
-        <ArtworksSection
+        {/* <ArtworksSection
           navigation={navigation}
           artworks={filteredArtworks || artwork}
           navigateToArtwork={(item) => navigateToArtwork(item)}
           onSortChange={(val) => sortArtworks(val)}
           onFilterChange={(val) => filterArtworks(val)}
-        />
+        /> */}
       </View>
     </TabContent>
 

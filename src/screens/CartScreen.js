@@ -305,7 +305,7 @@ export default function CartScreen({ navigation, route }) {
                 style={{ marginLeft: 10, marginRight: 10 }}
                 data={cart}
                 showsHorizontalScrollIndicator={false}
-                keyExtractor={(item) => `${item.artUrl}`}
+                keyExtractor={(item) => `${item.imageUid}`}
                 renderItem={({ item }) => {
                   return (
                     <View>
@@ -313,7 +313,7 @@ export default function CartScreen({ navigation, route }) {
                         imageUrl={item.artUrl}
                         name={item.artType}
                         price={item.price}
-                        keyy={item.imageUid}
+                        key={item.imageUid}
                       />
                     </View>
                   );

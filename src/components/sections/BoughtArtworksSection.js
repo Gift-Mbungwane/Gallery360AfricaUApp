@@ -22,7 +22,7 @@ const BoughtArtworksSection = ({ artworks }) => {
                         ItemSeparatorComponent={() => <View style={{width: 20}} />}
                         data={artworks}
                         renderItem={({ item }) => <BoughtArtworksCard uri={item.artUrl} name={item.artName} />}
-                        keyExtractor={item => item}
+                        keyExtractor={item => item} // Needs Fixing
                     />
                 ) : (
                     <View>

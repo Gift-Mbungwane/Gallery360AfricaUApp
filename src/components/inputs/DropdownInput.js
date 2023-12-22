@@ -32,13 +32,14 @@ const DropdownInput = ({ onChange }) => {
                             {
                                 options.map((item, index) => {
                                     const disabled = item.name === sortBy.name
+                                    console.log({ keyInDropDown: item.name });
                                     return <>
                                         <TouchableOpacity key={item.name} style={styles.optionOpacity} disabled={disabled} onPress={() => { updateState(item); onChange(item.name) }}>
                                             <Text style={[styles.optionText,disabled && {color: 'rgb(80, 80, 80)'}]}>{item.text}</Text>
                                         </TouchableOpacity>
                                         {
                                             index !== options.length - 1 && (
-                                                <View style={styles.line} />
+                                                <View style={styles.line} key={`${item.name}-separator`}/>
                                             )
                                         }
 

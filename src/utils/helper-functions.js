@@ -16,7 +16,9 @@ const getDate = (timeStamp) => {
 
 }
 
-
+const formatDate = (dateObject) => {
+    return `${ dateObject.date } ${ dateObject.month }, ${ dateObject.year }`
+}
 export {
-    getDate
+    getDate, formatDate
 }

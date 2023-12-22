@@ -3,14 +3,14 @@ import React from 'react'
 import ActionButton from '../buttons/ActionButton'
 import { Comment, Heart } from '../icons'
 
-const NewComment = ({ fullName, showCommentInput }) => {
+const NewComment = ({ fullName, setShowCommentInput }) => {
   return (
     <View style={styles.container}>
         <Comment size={29} />
         <Text style={styles.username}>{fullName}</Text>
         <Text style={styles.subtitle}>Be the first to comment</Text>
         <ActionButton
-            onPress={() => { showCommentInput }}
+            onPress={() => { setShowCommentInput(true) }}
             text={'Add Comment'}
         />
     </View>

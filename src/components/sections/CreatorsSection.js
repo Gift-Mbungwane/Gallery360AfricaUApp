@@ -14,14 +14,15 @@ const CreatorsSection = ({ artists, navigation, onSortChange }) => {
       </View>
       <ScrollView
         contentContainerStyle={styles.artists}
-        style={{zIndex: 1}}
+        style={{ zIndex: 1 }}
         scrollEnabled
         horizontal
       >
         {
-          artists.map(item => (
-            <HeroCard key={item.artistUid} name={item.artistName} pic={item.photoUrl} uid={ item.artistUid } onPress={(artistUid) => navigation.navigate('ArtistProfile', { ...item })} />
-          ))
+          artists.map(item => {
+            console.log({ key: item.artistUid });
+            return <HeroCard key={item.artistUid} name={item.artistName} pic={item.photoUrl} uid={item.artistUid} onPress={(artistUid) => navigation.navigate('ArtistProfile', { ...item })} />
+          })
         }
       </ScrollView>
     </View>
@@ -49,6 +50,6 @@ const styles = StyleSheet.create({
   artists: {
     // flexDirection: 'row',
     gap: 10,
-    zIndex:1
+    zIndex: 1
   }
 })
