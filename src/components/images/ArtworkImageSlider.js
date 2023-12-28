@@ -43,8 +43,7 @@ const ArtworkImageSlider = ({ imagesArr }) => {
                     marginHorizontal: 3,
                     padding: 0,
                     margin: 0,
-                    backgroundColor: '#FFF',
-                    color: "#FFF"
+                    backgroundColor: '#FFF'
                 }}
             />
             {/* <Text>Hi there</Text> */}

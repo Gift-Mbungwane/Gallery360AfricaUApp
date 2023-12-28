@@ -15,7 +15,7 @@ const background = require("../../assets/images/home.png");
 const TabNavigator = () => {
     const insets = useSafeAreaInsets()
     const headerHeight = useHeaderHeight()
-    // console.log({ insets, headerHeight });
+    console.log({ insets, headerHeight });
 
     // return(
     //     <View style={styles.container}>
@@ -24,10 +24,11 @@ const TabNavigator = () => {
     // )
     useEffect(() => {
         console.log('on tab navigator');
+        console.log({ insets, headerHeight });
     }, [])
 
     return (
-        <ImageBackground source={background} style={[styles.container, { paddingTop: insets.top + headerHeight }]}>
+        <ImageBackground source={background} style={[styles.container, { paddingTop: headerHeight + 10 }]}>
             <Tab.Navigator screenOptions={{ swipeEnabled: false }} tabBar={props => <TabBarComponent {...props} />}>
                 <Tab.Screen
                     name="Market"

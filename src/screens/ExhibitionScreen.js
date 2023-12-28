@@ -19,8 +19,8 @@ import { firestore } from "../../Firebase";
 import LoaderImage from "../assets/components/LoaderImage";
 import ArtistScrollView from "../assets/components/ArtistScrollView";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
-import { TabContent } from "../components";
-import Swiper from "react-native-swiper";
+import { ExhibitionSwiper, TabContent } from "../components";
+
 import { getDate } from "../utils/helper-functions";
 import { BlurView } from "expo-blur";
 
@@ -174,103 +174,11 @@ export default function ExhibitionScreen({ navigation }) {
       <View style={{ flex: 1, paddingVertical: 15 }}>
         <View style={{ flex: 1, paddingHorizontal: 20, }}
           onLayout={(event) => getViewLayout(event)}>
-          <Swiper style={{ borderRadius: 20, overflow: 'hidden' }} showsPagination={false} showsButtons >
-            {
-              exhibition.length > 0 && exhibition.map(item => {
-                console.log({ item });
-                return (
-                  <TouchableOpacity style={{ borderRadius: 20, overflow: 'hidden' }} onPress={() => (
-                    navigation.navigate("ExhibitionDetails", {
-                      ...item,
-                      exhibitionUid: item.exhibitionUid,
-                      artistUid: item.artistUid || item.userid,
-                      exhibitionTitle: item.exhibitionTitle || item.name,
-                      date: item.date,
-                      exhibitionImage: item.imgUrl,
-                      addresses: item.address,
-                      description: item.description || item.desc,
-                    })
-                  )}>
-                    <View style={{}}>
-                      <ImageBackground
-                        source={{ uri: item.imgUrl }}
-                        style={{ width: '100%', height: '100%', borderRadius: 20, overflow: 'hidden' }}
-                        resizeMode="cover"
-                      >
-
-                        <View
-                          style={{
-                            height: 80,
-                            position: "absolute",
-                            borderRadius: 16,
-                            bottom: 8,
-                            left: 8,
-                            right: 8,
-                            justifyContent: "center",
-                            overflow: 'hidden',
-                          }}
-                        >
-                            <BlurView intensity={80}
-                              style={{
-                                height: 80,
-                                justifyContent: "center",
-                                backgroundColor:'rgba(206, 184, 158, 0.5)',
-                                // borderColor: 'red',
-                                // borderWidth: 1,
-                                paddingVertical: 10,
-                                // gap: 200
-                                justifyContent: 'space-between'
-                              }}
-                            >
-                              <Text style={styles.artNameTxt} numberOfLines={1}>{item.exhibitionTitle ? (item.exhibitionTitle).trim() : (item.name).trim()}</Text>
-                              <View style={{ flexDirection: "row", justifyContent: 'space-between' }}>
-                                <Text style={styles.artTypeTxt}>{item.date.fromDate.date} {item.date.fromDate.month}</Text>
-                                <Text style={[styles.artTypeTxt, { width: 200 }]} numberOfLines={1}>{item.address}</Text>
-                              </View>
-                            </BlurView>
-
-                        </View>
-                      </ImageBackground>
-                    </View>
-                  </TouchableOpacity>
-
-                )
-              })
-            }
-          </Swiper>
+            <ExhibitionSwiper exhibition={exhibition} navigation={navigation}/>
         </View>
-
-
       </View>
-
       <ArtistScrollView navigation={navigation} artist={artist} SLIDER_WIDTH={SLIDER_WIDTH} />
     </TabContent>
-
-    // <View style={{ height: Dimensions.get('window').height - 110, width: '100%',paddingBottom: 0, top: 0  }}>
-    //   <View style={styles.container}>
-    //     <View style={{ flex: 1 }}>
-    //       <View onLayout={(e) => getViewLayout(e.nativeEvent.layout)} style={styles.body}>
-
-    //         {/* <Carousel
-    //           data={exhibition}
-    //           initialNumToRender={1}
-    //           windowSize={1}
-    //           sliderWidth={SLIDER_WIDTH}
-    //           itemWidth={ITEM_WIDTH}
-    //           renderItem={_renderItem}
-    //           onSnapToItem={(index) => setState({ index })}
-    //           useScrollView={false}
-    //         /> */}
-    //         {/* </SafeAreaView> */}
-    //       </View>
-
-    //       <ArtistScrollView navigation={navigation} artist={artist} SLIDER_WIDTH={SLIDER_WIDTH} />
-
-    //     </View>
-
-    //   </View>
-    // </View>
-
   );
 }
 

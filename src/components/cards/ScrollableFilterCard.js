@@ -34,7 +34,7 @@ const ScrollableFilterCard = ({ padding, onFilterChange }) => {
                 horizontal={true}
                 overScrollMode="always"
             >
-                <View style={styles.scrollable}>
+                <View style={[styles.scrollable,  styles.containerShadow]}>
                     {
                         filters.map((item, index) => {
                             return (
@@ -69,14 +69,23 @@ const styles = StyleSheet.create({
         // backgroundColor: 'red',
         flexDirection: 'row',
         width: Dimensions.get('window').width,
-        marginVertical: 10,
+        marginVertical: 5,
         // paddingHorizontal: 30,
         // left: -30
     },
+    containerShadow: {
+        // backgroundColor: 'red',
+        shadowColor: 'rgb(120, 120, 120)',
+        shadowOffset: {width: 5, height: 10},
+        shadowOpacity: 0.5,
+        shadowRadius: 20,
+        elevation: 4
+      },
     scrollView: {
         flex: 0,
         // flexDirection: 'row',
         // backgroundColor: 'yellow',
+        paddingVertical: 5,
 
         // borderRadius: 20,
         // marginHorizontal: 30,
@@ -85,7 +94,7 @@ const styles = StyleSheet.create({
     },
     scrollable: {
         flexDirection: 'row',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#FFF',
         padding: 10,
         // marginHorizontal: 10,
         borderRadius: 20

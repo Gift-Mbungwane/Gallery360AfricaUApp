@@ -164,7 +164,10 @@ safe: {},
     backgroundColor: '#E3E3E3',
     borderRadius: 20,
     padding: 20,
-    marginVertical: 10
+    marginVertical: 10,
+    top: 10,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   topView: {
     flexDirection: 'row',

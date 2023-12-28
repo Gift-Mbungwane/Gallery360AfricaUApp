@@ -5,6 +5,7 @@ import ExhibitionDetailsScreen from "./ExhibitionDetailsScreen";
 import ArtistProfileScreen from "./ArtistProfileScreen";
 import MarketScreen from "./MarketScreen";
 import ArtistsScreen from "./ArtistsScreen";
+import ArtistBiographyScreen from "./ArtistBiographyScreen";
 import ArtPreviewScreen from "./ArtPreviewScreen";
 import SignInScreen from "./SignInScreen";
 import SignUpScreen from "./SignUpScreen";
@@ -33,6 +34,7 @@ export {
     ArtistsScreen,
     ArtistsScreenCopy,
     ArtistProfileScreen,
+    ArtistBiographyScreen,
     ArtPreviewScreen,
     ArtWorksScreen,
     CartScreen,

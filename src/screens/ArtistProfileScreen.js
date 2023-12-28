@@ -13,6 +13,7 @@ import {
   Platform,
   ActivityIndicator,
   BackHandler,
+  ScrollView,
 } from "react-native";
 // import Toast from "react-native-simple-toast";
 //
@@ -31,6 +32,7 @@ import ArtistArtworks from "../components/sections/ArtistArtworks";
 import ArtistProfileHeader from "../components/sections/ArtistProfileHeader";
 import { useNavigationState } from "@react-navigation/native";
 import { UserContext } from "../Context/UserContext";
+import { ArtistDetailsModal } from "../components";
 //
 export default function ArtistProfileScreen({ route, navigation }) {
   //
@@ -39,6 +41,7 @@ export default function ArtistProfileScreen({ route, navigation }) {
   //
   console.log('on aartist screen');
   // const [uid, setUid] = useState(null)
+  const scrollViewRef = useRef(null);
   const [playing, setPlaying] = useState(false);
   const [isMute, setMute] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
@@ -52,8 +55,11 @@ export default function ArtistProfileScreen({ route, navigation }) {
   const [numberOfComments, setNumberOfComments] = useState(0);
   const [numberOfLikes, setNumberOfLikes] = useState(0);
   const [art, setArt] = useState(null);
+  const [boughtArtworks, setBoughtArtworks] = useState(null)
   const [size, setSize] = useState(0);
+  const [isModalVisible, setModalIsVisible] = useState(true)
   const [videoViewSize, setVideoViewSize] = useState(100)
+  const [scrollEnabled, setScrollEnabled] = useState(true)
   const video = useRef(null)
   const controlRef = useRef();
   const videoViewRef = useRef(null);
@@ -61,51 +67,45 @@ export default function ArtistProfileScreen({ route, navigation }) {
   const [filteredArtworks, setFilteredArtworks] = useState(null)
   const headerHeight = useHeaderHeight()
   const routes = useNavigationState(state => state.routes)
-  const { user: { uid, email} } = useContext(UserContext)
+  const { user: { uid, email } } = useContext(UserContext)
   // console.log({ uid });  
   // console.log({ headerHeight });
   //  video
-  const onStateChange = (state) => {
-    if (state === "ended") {
-      setPlaying(false);
-      Alert.alert("video has finished playing!");
-    }
-    if (state !== "playing") {
-      setPlaying(false);
-    }
-  };
-
-  //
 
   const getArt = async () => {
     // console.log(`artist ID : ${artistUid}s`);
     console.log({ artistUid });
     // return 
-    console.log('running art getter');
-    firestore
-      .collection("Market")
-      .where("artistUid", "==", artistUid.trim())
-      .where("isEnabled", "==", true)
-      .onSnapshot((snapShot) => {
-        console.log('got data');
-        if (!snapShot.empty) {
-          console.log('snap not empty');
-          let allArt = snapShot.docs.map((docSnap) => ({
-            isArt: true,
-            ...docSnap.data(),
-            imageUid: docSnap.id
-          }));
-          console.log('all art: ', allArt);
-          // if (allArt.length > 0) {
-          //   setArt([...allArt, { isArt: false, ImageUid: null }]);
-          // }
-          setArt(allArt)
-        } else {
-          console.log('snap is empty');
-        }
+    try {
+      console.log('running art getter');
+      firestore
+        .collection("Market")
+        .where("artistUid", "==", artistUid.trim())
+        .where("isEnabled", "==", true)
+        .onSnapshot((snapShot) => {
+          console.log('got data');
+          if (!snapShot.empty) {
+            console.log('snap not empty');
+            let allArt = snapShot.docs.map((docSnap) => ({
+              isArt: true,
+              ...docSnap.data(),
+              imageUid: docSnap.id
+            }));
+            console.log('all art: ', allArt);
+            // if (allArt.length > 0) {
+            //   setArt([...allArt, { isArt: false, ImageUid: null }]);
+            // }
+            setArt(allArt)
+          } else {
+            console.log('snap is empty');
+          }
 
 
-      });
+        });
+    } catch (error) {
+
+    }
+
   };
   useEffect(() => {
     // console.log(art);
@@ -116,115 +116,151 @@ export default function ArtistProfileScreen({ route, navigation }) {
   }, [art])
 
   const getArtistData = () => {
-    console.log('fetching user data');
-    console.log('data: ', artistUid)
-    firestore.collection('Artists').doc(artistUid).onSnapshot(doc => {
-      console.log('data changed');
-      if (doc.exists) {
-        // console.log({ artistData: doc.data() });
-        // console.log('data exists')
-        const artistLikes = doc.data().likes
-        // setNumberOfLikes(artistLikes.length || 0)
-        setLikes(artistLikes || [])
-        if(artistLikes && artistLikes.length > 0) {
-          const liked = artistLikes.includes(uid)
-          setUserLikes(liked)
-        } else {
-          setUserLikes(false)
-        }
-        setNumberOfComments(doc.data().numberOfComments || 0)
-        setVideoUrl(doc.data().introClip ? doc.data().introClip : 'no video')
-        // setVideoUrl(doc.data().videoUrl)
-        const followers = doc.data().followers
-        // console.log({ followers, uid });
-        const likeArr = doc.data().user
+    try {
+      console.log('fetching user data');
+      console.log('data: ', artistUid)
+      firestore.collection('Artists').doc(artistUid).onSnapshot(doc => {
+        console.log('data changed');
+        if (doc.exists) {
+          // console.log({ artistData: doc.data() });
+          // console.log('data exists')
+          const artistLikes = doc.data().likes
+          // setNumberOfLikes(artistLikes.length || 0)
+          setVideoUrl(doc.data().videoUrl)
+          setLikes(artistLikes || [])
+          if (artistLikes && artistLikes.length > 0) {
+            const liked = artistLikes.includes(uid)
+            setUserLikes(liked)
+          } else {
+            setUserLikes(false)
+          }
+          setNumberOfComments(doc.data().numberOfComments || 0)
+          // setVideoUrl(doc.data().introClip ? doc.data().introClip : 'no video')
+          // setVideoUrl(doc.data().videoUrl)
+          const followers = doc.data().followers
+          // console.log({ followers, uid });
+          const likeArr = doc.data().user
 
-        if(followers && followers.length > 0) {
-          let isFollowing = followers.includes(uid)
-          // console.log({ isFollowing });
-          setFollowers(followers)
-          setIsFollowing(isFollowing)
-        } else { 
-          // console.log('artist has no followers');
-          setIsFollowing(false)
-          // console.log({ follows: isFollowing});
+          if (followers && followers.length > 0) {
+            let isFollowing = followers.includes(uid)
+            // console.log({ isFollowing });
+            setFollowers(followers)
+            setIsFollowing(isFollowing)
+          } else {
+            // console.log('artist has no followers');
+            setIsFollowing(false)
+            // console.log({ follows: isFollowing});
+          }
+          if (likeArr && likeArr.length > 0) {
+            let userLikes = likeArr.includes(uid)
+            setLikes(likeArr)
+            setUserLikes(true)
+          }
+        } else {
+          // console.log('data does not exist')
         }
-        if(likeArr && likeArr.length > 0) {
-          let userLikes = likeArr.includes(uid)
-          setLikes(likeArr)
-          setUserLikes(true)
-        }
-      } else {
-        // console.log('data does not exist')
-      }
-      // console.log(doc.data())
-    })
+        // console.log(doc.data())
+      })
+    } catch (error) {
+      console.log({ error });
+    }
   }
   useEffect(() => {
     // console.log('url: ', videoUrl)
   }, [videoUrl])
   const getNumberOfImage = () => {
-    // console.log('artistUid: ', artistUid);
-    firestore
-      .collection("Market")
-      .where("artistUid", "==", artistUid)
-      .where("isEnabled", "==", true)
-      .onSnapshot((snapShot) => {
-        if (!snapShot.empty) {
-          const artSizes = snapShot.size - 2;
-          // console.log(artSizes, " the art size of the artist");
-          setSize(artSizes);
-        }
-      });
+    try {
+      // console.log('artistUid: ', artistUid);
+      firestore
+        .collection("Market")
+        .where("artistUid", "==", artistUid)
+        .where("isEnabled", "==", true)
+        .onSnapshot((snapShot) => {
+          if (!snapShot.empty) {
+            const artSizes = snapShot.size - 2;
+            // console.log(artSizes, " the art size of the artist");
+            setSize(artSizes);
+          }
+        });
+    } catch (error) {
+      console.log({ error });
+    }
   };
 
   const filterArtworks = (filter) => {
-    console.log({ filter });
-    if (filter === 'All') {
-      setFilteredArtworks(null)
-    } else {
-      setFilteredArtworks([...art].filter(item => item.artworkType.includes(filter)))
+    try {
+      console.log({ filter });
+      if (filter === 'All') {
+        setFilteredArtworks(null)
+      } else {
+        setFilteredArtworks([...art].filter(item => item.artworkType.includes(filter)))
+      }
+    } catch (error) {
+      console.log({ error });
     }
   }
   const updateFollowing = () => {
-    let followersArr = []
-    console.log({ uidInUpdate: uid });
-    if(isFollowing) {
-      followersArr = followers.filter(item => !item === uid) 
-    } else {
-      if(followers.includes(uid)) { // just in place to force consistency between the different states, it hasn't been consistent
-        followersArr = followers
+    try {
+      let followersArr = []
+      console.log({ uidInUpdate: uid });
+      if (isFollowing) {
+        followersArr = followers.filter(item => !item === uid)
       } else {
-        followersArr = [...followers, uid]
+        if (followers.includes(uid)) { // just in place to force consistency between the different states, it hasn't been consistent
+          followersArr = followers
+        } else {
+          followersArr = [...followers, uid]
+        }
       }
+      console.log({ followersArr });
+      setIsFollowing(followersArr.includes(uid))
+      updateArtist({ followers: followersArr })
+    } catch (error) {
+      console.log({ error });
     }
-    console.log({ followersArr });
-    setIsFollowing(followersArr.includes(uid))
-    updateArtist({followers: followersArr})
   }
   const updateLikes = () => {
-    let likeArr = []
-    if(userLikes) {
-      console.log({ current: likes });
-      likeArr = likes.filter(item => !item === uid)
-    } else {
-      if(likes.includes(uid)) {
-        likeArr = likes
+    try {
+      let likeArr = []
+      if (userLikes) {
+        console.log({ current: likes });
+        likeArr = likes.filter(item => !item === uid)
       } else {
-        likeArr = [...likes, uid]
+        if (likes.includes(uid)) {
+          likeArr = likes
+        } else {
+          likeArr = [...likes, uid]
+        }
       }
+      console.log({ likeArr });
+      setUserLikes(likeArr.includes(uid))
+      updateArtist({ likes: likeArr })
+    } catch (error) {
+      console.log({ error });
     }
-    console.log({ likeArr });
-    setUserLikes(likeArr.includes(uid))
-    updateArtist({ likes: likeArr })
-  } 
+  }
   const updateArtist = (obj) => {
     try {
       firestore.collection('Artists').doc(artistUid).update(obj)
     } catch (error) {
       console.log({ error });
     }
-    
+
+  }
+  const getBoughtArtworks = () => {
+    firestore.collectionGroup('orderItems').where('uid', '==', uid).where('artistUid', '==', artistUid).get().then(async result => {
+      const array = [...new Map(await new Promise.all(result.docs.map(async item => {
+        // console.log({ item: item.data()});
+        const data = [item.id, { ...item.data(), artName: await getArtName(item.id)}]
+        // console.log({ data });
+        return data
+      }))).values()]
+      // console.log({ boughtArtworks: array});
+      setBoughtArtworks(array)
+    })
+  }
+  const getArtName = async(artUid) => {
+    return firestore.collection('Market').doc(artUid).get().then( res => res.data().title )
   }
   useEffect(() => {
     let isMounted = true;
@@ -233,6 +269,7 @@ export default function ArtistProfileScreen({ route, navigation }) {
       console.log('getting details');
       getArt();
       getNumberOfImage();
+      // getBoughtArtworks()
       // followState();
       getArtistData()
       // const ref = videoViewRef.current
@@ -266,18 +303,20 @@ export default function ArtistProfileScreen({ route, navigation }) {
     // console.log(art);
 
   }, [art])
-  //
-  const setVideoSize = (size) => {
-    // console.log(size);
-    setVideoViewSize(size)
-  }
-  const CenterMarginView = ({ children }) => {
-    return (
-      <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-        {children}
-      </View>
-    )
-  }
+  // const handleScroll = (event) => {
+  //   const { y } = event.nativeEvent.contentOffset;
+  //   console.log({ y });
+  //   const childComponentTop = 250 // calculate the child component's top position;
+
+  //   // Adjust the threshold as needed
+  //   const threshold = 10;
+
+  //   const enable = (y <= childComponentTop + threshold);
+  //   console.log({ enable });
+  //   setScrollEnabled(enable)
+  //   if(!enable) scrollViewRef.current.scrollTo({ y: 250, animated: false });
+  // };
+
   // return (
   //  <TransparentHeaderView>
   //   <View>
@@ -292,7 +331,12 @@ export default function ArtistProfileScreen({ route, navigation }) {
       style={[styles.container]}
     >
       <TransparentHeaderView style={{ paddingHorizontal: 0 }}>
-        <View style={{ paddingHorizontal: 10 }}>
+        <ScrollView
+          contentContainerStyle={{ paddingHorizontal: 10 }}
+        // scrollEnabled={scrollEnabled}
+        // onScroll={handleScroll}
+        // ref={scrollViewRef}  
+        >
           <ArtistProfileHeader
             artistUid={artistUid}
             photoUrl={photoUrl}
@@ -303,23 +347,34 @@ export default function ArtistProfileScreen({ route, navigation }) {
             updateFollowing={() => updateFollowing()}
             updateLikes={() => updateLikes()}
             userLikes={userLikes}
+            onImagePress={() => navigation.navigate("ArtistBiography", {
+              artistUid,
+              description: route.params.biography,
+              signature: route.params.signature,
+              videoUrl: videoUrl
+            })}
           />
-          <BoughtArtworksSection artworks={art} />
-          {
-            art && art.length > 0 && (
-              <ArtistArtworks
-                artworks={filteredArtworks || art}
-                artistName={artistName}
-                artistPic={photoUrl}
-                onPress={(imageUID) => {
-                  console.log({ artistUid, imageUID: imageUID, photoUrl, artistName });
-                  navigation.navigate('ArtPreview', { artistUid, imageUID: imageUID, photoUrl, artistName })
-                }}
-                onFilterChange={(val) => filterArtworks(val)} />
-            )
-          }
+          <BoughtArtworksSection
+            artworks={boughtArtworks}
+            navigation={navigation}
+            onNavigate={(imageUID) => {
+              console.log({ artistUid, imageUID: imageUID, photoUrl, artistName });
+              // navigation.navigate('ArtPreview', { artistUid, imageUID: imageUID, photoUrl, artistName })
+            }}
+          />
 
-        </View>
+          <ArtistArtworks
+            artworks={filteredArtworks || art}
+            artistName={artistName}
+            artistPic={photoUrl}
+            onPress={(imageUID) => {
+              console.log({ artistUid, imageUID: imageUID, photoUrl, artistName });
+              navigation.navigate('ArtPreview', { artistUid, imageUID: imageUID, photoUrl, artistName })
+            }}
+            onFilterChange={(val) => filterArtworks(val)} />
+
+
+        </ScrollView>
       </TransparentHeaderView>
 
     </ImageBackground>

@@ -253,19 +253,19 @@ export default function MarketScreen({ navigation }) {
 
   return (
     <TabContent>
-      <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+      <View style={{ flex: 1, backgroundColor: 'transparent' }}>
         <CreatorsSection
           artists={artist}
           navigation={navigation}
           onSortChange={(val) => { sortArtist(val) }}
         />
-        {/* <ArtworksSection
+        <ArtworksSection
           navigation={navigation}
           artworks={filteredArtworks || artwork}
           navigateToArtwork={(item) => navigateToArtwork(item)}
           onSortChange={(val) => sortArtworks(val)}
           onFilterChange={(val) => filterArtworks(val)}
-        /> */}
+        />
       </View>
     </TabContent>
 

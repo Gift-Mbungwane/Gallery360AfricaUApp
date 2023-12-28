@@ -9,8 +9,9 @@ const TransparentHeaderView = ({ children, padding, style }) => {
     const insets = useSafeAreaInsets()
     // console.log({ headerHeight, insets });
     console.log({ children });
+    console.log({ headerHeight });
     return (
-        <View style={[styles.container, { paddingTop: headerHeight}]}>
+        <View style={[styles.container, { paddingTop: headerHeight + 15 }]}>
             <View style={[ styles.safeArea, padding !== null && { padding }, style !== null && {...style} ]}>
                 { children ? children : (
                     <Text>NO DATA</Text>
@@ -24,8 +25,9 @@ export default TransparentHeaderView
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1, borderWidth: 3
-
+        flex: 1,
+        // borderWidth: 3,
+        // borderColor: 'red'
     },
     safeArea: {
         flex: 1, padding: 10

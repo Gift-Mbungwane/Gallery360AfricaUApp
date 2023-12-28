@@ -39,7 +39,7 @@ import TransparentHeaderView from "../components/TransparentHeaderView";
 
 const background = require("../assets/images/home.png");
 
-export default function UserProfileScreen({ route, navigation }) {
+export default function UserProfileScreens({ route, navigation }) {
   const [modalOpen, setModalOpen] = useState("");
   const [userName, setUserName] = useState('');
   const [imageUri, setimageUri] = useState(`${route.params ? route.params.photoURL : 'https://icon-library.com/images/no-profile-picture-icon-female/no-profile-picture-icon-female-17.jpg'}`);
@@ -55,7 +55,7 @@ export default function UserProfileScreen({ route, navigation }) {
   const headerHeight = useHeaderHeight()
   const safeAreaInsets = useSafeAreaInsets()
 
-  console.log({ headerHeight, safeAreaInsets });
+console.log({ headerHeight, safeAreaInsets });
 
 
   // console.log({ viewHeight, screenHeight });
@@ -100,10 +100,10 @@ export default function UserProfileScreen({ route, navigation }) {
           setSubmit(false);
         });
 
-      snapshot.snapshot.ref.getDownloadURL().then((imageUrl) => {
-        console.log(imageUrl, "this is setting the image too storage before 2");
-        setPhoto(imageUrl);
-      });
+      // snapshot.snapshot.ref.getDownloadURL().then((imageUrl) => {
+      //   console.log(imageUrl, "this is setting the image too storage before 2");
+      //   setPhoto(imageUrl);
+      // });
     } else {
       // console.log(result.uri);
       if (result.uri) setimageUri(result.uri)
@@ -111,41 +111,43 @@ export default function UserProfileScreen({ route, navigation }) {
   };
 
   const updateUser = () => {
-    console.log('uuid: ', uuid);
-    firestore
-      .collection("users")
-      .doc(uuid)
-      .update({
-        fullName: userName,
-        photoURL: imageUri,
-      })
-      .then(() => {
-        // Toast.show(
-        //   "you have successfully update your profile",
-        //   Toast.LONG,
-        //   Toast.CENTER
-        // );
-        setUserName(userName);
-        // fullName = userName;
-        setPhotoUri(imageUri)
-        setModalOpen(false);
+    // console.log('uuid: ', uuid);
+    // firestore
+    //   .collection("users")
+    //   .doc(uuid)
+    //   .update({
+    //     fullName: userName,
+    //     photoURL: imageUri,
+    //   })
+    //   .then(() => {
+    //     // Toast.show(
+    //     //   "you have successfully update your profile",
+    //     //   Toast.LONG,
+    //     //   Toast.CENTER
+    //     // );
+    //     setUserName(userName);
+    //     // fullName = userName;
+    //     setPhotoUri(imageUri)
+    //     setModalOpen(false);
 
-      })
-      .catch((error) => {
-        // Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
-      });
+    //   })
+    //   .catch((error) => {
+    //     // Toast.show(`${error}`, Toast.LONG, Toast.CENTER);
+    //   });
   };
   useEffect(() => {
     // StatusBar.setHidden(true)
     let isMounted = true;
     if (isMounted) {
-      firestore.collection('users').doc(uuid).get().then(res => {
-        // console.log(res.data())
-        if (res.data()) {
-          setUserName(res.data().fullName);
-          setPhotoUri(res.data().photoURL);
-        }
-      })
+      console.log();
+      return
+      // firestore.collection('users').doc(uuid).get().then(res => {
+      //   // console.log(res.data())
+      //   if (res.data()) {
+      //     setUserName(res.data().fullName);
+      //     setPhotoUri(res.data().photoURL);
+      //   }
+      // })
     }
     return () => isMounted = false
   }, [])
@@ -153,124 +155,15 @@ export default function UserProfileScreen({ route, navigation }) {
     console.log(imageUri);
   }, [imageUri])
   return (
-    <ImageBackground source={background} resizeMode="cover" style={[globalStyles.backgroundImg, { height: Dimensions.get('screen').height }]}>
+    // <ImageBackground source={background} resizeMode="cover" style={[globalStyles.backgroundImg, { height: Dimensions.get('window').height }]}>
       <TransparentHeaderView>
-        <View style={[{ flex: 1 }]}>
-          <Modal visible={modalOpen} transparent>
-            <View style={globalStyles.modalFullView}>
-              <View style={globalStyles.modalContainer}>
-                <View style={globalStyles.closeBtnContaainer}>
-                  <EvilIcons
-                    onPress={() => setModalOpen(false)}
-                    name="close"
-                    size={21}
-                    color="white"
-                  />
-                </View>
-                <View style={globalStyles.editprofileImgContainer}>
 
-                  {submit ? (
-                    <LoaderImage
-                      uri={imageUri ? imageUri : photoUri}
-                      style={globalStyles.uploadedImage}
-                    />
-                  ) : (
-                    <Image
-                      source={{ uri: photoUri }}
-                      placeholderStyle={{ backgroundColor: 'rgb(200, 200, 200)' }}
-                      PlaceholderContent={<ActivityIndicator size="large" color={"#000"} />}
-                      containerStyle={globalStyles.uploadedImage}
-                      style={globalStyles.uploadedImage}
-                    />
-                    // <LoaderImage
-                    //   uri={photoUri}
-                    //   style={globalStyles.uploadedImage}
-                    // />
-                  )}
-
-                  <AntDesign
-                    onPress={() => openImageLibrary()}
-                    style={globalStyles.imgAddIcon}
-                    name="pluscircle"
-                    size={35}
-                    color="#E3E3E3"
-                  />
-
-                </View>
-                <TextInput
-                  placeholder="Edit Username"
-                  onChangeText={(fullName) => setUserName(fullName)}
-                  style={globalStyles.editUserInput}
-                  value={userName}
-                />
-                <TouchableOpacity
-                  style={globalStyles.updateBtn}
-                  onPress={updateUser}
-                >
-                  <Text style={globalStyles.modalText}>Update</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-
-          </Modal>
-
-
-          {/* <ScrollView contentContainerStyle={{ flex: 1 }}> */}
-          <View style={styles.profileContainer}>
-            <View style={globalStyles.profileImgContainer}>
-              <View style={{ position: 'absolute', height: '90%', aspectRatio: 1, top: '-45%' }}>
-                {photoUri ? (
-                  <LoaderImage
-                    uri={photoUri}
-                    style={globalStyles.profileImg}
-                  />
-                ) : (
-                  <Image
-                    source={{
-                      uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTet-jk67T6SYdHW04eIMLygHzEeJKobi9zdg&usqp=CAU",
-                    }}
-                    style={globalStyles.profileImg}
-                  />
-                )}
-              </View>
-
-              <Text style={globalStyles.userNameText}>{userName}</Text>
-              <TouchableOpacity
-                onPress={() => setModalOpen(true)}
-                style={styles.editBtn}
-              >
-                <Text style={globalStyles.btnText}>Edit Profile</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View style={globalStyles.optionsContainer}>
-            <ProfileOptionButton
-              icon={<Cart size={24} dark />}
-              text={'My Cart'}
-              onPress={() => navigation.navigate("Cart", { uuid: uuid, cartItem: cartItem })}
-            />
-            <ProfileOptionButton
-              icon={<NotificationsIcon size={24} dark />}
-              text={'Notifications'}
-              onPress={() => navigation.navigate("Notifications", { uuid })}
-            />
-            <ProfileOptionButton
-              icon={<SettingsIcon size={24} dark />}
-              text={'Settings'}
-              onPress={() => navigation.navigate("Cart", { uuid: uuid, cartItem: cartItem })}
-            />
-            {/* <ProfileOptionButton text={'My Cart'} icon={<Cart dark size={24} onPress={() => navigation.navigate("Cart", { uuid: uuid, cartItem: cartItem })}/>}/> */}
-
-
-          </View>
-          {/* </ScrollView>        */}
-        </View>
       </TransparentHeaderView>
-    </ImageBackground>
+    // {/* </ImageBackground> */}
   )
   return (
     <ImageBackground source={background} resizeMode="cover" style={globalStyles.backgroundImg}>
-      <View style={[styles.areaView, { paddingTop: headerHeight, paddingBottom: safeAreaInsets.bottom + 40 }]}>
+      <View style={[styles.areaView, { paddingTop: headerHeight, paddingBottom: safeAreaInsets.bottom + 40}]}>
         <ScrollView contentContainerStyle={[{ flex: 1, borderWidth: 1, borderColor: 'green' }]}>
           <Modal visible={modalOpen} transparent>
             <View style={globalStyles.modalFullView}>
@@ -413,7 +306,11 @@ export default function UserProfileScreen({ route, navigation }) {
   )
 }
 
-
+const screenHeight = Dimensions.get('screen').height;
+const viewHeight = Dimensions.get('window').height;
+const viewWidth = Dimensions.get('window').width;
+const pageHeight = Dimensions.get('window').height;
+const statusBarHeight = StatusBar.currentHeight;
 const styles = StyleSheet.create({
   areaView: {
     // height: viewHeight,

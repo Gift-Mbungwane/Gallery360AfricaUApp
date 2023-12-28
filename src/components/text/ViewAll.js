@@ -14,6 +14,8 @@ export default ViewAll
 const styles = StyleSheet.create({
     viewMoreText: {
         color: '#CEB89E',
-        padding: 10
+        padding: 10,
+        fontSize: 12,
+        textTransform: 'uppercase'
     }
 })

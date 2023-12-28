@@ -177,12 +177,16 @@ export default function CartScreen({ navigation, route }) {
     });
 
   const openBrowser = async () => {
+    
     const uid = auth.currentUser.uid;
+    const path = `https://gallery-360-africa.web.app/Payment/${uid}`
     // const open = WebBrowser.openBrowserAsync(
     //   "https://gallery-360-africa.web.app/Payment" +
     //     `?id=${auth.currentUser.uid}`
     // );
-    let webResult = await WebBrowser.openBrowserAsync(`https://gallery-360-africa.web.app/Payment/${uid}`);
+    console.log(path);
+    return
+    let webResult = await WebBrowser.openBrowserAsync(path);
     setResult(webResult);
     return;
     // const uid = auth.currentUser.uid;
@@ -281,7 +285,7 @@ export default function CartScreen({ navigation, route }) {
         </View>
         <Image source={{ uri: imageUrl }} style={globalStyles.cartImage} />
         <View style={globalStyles.priceContainer}>
-          <Text style={globalStyles.artTxtName}>{name}</Text>
+          <Text numberOfLines={1} style={globalStyles.artTxtName}>{name}</Text>
           <Text style={globalStyles.priceTxt}>{`R${price}.00`}</Text>
         </View>
       </View>

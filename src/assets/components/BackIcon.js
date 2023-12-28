@@ -6,7 +6,7 @@ import { Back } from '../../components/icons';
 
 export default function BackIcon({ navigation }) {
     return (
-        <View>
+        <View style={{ height: 'auto', justifyContent: 'center' }}>
             <TouchableOpacity
                 onPress={() => {
                     //   console.log(props);

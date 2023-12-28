@@ -36,6 +36,8 @@ export default function ArtPreviewScreen({ route, navigation }) {
   const [followers, setFollowers] = useState([])
   const [likes, setLikes] = useState([])
   const [userLikes, setUserLikes] = useState(false)
+  const [artworkLikes, setArtworkLikes] = useState([])
+  const [userLikesArtwork, setUserLikesArtwork] = useState(false)
   const [showReviews, setShowReviews] = useState(false)
   const [showCommentInput, setShowCommentInput] = useState(false)
   const [reviews, setReviews] = useState([])
@@ -164,6 +166,9 @@ export default function ArtPreviewScreen({ route, navigation }) {
           console.log({ data : data.ratings });
           // const hasReviewed = data.ratings.reviewers.includes(uid) 
           // console.log({ hasReviewedInGetter: hasReviewed });
+          const likes = snapShot.data().likes ?? []
+          setUserLikesArtwork(likes.includes(uid))
+          setArtworkLikes(likes)
           setArtDetails({
             ...snapShot.data(),
             imageUid: snapShot.id,
@@ -284,6 +289,14 @@ export default function ArtPreviewScreen({ route, navigation }) {
     }
 
   }
+  const updateArtwork = (obj) => {
+    try {
+      firestore.collection('Market').doc(imageUID.trim()).update(obj)
+    } catch (error) {
+      console.log({ error });
+    }
+
+  }
   const updateLikes = () => {
     let likeArr = []
     if (userLikes) {
@@ -299,6 +312,25 @@ export default function ArtPreviewScreen({ route, navigation }) {
     console.log({ likeArr });
     setUserLikes(likeArr.includes(uid))
     updateArtist({ likes: likeArr })
+  }
+  const updateArtworkLikes = () => {
+    // console.log('updating likes');
+    // return
+    let likeArr = []
+    if (userLikesArtwork) {
+      console.log({ current: artworkLikes });
+      likeArr = artworkLikes.filter(item => !item === uid)
+    } else {
+      if (artworkLikes.includes(uid)) {
+        likeArr = artworkLikes
+      } else {
+        likeArr = [...artworkLikes, uid]
+      }
+    }
+    console.log({ likeArr });
+    setUserLikesArtwork(likeArr.includes(uid))
+    setArtworkLikes(likeArr.length)
+    updateArtwork({ likes: likeArr })
   }
   const updateFollowing = () => {
     let followersArr = []
@@ -449,10 +481,10 @@ export default function ArtPreviewScreen({ route, navigation }) {
             updateFollowing={updateFollowing}
             artistName={artistName}
             isFollowing={isFollowing}
-            updateLikes={updateLikes}
-            likes={likes.length}
-            userLikes={userLikes}
-            messages={30}
+            updateLikes={updateArtworkLikes}
+            likes={artworkLikes.length}
+            userLikes={userLikesArtwork}
+            messages={reviews.length}
             artistPhoto={photoUrl}
             toggleShowReviews={() => setShowReviews(showReviews => !showReviews)}
             viewArtist={() => navigation.navigate('ArtistProfile', { artistUid, photoUrl, artistName })}

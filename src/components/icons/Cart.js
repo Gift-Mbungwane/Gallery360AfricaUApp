@@ -2,10 +2,10 @@ import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { Image } from 'react-native'
 
-const Cart = ({ size }) => {
+const Cart = ({ size, dark=false }) => {
     return (
         // <View style={{ backgroundColor: 'red'}}>
-            <Image style={[{ height: size, width: size }]} source={require('../../../assets/icons/cart.png')} />
+            <Image style={[{ height: size, width: size }]} source={ dark ? require('../../../assets/icons/bulk.png') : require('../../../assets/icons/cart.png')} />
 
         // </View>
     )

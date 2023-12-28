@@ -641,8 +641,8 @@ const globalStyles = StyleSheet.create({
     // flex: 1,
     height: '100%',
     width: '100%',
-    // borderColor: 'red',
-    // borderWidth: 1,
+    borderColor: '#FFF',
+    borderWidth: 5,
     // aspectRatio: 1,
     // height: '90%',
     borderRadius: 300,
@@ -652,8 +652,8 @@ const globalStyles = StyleSheet.create({
   },
   profileImgContainer: {
     // top: 120,
-    marginBottom: 20,
-    width: "80%",
+    marginBottom: 10,
+    width: "100%",
     height: '65%',
     
     borderRadius: 15,
@@ -703,7 +703,9 @@ const globalStyles = StyleSheet.create({
   optionsContainer: {
     // top: 120,
     flex: 5,
-    justifyContent: 'space-evenly',
+    gap: 10,
+    paddingHorizontal: 20
+    // justifyContent: 'space-evenly',
     // borderColor: 'red',
     // borderWidth: 1
     // bottom: -110,
@@ -734,7 +736,7 @@ const globalStyles = StyleSheet.create({
     // backgroundColor: "gray",
     // justifyContent: "center",
     // alignItems: "center",
-    // borderColor: 'red',
+    // borderColor: 'blue',
     // borderWidth: 3
     
   },

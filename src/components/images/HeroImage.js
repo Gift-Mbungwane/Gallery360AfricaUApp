@@ -1,11 +1,13 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
+import LoaderImage from '../../assets/components/LoaderImage'
 
 const HeroImage = ({ uri, onPress, size }) => {
     // console.log({ uri });
     return (
         // <TouchableOpacity onPress={onPress}>
-            <Image style={[ styles.image, size && { height: size, width: size } ]} src={uri} />
+        <LoaderImage uri={uri} style={[ styles.image, size && { height: size, width: size } ]} />
+            // <Image style={[ styles.image, size && { height: size, width: size } ]} {uri} src={uri} />
         // </TouchableOpacity>
     )
 }

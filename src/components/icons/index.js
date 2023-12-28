@@ -6,7 +6,8 @@ import Person from "./Person"
 import MessageText from "./MessageText";
 import Back from "./Back";
 import Comment from "./Comment";
-
+import Settings from "./Settings";
+import Notifications from "./Notifications";
 export {
     ArrowDown,
     Cart,
@@ -15,5 +16,7 @@ export {
     Person,
     MessageText,
     Back,
-    Comment
+    Comment,
+    Settings as SettingsIcon,
+    Notifications as NotificationsIcon
 }

@@ -3,6 +3,7 @@ import React from 'react'
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import ArtistLabel from '../labels/ArtistLabel';
+import LoaderImage from '../../assets/components/LoaderImage';
 // import LinearGradient from 'react-native-linear-gradient';
 const imgSrc = "https://firebasestorage.googleapis.com/v0/b/chatta-mobile.appspot.com/o/messages%2Fimages%2FcW7x3aV9o8rpH4478Hnf?alt=media&token=e2587fdc-ec26-4084-b57e-8f61628d5800"
 
@@ -26,10 +27,11 @@ const ArtworkCard = ({ artDetails, navigateToArtwork }) => {
             })
         }}>
             <View style={styles.backgroundContainer}>
-                <Image style={styles.image} resizeMode={"cover"} src={artDetails.artUrl}>
+                <LoaderImage style={styles.image} mode={'cover'} uri={artDetails.artUrl} />
+                {/* <Image style={styles.image} resizeMode={"cover"} src={artDetails.artUrl}>
 
 
-                </Image>
+                </Image> */}
                 <View style={styles.blurViewContainer}>
                     <BlurView intensity={90} style={styles.blurView}>
                         <View style={styles.artHeader}>

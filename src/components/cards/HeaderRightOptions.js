@@ -3,6 +3,7 @@ import React from 'react'
 import { TouchableOpacity } from 'react-native'
 
 const HeaderRightOptions = ({ navigation, userDetails, cartItem }) => {
+    console.log({ navigation, userDetails, cartItem });
     return (
         <View style={styles.container}>
             <TouchableOpacity
@@ -33,6 +34,9 @@ export default HeaderRightOptions
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
+        // backgroundColor: 'red',
+        height: 70,
+        alignItems: 'center',
         gap: 10
     },
     cartContainer: {

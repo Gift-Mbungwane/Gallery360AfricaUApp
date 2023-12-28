@@ -20,7 +20,7 @@ import { globalStyles } from "./src/assets/styles/GlobalStyles";
 import {
   UserSettingsScreen, CartScreen, ExhibitionDetailsScreen, ExhibitionScreen, ArtistProfileScreen, MarketScreen, ArtPreviewScreen, ArtWorksScreen, ArtistsScreen, SignUpScreen,
   SignInScreen, OnboardingScreen, SplashScreen, UserProfileScreen, SearchScreen, PreviewMoreScreen, PreviewScreen, TermsAndConditionsScreen, ShippingAddressScreen, DeliveryAddressScreen,
-  PayPalPaymentScreen, PaymentFailureScreen, PaymentSuccessScreen, NotificationScreen, ScrollScreen, ForgotPasswordScreen, TestScreen, ArtistsScreenCopy
+  PayPalPaymentScreen, PaymentFailureScreen, PaymentSuccessScreen, NotificationScreen, ScrollScreen, ForgotPasswordScreen, TestScreen, ArtistsScreenCopy, ArtistBiographyScreen
 }
   from './src/screens';
 import Home from './src/screens/Home';
@@ -41,7 +41,7 @@ import BackIcon from "./src/assets/components/BackIcon";
 const background = require("./src/assets/images/home.png");
 import LogoutIcon from './src/assets/images/logout.svg'
 import HomeHeaderRight from "./src/assets/components/HomeHeaderRight";
-import { Header, HeroImage } from "./src/components";
+import { Header, HeroImage, SignOutButton } from "./src/components";
 import UserHeaderCard from "./src/components/cards/UserHeaderCard";
 import HeaderRightOptions from "./src/components/cards/HeaderRightOptions";
 import { UserDetails } from "./src/Context/UserDetailsContext";
@@ -168,47 +168,54 @@ export default function App({ navigation }) {
     }
   }
   const getUserData = () => {
-    if (userState.isLoggedIn) {
-      // setuser(userExist);
-      console.log('user exists');
+    try {
+      if (userState.isLoggedIn) {
+        // setuser(userExist);
+        console.log('user exists');
+        if (userState?.user?.uid) {
+          firestore.collection('users').doc(userState.user.uid).onSnapshot(res => {
+            if (res.data()) {
+              const { fullName, photoURL } = res.data()
+              setUserDetails({
+                photoUrl: res.data().photoURL,
+                fullName: res.data().fullName,
+                userId: userState.user.uid,
+                email: res.data().email
+              })
+              setImageLink(photoURL);
+              setFullName(fullName);
+            }
 
-      firestore.collection('users').doc(userState.user.uid).onSnapshot(res => {
-        if (res.data()) {
-          const { fullName, photoURL } = res.data()
-          setUserDetails({
-            photoUrl: res.data().photoURL,
-            fullName: res.data().fullName,
-            userId: userState.user.uid,
-            email: res.data().email
+          }, (err) => {
+            if (err.message === 'Failed to get document because the client is offline.') {
+              // console.log(err.message);
+            }
           })
-          setImageLink(photoURL);
-          setFullName(fullName);
         }
 
-      }, (err) => {
-        if (err.message === 'Failed to get document because the client is offline.') {
-          // console.log(err.message);
-        }
-      })
 
-      firestore
-        .collection("cartItem")
-        .doc(userState.user.uid)
-        .collection("items")
-        .onSnapshot((snapShot) => {
-          const cartItems = snapShot.size;
-          console.log({ cartItems });
-          setCartItem(cartItems);
-        }, (err) => {
-          if (err.message === 'Failed to get document because the client is offline.') {
-            // console.log(err.message);
-          }
-        });
-    } else {
-      // setuser("");
-      // toggleUserState(false)
-      console.log('user doesn\'t exist');
+        firestore
+          .collection("cartItem")
+          .doc(userState.user.uid)
+          .collection("items")
+          .onSnapshot((snapShot) => {
+            const cartItems = snapShot.size;
+            console.log({ cartItems });
+            setCartItem(cartItems);
+          }, (err) => {
+            if (err.message === 'Failed to get document because the client is offline.') {
+              // console.log(err.message);
+            }
+          });
+      } else {
+        // setuser("");
+        // toggleUserState(false)
+        console.log('user doesn\'t exist');
+      }
+    } catch (error) {
+      console.log({ errorFetchingUserData: error });
     }
+
   }
   useEffect(() => {
     console.log({ userState });
@@ -280,36 +287,42 @@ export default function App({ navigation }) {
                           color: "#000",
                         },
 
-                        headerBackVisible: false,
+                        // headerBackVisible: false,
                         headerShadowVisible: false,
-
+                        headerStyle: {
+                          height: 80,
+                          // backgroundColor: 'red'
+                        },
                         headerTitle: null,
                         title: null,
                         // presentation: 'transperantModal',
                         headerShown: true,
                         headerTransparent: true,
-                        // headerStyle: {
-                        //   position: 'absolute',
-                        //   top: 10,
-                        //   left: 0,
-                        //   right: 0,
-                        //   zIndex: 100,
-                        //   backgroundColor: 'transparent',
-                        //   // backgroundColor: 'red',
-                        //   borderBottomWidth: 0,
-                        //   margin: 0,
-                        //   borderColor: 'yellow',
-                        //   height: 60,
-                        //   paddingTop: 10
-                        // },
-                        // headerRight: () =>  <HeaderRightOptions userDetails={userDetails} cartItem={cartItem} navigation={navigation} />,
-
-                        header: () => (
-                          <Header>
-                            <UserHeaderCard userDetails={userDetails} />
-                            <HeaderRightOptions userDetails={userDetails} cartItem={cartItem} navigation={navigation} />
-                          </Header>
-                        )
+                        headerLeft: () => <UserHeaderCard
+                          userDetails={userDetails}
+                          navigation={navigation}
+                          cartItem={cartItem}
+                          onPress={() => {
+                            console.log('navigation pressed');
+                            console.log('nav');
+                            // navigation.navigate('UserProfile', {
+                            //   photoURL: userDetails.photoUrl,
+                            //   fullName: userDetails.fullName,
+                            //   uuid: userDetails.userId,
+                            //   cartItem: cartItem,
+                            // })
+                          }}
+                        />,
+                        headerRight: () => <HeaderRightOptions userDetails={userDetails} cartItem={cartItem} navigation={navigation} />
+                        // header: () => (
+                        //   // <View>
+                        //   //   <Text>Hi there</Text>
+                        //   // </View>
+                        //   <Header>
+                        //     <UserHeaderCard userDetails={userDetails} />
+                        //     <HeaderRightOptions userDetails={userDetails} cartItem={cartItem} navigation={navigation} />
+                        //   </Header>
+                        // )
 
                       })}
                     />
@@ -478,6 +491,11 @@ export default function App({ navigation }) {
                       })}
                     />
                     <Stack.Screen
+                      screenOptions={({ navigation }) => ({
+                        headerStyle: {
+                          height: 70
+                        }
+                      })}
                       options={({ navigation }) => ({
                         headerShown: true,
                         headerTransparent: true,
@@ -485,31 +503,16 @@ export default function App({ navigation }) {
                         cardStyle: {
                           backgroundColor: 'red'
                         },
+                        headerStyle: {
+                          height: 70,
+                          // backgroundColor: 'black'
+                        },
                         headerLeft: (props) => (
                           <BackIcon navigation={navigation} />
                         ),
                         headerRight: () => {
                           // console.log(LogoutIcon);
-                          return (
-                            <TouchableOpacity style={{
-                              height: 35,
-                              width: 37,
-                              borderRadius: 12,
-                              borderWidth: 1,
-                              borderColor: '#fff',
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              paddingLeft: 5
-                              // alignSelf: "center"
-                            }}
-                              onPress={() => {
-                                signoutUser()
-                              }}
-                            >
-                              <FontAwesome name='sign-out' size={17} color='white'></FontAwesome>
-                              {/* <Image src={LogoutIcon} style={{height: 30, width: 30}}></Image> */}
-                            </TouchableOpacity>
-                          )
+                          return (<SignOutButton signOutUser={() => signoutUser()} />)
 
                         },
                         headerTitle: () => (
@@ -695,7 +698,7 @@ export default function App({ navigation }) {
                         headerBackTitleVisible: false,
                         title: null,
                         headerStyle: {
-                          height: 60
+                          height: 70
                         },
                         headerLeft: () => (
                           // <UserHeaderCard userDetails={userDetails} />
@@ -708,6 +711,24 @@ export default function App({ navigation }) {
                       })}
                       name="ArtistProfile"
                       component={ArtistProfileScreen}
+                    />
+                    <Stack.Screen
+                      options={({ navigation }) => ({
+                        headerShown: true,
+                        headerTransparent: true,
+                        headerBackVisible: false,
+                        headerBackTitleVisible: false,
+                        title: null,
+                        headerStyle: {
+                          height: 70
+                        },
+                        headerLeft: () => (
+                          // <UserHeaderCard userDetails={userDetails} />
+                          <BackIcon navigation={navigation} />
+                        ),
+                      })}
+                      name="ArtistBiography"
+                      component={ArtistBiographyScreen}
                     />
                     <Stack.Screen
                       options={({ navigation }) => ({
