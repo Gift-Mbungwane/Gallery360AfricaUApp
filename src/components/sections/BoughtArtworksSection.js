@@ -8,7 +8,7 @@ import ViewAll from '../text/ViewAll'
 
 const BoughtArtworksSection = ({ artworks, onNavigate }) => {
     const arr = [1, 2, 3, 4, 5]
-    // console.log({ artworksInBought: artworks });
+    console.log({ artworksInBought: artworks });
     if(artworks) {
         // console.log({ url: artworks[0]?.artUrl });
     }
@@ -21,7 +21,7 @@ const BoughtArtworksSection = ({ artworks, onNavigate }) => {
                 <ViewAll onPress={() => console.log('View more chosen')}/>
             </View>
             {
-                artworks && artworks.length > 0 && (
+                (artworks && artworks.length > 0) && (
                     <FlatList
                         horizontal
                         style={{ paddingTop: 20 }}
@@ -37,8 +37,8 @@ const BoughtArtworksSection = ({ artworks, onNavigate }) => {
                 )
             }
             {
-                !artworks || artworks.length === 0 && (
-                    <View style={{ height: 70, width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                (artworks === null || artworks.length === 0) && (
+                    <View style={{ height: 120, width: '100%', justifyContent: 'center', alignItems: 'center' }}>
                         <Text style={{ fontSize: 18, fontWeight: '500'}}>No Art bought</Text>
                     </View>
                 )

@@ -255,7 +255,7 @@ export default function ArtistProfileScreen({ route, navigation }) {
         // console.log({ data });
         return data
       }))).values()]
-      // console.log({ boughtArtworks: array});
+      console.log({ boughtArtworks: array});
       setBoughtArtworks(array)
     })
   }
@@ -269,7 +269,7 @@ export default function ArtistProfileScreen({ route, navigation }) {
       console.log('getting details');
       getArt();
       getNumberOfImage();
-      // getBoughtArtworks()
+      getBoughtArtworks()
       // followState();
       getArtistData()
       // const ref = videoViewRef.current
